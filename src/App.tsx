@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
@@ -181,66 +181,6 @@ function AidressLogo({ className = "", logoHeight = 44 }: { className?: string; 
   );
 }
 
-const NAV_SECTIONS = [
-  { id: "problem", label: "The Problem" },
-  { id: "layers", label: "The Engine" },
-  { id: "team", label: "The Crew" },
-  { id: "blog", label: "Mission Logs" },
-  { id: "terminal", label: "Integrate" },
-  { id: "reach", label: "Let's Talk" },
-];
-
-function SideNav() {
-  const [visible, setVisible] = useState(false);
-  const [active, setActive] = useState("problem");
-
-  useEffect(() => {
-    const onScroll = () => {
-      setVisible(window.scrollY > 300);
-      for (const { id } of [...NAV_SECTIONS].reverse()) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 120) {
-          setActive(id);
-          break;
-        }
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: visible ? 1 : 0, x: visible ? 0 : -20 }}
-      transition={{ duration: 0.3 }}
-      className="fixed left-0 top-0 z-40 hidden h-screen w-52 flex-col justify-center px-6 xl:flex"
-      style={{ pointerEvents: visible ? "auto" : "none" }}
-    >
-      <div className="rounded-2xl border border-white/8 bg-[#06070a]/70 p-5 backdrop-blur-xl">
-        <AidressLogo logoHeight={28} className="mb-6" />
-        <div className="flex flex-col gap-1">
-          {NAV_SECTIONS.map(({ id, label }) => (
-            <a
-              key={id}
-              href={`#${id}`}
-              className={`rounded-lg px-3 py-2 text-xs transition ${
-                active === id
-                  ? "bg-white/8 text-white"
-                  : "text-white/40 hover:text-white/70"
-              }`}
-            >
-              {active === id && (
-                <span className="mr-2 inline-block h-1 w-1 rounded-full bg-blue-300 align-middle" />
-              )}
-              {label}
-            </a>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 function ProblemSection() {
   return (
