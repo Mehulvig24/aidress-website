@@ -593,7 +593,7 @@ export default function PactWebsiteConcept() {
             </div>
             <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4">
               {[
-                { name: "Mehul Vig", initials: "MV", photo: "/mehul.jpg", role: "Co-Founder", bio: "Previously stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress to build the coordination layer the agentic economy needs.", linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/", gradient: "from-blue-500/30 to-blue-300/10" },
+                { name: "Mehul Vig", initials: "MV", photo: "/mehul.jpg", role: "Co-Founder", bio: "Previously at stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/", gradient: "from-blue-500/30 to-blue-300/10" },
                 { name: "Kabir Sadani", initials: "KS", photo: "/kabir.jpg", role: "Co-Founder", bio: "Designing agent-native infrastructure for autonomous transactions.", linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/", gradient: "from-indigo-500/30 to-purple-300/10" },
                 { name: "Prashanth Ranganathan", initials: "PR", photo: "/prashanth.jpg", role: "Board Member", bio: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.", linkedin: "https://www.linkedin.com/in/prashanthr/", gradient: "from-slate-500/30 to-slate-300/10" },
                 { name: "Milind Sanghavi", initials: "MS", photo: "/milind.jpg", role: "Board Member", bio: "Founder of XWeave, building next-gen financial rails.", linkedin: "https://www.linkedin.com/in/milindsanghavi/", gradient: "from-slate-500/30 to-slate-300/10" },
@@ -683,8 +683,8 @@ export default function PactWebsiteConcept() {
 
           <section id="terminal" className="mx-auto max-w-6xl px-4 pb-16 md:px-10">
             <div className="mb-8">
-              <div className="mb-3 text-xs uppercase tracking-[0.22em] text-white/50">Integrate</div>
-              <h2 className="text-3xl tracking-tight text-blue-300 md:text-5xl">Integrate in minutes</h2>
+              <div className="mb-3 text-xs uppercase tracking-[0.22em] text-white/50">Integrate in minutes</div>
+              <h2 className="text-3xl tracking-tight text-blue-300 md:text-5xl">Launch Control</h2>
             </div>
             <IntegrationSection />
           </section>
