@@ -455,7 +455,7 @@ export default function PactWebsiteConcept() {
       </div>
 
       <div className="relative z-10">
-        <header className={`fixed inset-x-0 top-0 z-30 transition-all duration-300 ${headerSolid ? "border-b border-white/10 bg-[#06070a]/80 backdrop-blur-xl" : "border-b border-transparent bg-transparent"}`}>
+        <header className={`fixed inset-x-0 top-0 z-30 transition-all duration-300 border-b border-white/10 bg-[#06070a]/80 backdrop-blur-xl ${!headerSolid ? "md:border-transparent md:bg-transparent md:backdrop-blur-none" : ""}`}>
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:h-16 md:px-6 lg:px-10">
             <div className="flex items-center gap-3">
               <AidressLogo logoHeight={36} />
@@ -594,7 +594,7 @@ export default function PactWebsiteConcept() {
             <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4">
               {[
                 { name: "Mehul Vig", initials: "MV", photo: "/mehul.jpg", role: "Co-Founder", bio: "Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/", gradient: "from-blue-500/30 to-blue-300/10" },
-                { name: "Kabir Sadani", initials: "KS", photo: "/kabir.jpg", role: "Co-Founder", bio: "Experience in product design and data-driven systems through sports analytics research and product development work at Sportz Interactive (a leading sports technology company). Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/", gradient: "from-indigo-500/30 to-purple-300/10" },
+                { name: "Kabir Sadani", initials: "KS", photo: "/kabir.jpg", role: "Co-Founder", bio: "Experience in product design and data-driven systems through sports analytics research and product development work at Sportz Interactive. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/", gradient: "from-indigo-500/30 to-purple-300/10" },
                 { name: "Prashanth Ranganathan", initials: "PR", photo: "/prashanth.jpg", role: "Board Member", bio: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.", linkedin: "https://www.linkedin.com/in/prashanthr/", gradient: "from-slate-500/30 to-slate-300/10" },
                 { name: "Milind Sanghavi", initials: "MS", photo: "/milind.jpg", role: "Board Member", bio: "Founder of XWeave, building next-gen financial rails.", linkedin: "https://www.linkedin.com/in/milindsanghavi/", gradient: "from-slate-500/30 to-slate-300/10" },
               ].map((person, index) => (
