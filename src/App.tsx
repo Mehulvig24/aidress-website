@@ -697,8 +697,8 @@ function HomePage() {
                     className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/40 transition focus:border-blue-300 focus:outline-none"
                   />
                   <div className="flex flex-col gap-3 sm:flex-row">
-                    <button type="button" className="flex-1 rounded-xl bg-white py-3 text-sm font-medium text-black transition hover:bg-white/90 active:scale-95">Start a conversation</button>
-                    <button type="button" className="flex-1 rounded-xl border border-white/20 py-3 text-sm transition hover:border-white active:scale-95">Become a partner</button>
+                    <button type="button" className="flex-1 rounded-xl bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90 active:scale-95">Start a conversation</button>
+                    <button type="button" className="flex-1 rounded-xl border border-white/30 px-6 py-3 text-center text-sm text-white transition hover:border-white active:scale-95">Become a partner</button>
                   </div>
                 </div>
               </div>
