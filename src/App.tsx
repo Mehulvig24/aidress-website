@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   FileText,
-  Route,
+  Route as RouteIcon,
   Search,
   ShieldCheck,
   User,
@@ -55,7 +56,7 @@ const layers: Layer[] = [
   },
   {
     name: "Routing",
-    icon: Route,
+    icon: RouteIcon,
     blurb:
       "A transaction layer to review routing information and integrate with settlement tools including x402 and programmable payment rails.",
   },
@@ -405,8 +406,8 @@ function IntegrationSection() {
 }
 
 
-export default function PactWebsiteConcept() {
-  const [page, setPage] = useState<"home" | "whitepaper" | "validation" | "protocol" | "systems">("home");
+function HomePage() {
+  const navigate = useNavigate();
   const { scrollY } = useScroll();
   const yBg = useTransform(scrollY, [0, 500], [0, -100]);
   const yGrid = useTransform(scrollY, [0, 500], [0, -40]);
@@ -428,11 +429,6 @@ export default function PactWebsiteConcept() {
   const midY = driftY * 0.6;
   const fastX = driftX;
   const fastY = driftY;
-
-  if (page === "whitepaper") return <WhitePaperPage onBack={() => setPage("home")} />;
-  if (page === "validation") return <ValidationReportPage onBack={() => setPage("home")} />;
-  if (page === "protocol") return <ProtocolArticlePage onBack={() => setPage("home")} />;
-  if (page === "systems") return <SystemsArticlePage onBack={() => setPage("home")} />;
 
   return (
     <div
@@ -622,7 +618,7 @@ export default function PactWebsiteConcept() {
               <div className="hidden text-sm text-white/55 md:block">Architecture notes, protocol thinking, and system design.</div>
             </div>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
-              <button type="button" onClick={() => posts[0].paperId && setPage(posts[0].paperId)} className="text-left lg:col-span-2">
+              <button type="button" onClick={() => posts[0].paperId && navigate(`/${posts[0].paperId}`)} className="text-left lg:col-span-2">
                 <motion.div whileHover={{ scale: 1.01 }} className="h-full cursor-pointer">
                   <SurfaceCard className="h-full overflow-hidden">
                     <div className="flex h-28 w-full items-center justify-center bg-gradient-to-br from-blue-400/20 to-white/5 text-sm text-white/30 md:h-48">White Paper</div>
@@ -644,7 +640,7 @@ export default function PactWebsiteConcept() {
                     key={post.title}
                     whileHover={{ y: -3 }}
                     className={`h-full ${post.paperId ? "cursor-pointer" : ""}`}
-                    onClick={() => post.paperId && setPage(post.paperId)}
+                    onClick={() => post.paperId && navigate(`/${post.paperId}`)}
                   >
                     <SurfaceCard className="h-full">
                       <div className="flex h-full flex-col p-4">
@@ -735,5 +731,19 @@ export default function PactWebsiteConcept() {
         </footer>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/whitepaper" element={<WhitePaperPage onBack={() => window.history.back()} />} />
+        <Route path="/validation" element={<ValidationReportPage onBack={() => window.history.back()} />} />
+        <Route path="/protocol" element={<ProtocolArticlePage onBack={() => window.history.back()} />} />
+        <Route path="/systems" element={<SystemsArticlePage onBack={() => window.history.back()} />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
