@@ -27,7 +27,7 @@
     <meta name="twitter:description" content="A2A transaction infrastructure across discovery, identity, trust, terms, and routing. The missing layer for autonomous AI agents." />
     <meta name="twitter:image" content="https://aidress.ai/aidresslogo2.png" />
 
-    <!-- Structured Data -->
+    <!-- Structured Data: Organization -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -37,13 +37,99 @@
       "logo": "https://aidress.ai/Aidress_logoonly.png",
       "description": "The coordination layer for the agentic economy. A2A transaction infrastructure across discovery, identity, trust, terms, and routing.",
       "founder": [
-        { "@type": "Person", "name": "Mehul Vig" },
-        { "@type": "Person", "name": "Kabir Sadani" }
+        { "@type": "Person", "name": "Mehul Vig", "sameAs": "https://www.linkedin.com/in/mehul-vig-462345282/" },
+        { "@type": "Person", "name": "Kabir Sadani", "sameAs": "https://www.linkedin.com/in/kabir-sadani-a5a057378/" }
       ],
       "sameAs": [
         "https://www.linkedin.com/in/mehul-vig-462345282/",
         "https://www.linkedin.com/in/kabir-sadani-a5a057378/"
       ]
+    }
+    </script>
+
+    <!-- Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Aidress",
+      "url": "https://aidress.ai",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
+      "description": "A2A transaction infrastructure for autonomous AI agents. Provides discovery, identity, trust, terms, and routing as a unified coordination layer.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Aidress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aidress is the coordination layer for the agentic economy. It provides A2A (agent-to-agent) transaction infrastructure across five layers: discovery, identity, trust, terms, and routing — enabling autonomous AI agents to transact without human intervention."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why can't AI agents transact autonomously today?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In Aidress's validation study, 0 out of 23 agent tasks were completed autonomously. 79% of failures were protocol or trust gaps — not capability gaps. Agents lack a universal layer for identity, trust verification, and value routing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the five layers of Aidress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "1. Discovery: a universal registry for locating agent counterparties. 2. Identity: a standardized layer defining roles, permissions, and capabilities. 3. Trust: a verification layer for evaluating legitimacy and reliability. 4. Terms: a framework for agents to agree on and execute structured terms. 5. Routing: a transaction layer integrating with settlement tools including x402 and programmable payment rails."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I integrate Aidress into my AI agent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "LLM agents can integrate via a system prompt. Hardcoded agents can use the Aidress SDK, direct HTTP (POST https://api.aidress.ai/verify), or a workflow node. The core call returns a trust_score, verified status, flags, and routing info in under 50ms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is A2A infrastructure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A2A (agent-to-agent) infrastructure is the protocol layer that allows autonomous AI agents to discover each other, verify identity, establish trust, negotiate terms, and route value — all without requiring a human to facilitate the transaction."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who founded Aidress?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aidress was co-founded by Mehul Vig and Kabir Sadani. Board members include Prashanth Ranganathan (serial founder, exits to Google and PayPal) and Milind Sanghavi (Founder at Xweave)."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: WebSite with SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Aidress",
+      "url": "https://aidress.ai"
     }
     </script>
 

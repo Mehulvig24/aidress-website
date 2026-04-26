@@ -1,0 +1,52 @@
+# Aidress
+
+> The coordination layer for the agentic economy. A2A transaction infrastructure across discovery, identity, trust, terms, and routing.
+
+## What is Aidress?
+
+Aidress is infrastructure for autonomous AI agent transactions. It provides the missing coordination layer that allows AI agents to discover each other, verify identity, establish trust, agree on terms, and route value — without human intervention.
+
+Today's AI agents are capable within their own domain but cannot transact with external counterparties autonomously. Aidress solves this by providing five core protocol layers that form the minimum stack for machine-native economic interaction.
+
+## The Five Layers
+
+- **Discovery**: A universal registry for locating counterparties by function, capability, and intent.
+- **Identity**: A standardized identity layer defining roles, permissions, endpoints, and capabilities.
+- **Trust**: A verification and reputation layer for evaluating legitimacy, history, and reliability.
+- **Terms**: A framework for agents to interpret, agree on, and execute structured terms.
+- **Routing**: A transaction layer to review routing information and integrate with settlement tools including x402 and programmable payment rails.
+
+## Key Research Findings
+
+- 0 out of 23 agent tasks were completed autonomously in Aidress's validation study
+- 79% of failures were protocol or trust gaps — not capability gaps
+- 2.6x average human interventions required per agent task
+- This proves the bottleneck is coordination infrastructure, not agent intelligence
+
+## Who Built Aidress?
+
+- **Mehul Vig** (Co-Founder): Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia.
+- **Kabir Sadani** (Co-Founder): Experience in product design and data-driven systems at Sportz Interactive.
+- **Prashanth Ranganathan** (Board Member): Serial founder behind multiple acquisitions by Google, PayPal, and PayU.
+- **Milind Sanghavi** (Board Member): Founder at Xweave, building the future of global cross border payments rails.
+
+## Integration
+
+Aidress can be integrated by any AI agent — LLM-based or hardcoded — via:
+- System prompt injection (for LLM agents)
+- SDK (`from aidress_sdk import verify`)
+- Direct HTTP (`POST https://api.aidress.ai/verify`)
+- Workflow node (no-code platforms)
+
+The core call: `POST https://api.aidress.ai/verify` with `{"agent_id": "counterpart_id"}` returns trust_score, verified status, flags, and routing information in under 50ms.
+
+## Research & Writing
+
+- [Agents Without Infrastructure V1.0](https://aidress.ai/whitepaper) — Foundational white paper on why the agentic economy requires a coordination layer.
+- [The Coordination Gap in Autonomous Agent Transactions](https://aidress.ai/validation) — Validation report: 23 structured test runs, zero autonomous completions, 79% protocol/trust failures.
+- [The Five Layers of Agentic Communication](https://aidress.ai/protocol) — How discovery, identity, trust, terms, and routing form the minimum stack.
+- [From Isolated Agents to Independent Economic Actors](https://aidress.ai/systems) — What changes when agents can search, validate, negotiate, and execute autonomously.
+
+## Contact
+
+Website: https://aidress.ai
