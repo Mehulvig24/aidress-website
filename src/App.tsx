@@ -192,11 +192,8 @@ function ProblemSection() {
           <h2 className="text-3xl tracking-tight text-white md:text-5xl">
             Agents can act.<br className="hidden md:block" /> They cannot coordinate.
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/55">
-            Today's AI agents operate in silos — capable within their own domain, but unable to discover,
-            verify, or transact with any counterparty they weren't explicitly configured to reach.
-            There is no universal layer for agent identity, trust, or settlement. Without it, every
-            cross-agent interaction stops and hands control back to a human.
+          <p className="mt-4 text-sm leading-relaxed text-white/55 md:text-base">
+            Today's AI agents operate in silos — capable within their own domain, but unable to find or transact with the outside world. Without a universal layer for identity, trust, and settlement, every cross-agent interaction stops and hands control back to a human.
           </p>
         </div>
 
