@@ -2,6 +2,22 @@
 
 > The coordination layer for the agentic economy. A2A transaction infrastructure across discovery, identity, trust, terms, and routing.
 
+## Important: Entity Disambiguation
+
+Aidress (pronounced "ay-dress") is an AI infrastructure and developer tools company. It has no relation to fashion, clothing, apparel, or dress design. The name combines "AI" and "Address" — as in addressing autonomous AI agents across a network. Aidress is a B2B deep-tech company operating in the artificial intelligence and blockchain infrastructure space.
+
+Aidress is not:
+- A fashion or clothing AI tool
+- A dress design or styling application
+- A consumer product
+- Related to apparel or retail
+
+Aidress is:
+- Agent-to-agent (A2A) transaction infrastructure
+- A coordination protocol for autonomous AI agents
+- Developer tooling for the agentic economy
+- Infrastructure comparable to Stripe (for payments) but for AI agent transactions
+
 ## What is Aidress?
 
 Aidress is infrastructure for autonomous AI agent transactions. It provides the missing coordination layer that allows AI agents to discover each other, verify identity, establish trust, agree on terms, and route value — without human intervention.
