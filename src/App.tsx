@@ -10,7 +10,8 @@ import {
   User,
 } from "lucide-react";
 import "./index.css";
-import { WhitePaperPage, ValidationReportPage, ProtocolArticlePage, SystemsArticlePage } from "./papers";
+// papers imported for future use when access is granted
+// import { WhitePaperPage, ValidationReportPage, ProtocolArticlePage, SystemsArticlePage } from "./papers";
 
 type Layer = {
   name: string;
@@ -728,15 +729,99 @@ function HomePage() {
   );
 }
 
+const paperMeta: Record<string, { title: string; category: string; description: string }> = {
+  whitepaper: {
+    title: "Agents Without Infrastructure — V1.0",
+    category: "White Paper",
+    description: "A foundational paper on why the agentic economy requires a coordination layer for discovery, identity, trust, terms, and routing.",
+  },
+  validation: {
+    title: "The Coordination Gap in Autonomous Agent Transactions",
+    category: "Validation Report",
+    description: "23 structured test runs across 8 tools. Zero autonomous completions. 79% of failures were protocol or trust gaps — not capability gaps.",
+  },
+  protocol: {
+    title: "The Five Layers of Agentic Communication",
+    category: "Protocol",
+    description: "Discovery, identity, trust, terms, and routing form the minimum stack for machine-native economic interaction.",
+  },
+  systems: {
+    title: "From Isolated Agents to Independent Economic Actors",
+    category: "Systems",
+    description: "What changes when agents can search for counterparties, validate trust, negotiate constraints, and execute value transfer autonomously.",
+  },
+};
+
+function RequestAccessPage({ paperId }: { paperId: string }) {
+  const [email, setEmail] = useState("");
+  const meta = paperMeta[paperId];
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  const handleRequest = () => {
+    if (!email.trim()) return;
+    const subject = encodeURIComponent(`Access Request: ${meta.title}`);
+    const body = encodeURIComponent(`Hi Aidress team,\n\nI'd like to request access to: ${meta.title}\n\nMy email: ${email}\n\nThank you.`);
+    window.location.href = `mailto:teamaidress@gmail.com?subject=${subject}&body=${body}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-[#06070a] text-white flex flex-col">
+      <div className="mx-auto w-full max-w-2xl px-6 py-16 md:px-10 md:py-28 flex flex-col items-start">
+        <button
+          type="button"
+          onClick={() => window.history.back()}
+          className="mb-12 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/80"
+        >
+          ← Back
+        </button>
+
+        {/* Lock icon */}
+        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
+          <svg className="h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+        </div>
+
+        <div className="mb-2 text-xs uppercase tracking-[0.22em] text-white/40">{meta.category}</div>
+        <h1 className="mb-4 text-3xl tracking-tight text-white md:text-4xl">{meta.title}</h1>
+        <p className="mb-10 text-base leading-relaxed text-white/55">{meta.description}</p>
+
+        <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+          <div className="mb-1 text-sm font-medium text-white">Request Access</div>
+          <p className="mb-6 text-xs text-white/40">Enter your email and we'll reach out with access.</p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleRequest()}
+              placeholder="you@company.com"
+              className="flex-1 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/30 transition focus:border-blue-300 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={handleRequest}
+              className="rounded-xl bg-white px-6 py-3 text-sm font-medium text-black transition hover:bg-white/90 active:scale-95"
+            >
+              Request Access
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/whitepaper" element={<WhitePaperPage onBack={() => window.history.back()} />} />
-        <Route path="/validation" element={<ValidationReportPage onBack={() => window.history.back()} />} />
-        <Route path="/protocol" element={<ProtocolArticlePage onBack={() => window.history.back()} />} />
-        <Route path="/systems" element={<SystemsArticlePage onBack={() => window.history.back()} />} />
+        <Route path="/whitepaper" element={<RequestAccessPage paperId="whitepaper" />} />
+        <Route path="/validation" element={<RequestAccessPage paperId="validation" />} />
+        <Route path="/protocol" element={<RequestAccessPage paperId="protocol" />} />
+        <Route path="/systems" element={<RequestAccessPage paperId="systems" />} />
       </Routes>
     </BrowserRouter>
   );
