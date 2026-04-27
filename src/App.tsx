@@ -717,6 +717,7 @@ function HomePage() {
                 <span className="text-white/30">•</span>
                 <a href="https://x.com/AIDRESS_AI" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">X</a>
                 <a href="https://www.instagram.com/aidress_ai/" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
+                <a href="https://www.linkedin.com/company/aidress/about/" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">LinkedIn</a>
                 <a href="mailto:teamaidress@gmail.com" className="transition hover:text-white">Email</a>
               </div>
             </div>
