@@ -692,13 +692,9 @@ function HomePage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <input
-                    placeholder="you@company.com"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/40 transition focus:border-blue-300 focus:outline-none"
-                  />
                   <div className="flex flex-col gap-3 sm:flex-row">
-                    <button type="button" className="flex-1 rounded-xl bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90 active:scale-95">Start a conversation</button>
-                    <button type="button" className="flex-1 rounded-xl border border-white/30 px-6 py-3 text-center text-sm text-white transition hover:border-white active:scale-95">Become a partner</button>
+                    <a href="mailto:teamaidress@gmail.com?subject=Starting a conversation" className="flex-1 rounded-xl bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90 active:scale-95">Start a conversation</a>
+                    <a href="mailto:teamaidress@gmail.com?subject=Partner inquiry" className="flex-1 rounded-xl border border-white/30 px-6 py-3 text-center text-sm text-white transition hover:border-white active:scale-95">Become a partner</a>
                   </div>
                 </div>
               </div>
@@ -719,9 +715,9 @@ function HomePage() {
                 <a href="#blog" className="transition hover:text-white">Logs</a>
                 <a href="#terminal" className="transition hover:text-white">API</a>
                 <span className="text-white/30">•</span>
-                <span className="cursor-pointer transition hover:text-white">X</span>
-                <span className="cursor-pointer transition hover:text-white">LinkedIn</span>
-                <span className="cursor-pointer transition hover:text-white">Email</span>
+                <a href="https://x.com/AIDRESS_AI" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">X</a>
+                <a href="https://www.instagram.com/aidress_ai/" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
+                <a href="mailto:teamaidress@gmail.com" className="transition hover:text-white">Email</a>
               </div>
             </div>
           </div>
