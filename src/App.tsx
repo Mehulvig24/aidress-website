@@ -459,6 +459,7 @@ function HomePage() {
               <a href="#layers" className="transition hover:text-white">The Engine</a>
               <a href="#team" className="transition hover:text-white">The Crew</a>
               <a href="#blog" className="transition hover:text-white">Mission Logs</a>
+              <a href="#terminal" className="transition hover:text-white">Launch Control</a>
             </nav>
             <a href="#reach" className="inline-block rounded-full border border-white/30 px-4 py-1.5 text-xs font-medium text-white transition hover:border-white hover:bg-white hover:text-black md:px-5 md:py-2 md:text-sm">
               Reach Us
@@ -506,7 +507,7 @@ function HomePage() {
                 className="relative z-10 mt-4 max-w-xl md:mt-6 md:max-w-2xl"
               >
                 <div className="text-base leading-relaxed text-blue-300 md:text-lg">
-                  A2A transaction infrastructure throughout its 5 layers: discovery, identity, trust, terms, and routing.
+                  The agent economy is coming. We're building the engine it runs on.
                 </div>
               </motion.div>
             </div>
@@ -589,8 +590,8 @@ function HomePage() {
               {[
                 { name: "Mehul Vig", initials: "MV", photo: "/mehul.jpg", role: "Co-Founder", bio: "Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/", gradient: "from-blue-500/30 to-blue-300/10" },
                 { name: "Kabir Sadani", initials: "KS", photo: "/kabir.jpg", role: "Co-Founder", bio: "Experience in product design and data-driven systems at Sportz Interactive. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/", gradient: "from-indigo-500/30 to-purple-300/10" },
-                { name: "Prashanth Ranganathan", initials: "PR", photo: "/prashanth.jpg", role: "Board Member", bio: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.", linkedin: "https://www.linkedin.com/in/prashanthr/", gradient: "from-slate-500/30 to-slate-300/10" },
-                { name: "Milind Sanghavi", initials: "MS", photo: "/milind.jpg", role: "Board Member", bio: "Founder at Xweave, building the future of global cross border payments rails.", linkedin: "https://www.linkedin.com/in/milindsanghavi/", gradient: "from-slate-500/30 to-slate-300/10" },
+                { name: "Prashanth Ranganathan", initials: "PR", photo: "/prashanth.jpg", role: "Advisor", bio: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.", linkedin: "https://www.linkedin.com/in/prashanthr/", gradient: "from-slate-500/30 to-slate-300/10" },
+                { name: "Milind Sanghavi", initials: "MS", photo: "/milind.jpg", role: "Advisor", bio: "Founder at Xweave, building the future of global cross border payments rails.", linkedin: "https://www.linkedin.com/in/milindsanghavi/", gradient: "from-slate-500/30 to-slate-300/10" },
               ].map((person, index) => (
                 <motion.div key={person.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} whileHover={{ y: -4 }} className="flex flex-col">
                   <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="mb-4 block">
@@ -681,6 +682,39 @@ function HomePage() {
               <h2 className="text-3xl tracking-tight text-blue-300 md:text-5xl">Launch Control</h2>
             </div>
             <IntegrationSection />
+
+            {/* Agent Well-Known Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-6 rounded-2xl border border-blue-300/20 bg-blue-300/[0.03] p-6 md:p-8"
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div className="flex-1">
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+                    <span className="text-xs uppercase tracking-[0.22em] text-blue-300/70">For AI Agents</span>
+                  </div>
+                  <h3 className="mb-2 text-lg text-white">Agent Discovery File</h3>
+                  <p className="text-sm leading-relaxed text-white/50">
+                    AI agents can access our machine-readable agent card for a full guide on how to discover, verify, and transact through Aidress — including all endpoints, schemas, and authentication details.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3 md:items-end">
+                  <a
+                    href="https://api.aidress.ai/.well-known/agent.json"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-blue-300/30 bg-blue-300/5 px-4 py-2.5 text-xs text-blue-300 transition hover:bg-blue-300/10"
+                  >
+                    <span className="font-mono">GET /.well-known/agent.json</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </a>
+                  <span className="text-[10px] text-white/30">api.aidress.ai · A2A agent card standard</span>
+                </div>
+              </div>
+            </motion.div>
           </section>
 
           <section id="reach" className="relative overflow-hidden border-t border-white/10 py-14 md:py-20">
