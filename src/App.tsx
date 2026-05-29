@@ -380,7 +380,7 @@ function IntegrationSection() {
           <ol className="flex flex-col gap-2 font-mono text-sm text-white/80">
             <li>1. Choose your agent type (LLM or hardcoded)</li>
             <li>2. Pick your integration method</li>
-            <li>3. POST /verify before every transaction</li>
+            <li>3. POST /match to discover and verify in one call</li>
             <li>4. Use trust_score + flags to decide</li>
             <li>5. POST /register to list your agent</li>
           </ol>
@@ -390,13 +390,14 @@ function IntegrationSection() {
           <div className="mb-4 text-xs uppercase tracking-[0.22em] text-white/50">
             The One Call
           </div>
-          <pre className="whitespace-pre-wrap font-mono text-sm text-white/80">{`POST https://api.aidress.ai/verify\n{"agent_id": "counterpart_id"}`}</pre>
+          <pre className="whitespace-pre-wrap font-mono text-sm text-white/80">{`POST https://api.aidress.ai/match\n{"required_capabilities": ["what you need"]}`}</pre>
           <div className="mt-4 flex flex-col gap-1.5 font-mono text-sm">
             {[
               { label: "trust_score", value: "0–100" },
               { label: "verified", value: "true | false" },
               { label: "flags", value: "[]" },
-              { label: "routing", value: "{ endpoint, protocol }" },
+              { label: "routing", value: "{ endpoint_url, protocol, settlement_rail }" },
+              { label: "capabilities", value: "[]" },
             ].map(({ label, value }) => (
               <div key={label} className="flex gap-3">
                 <span className="text-white/40">→ {label}</span>
@@ -404,7 +405,7 @@ function IntegrationSection() {
               </div>
             ))}
           </div>
-          <p className="mt-4 text-xs text-white/40">Works with any agent type. Returns in &lt;50ms.</p>
+          <p className="mt-4 text-xs text-white/40">Use natural language. Returns in &lt;50ms.</p>
         </div>
       </div>
     </div>
