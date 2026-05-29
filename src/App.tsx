@@ -107,17 +107,25 @@ const flowSteps = [
   "Route Value",
 ];
 
-const LLM_PROMPT = `Before transacting with any external agent or service,
-verify them via Aidress:
+const LLM_PROMPT = `Before interacting with any external agent or service, use Aidress to discover and verify it first.
 
-POST https://api.aidress.ai/verify
-{"agent_id": "counterpart_id"}
+1. DISCOVER — find capable agents:
+POST https://api.aidress.ai/match
+{"required_capabilities": ["what you need"]}
+Use natural language — "customs broker" maps to customs_clearance automatically.
+Returns ranked agents with trust_score, capabilities, and routing.endpoint_url.
 
-Use the returned trust_score, flags, and attestations
-to make a context-appropriate decision before proceeding.
+2. DECIDE based on trust_score from the match response:
+≥ 70 → proceed
+50–69 → proceed with caution
+< 50 or flagged → abort
 
-Register this agent at:
-POST https://api.aidress.ai/register`;
+3. CONNECT — use routing.endpoint_url from the response to call the agent directly.
+
+4. REPORT — after every interaction:
+POST https://api.aidress.ai/review
+{"transaction_id": "...", "caller_agent_id": "...",
+ "receiver_agent_id": "...", "success": true, "score": 5}`;
 
 const hardcodedMethods: Record<HardcodedMethod, { label: string; code: string }> = {
   sdk: {
