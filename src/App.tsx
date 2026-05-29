@@ -107,25 +107,30 @@ const flowSteps = [
   "Route Value",
 ];
 
-const LLM_PROMPT = `Before interacting with any external agent or service, use Aidress to discover and verify it first.
+const LLM_PROMPT = `Before interacting with any external agent or service, use Aidress to discover and call it.
 
 1. DISCOVER — find capable agents:
 POST https://api.aidress.ai/match
 {"required_capabilities": ["what you need"]}
 Use natural language — "customs broker" maps to customs_clearance automatically.
-Returns ranked agents with trust_score, capabilities, and routing.endpoint_url.
+Returns ranked agents with trust_score, capabilities, and agent_id.
 
-2. DECIDE based on trust_score from the match response:
-≥ 70 → proceed
-50–69 → proceed with caution
-< 50 or flagged → abort
+2. CONNECT — call the agent through Aidress:
+POST https://api.aidress.ai/call
+{"agent_id": "agent_id_from_match", "payload": {"your": "task here"}}
+Aidress routes the request to the agent and returns the response.
+Endpoint URLs are never exposed directly.
 
-3. CONNECT — use routing.endpoint_url from the response to call the agent directly.
-
-4. REPORT — after every interaction:
+3. REPORT — after every interaction:
 POST https://api.aidress.ai/review
 {"transaction_id": "...", "caller_agent_id": "...",
- "receiver_agent_id": "...", "success": true, "score": 5}`;
+ "receiver_agent_id": "...", "success": true, "score": 5}
+
+Register this agent at:
+POST https://api.aidress.ai/register
+
+Agent card (A2A):
+https://api.aidress.ai/.well-known/agent.json`;
 
 const hardcodedMethods: Record<HardcodedMethod, { label: string; code: string }> = {
   sdk: {
