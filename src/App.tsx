@@ -129,7 +129,7 @@ POST https://api.aidress.ai/review
 Register this agent at:
 POST https://api.aidress.ai/register
 
-Agent card (A2A):
+Well-known (service info):
 https://api.aidress.ai/.well-known/agent.json`;
 
 const hardcodedMethods: Record<HardcodedMethod, { label: string; code: string }> = {
