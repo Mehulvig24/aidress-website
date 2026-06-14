@@ -9,7 +9,7 @@ import React, {
 import { motion, AnimatePresence } from "framer-motion";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import { ArrowRight, Play, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X } from "lucide-react";
+import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X } from "lucide-react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { SearchModal, SearchTrigger } from "./components/SearchModal";
 import DocsPage from "./pages/DocsPage";
@@ -846,9 +846,9 @@ function Nav() {
   }, [mobileOpen]);
 
   const navLinks = [
-    { href: "#logs", label: "Mission Logs" },
     { href: "#engine", label: "Engine" },
     { href: "#integrate", label: "Integrate" },
+    { href: "#logs", label: "Mission Logs" },
     { href: "#crew", label: "Crew" },
   ];
 
@@ -1251,37 +1251,7 @@ function EngineSection() {
   );
 }
 
-// ─── Section 5: Demo Video ──────────────────────────────────────────────────────
-
-function DemoSection() {
-  return (
-    <section className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
-      <FadeIn>
-        <h2 className="mb-8 text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
-          See it working
-        </h2>
-      </FadeIn>
-      <FadeIn delay={0.1}>
-        <div
-          className="flex h-64 items-center justify-center rounded-[14px] md:h-96"
-          style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
-        >
-          <div className="flex flex-col items-center gap-4">
-            <div
-              className="flex h-16 w-16 items-center justify-center rounded-full"
-              style={{ border: "1px solid var(--border)", color: "var(--text-faint)" }}
-            >
-              <Play size={28} />
-            </div>
-            <span className="text-sm" style={{ color: "var(--text-faint)" }}>Demo coming soon</span>
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
-
-// ─── Section 6: Launch Control ──────────────────────────────────────────────────
+// ─── Section 5: Launch Control ──────────────────────────────────────────────────
 
 type CodeTab = "python" | "curl" | "mcp" | "systemprompt";
 
@@ -1670,11 +1640,10 @@ function HomePage() {
       <main>
         <HeroSection />
         <StatsSection />
-        <MissionLogsSection />
         <EngineSection />
-        <DemoSection />
         <LaunchControlSection />
         <SystemStatusStrip />
+        <MissionLogsSection />
         <CrewSection />
         <LetsTalkSection />
       </main>
