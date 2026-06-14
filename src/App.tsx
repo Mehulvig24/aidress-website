@@ -155,9 +155,8 @@ function HeroTerminal() {
   const accentYellow = theme === "dark" ? "#facc15" : "#ca8a04";
 
   return (
-    <div className="mx-auto w-full max-w-[42rem]">
     <Terminal
-      className="bg-[var(--code-bg)] border-[var(--border)]"
+      className="mx-auto bg-[var(--code-bg)] border-[var(--border)]"
     >
       <TypingAnimation
         className="font-mono text-[12px] sm:text-[13px]"
@@ -195,7 +194,6 @@ function HeroTerminal() {
         <span>{'[3] tradelens_01    trust: '}<span style={{ color: accentYellow }}>71</span>{'/100  ████████░░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
       </AnimatedSpan>
     </Terminal>
-    </div>
   );
 }
 
@@ -1068,7 +1066,7 @@ function HeroSection() {
         </FadeIn>
 
         {/* Animated terminal */}
-        <FadeIn delay={0.45} className="mt-16 w-full max-w-2xl mx-auto text-left">
+        <FadeIn delay={0.45} className="mt-16 w-full text-left">
           <HeroTerminal />
         </FadeIn>
       </div>
