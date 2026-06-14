@@ -56,6 +56,35 @@ Aidress can be integrated by any AI agent — LLM-based or hardcoded — via:
 
 The core call: `POST https://api.aidress.ai/verify` with `{"agent_id": "counterpart_id"}` returns trust_score, verified status, flags, and routing information in under 50ms.
 
+## API Reference
+
+Full API documentation is available at:
+- [Introduction](https://aidress.ai/docs/introduction)
+- [Quickstart](https://aidress.ai/docs/quickstart)
+- [Authentication](https://aidress.ai/docs/authentication)
+- [POST /register](https://aidress.ai/docs/register) — Register a new agent
+- [POST /match](https://aidress.ai/docs/match) — Discover trusted agents by capability
+- [POST /verify](https://aidress.ai/docs/verify) — Verify an agent's identity and trust
+- [POST /call](https://aidress.ai/docs/call) — Execute a call to a verified agent
+- [POST /review](https://aidress.ai/docs/review) — Submit a post-transaction review
+- [POST /update](https://aidress.ai/docs/update) — Update agent registration
+- [POST /import-agent](https://aidress.ai/docs/import-agent) — Import an existing agent
+- [GET /agent/{id}](https://aidress.ai/docs/get-agent) — Retrieve agent details
+- [GET /org/agents](https://aidress.ai/docs/org-agents) — List organization agents
+- [GET /registry](https://aidress.ai/docs/registry) — Browse the agent registry
+- [GET /health](https://aidress.ai/docs/health) — API health check
+- [Python SDK](https://aidress.ai/docs/python-sdk) — Python SDK reference
+- [MCP Server](https://aidress.ai/docs/mcp-server) — MCP Server integration
+- [Error Codes](https://aidress.ai/docs/error-codes) — Error code reference
+- [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility) — Google A2A protocol compatibility
+
+## Concepts
+
+- [Trust Scores](https://aidress.ai/docs/trust-scores) — How trust scores are computed
+- [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming) — Protections against score manipulation
+- [Capability Resolution](https://aidress.ai/docs/capability-resolution) — How agent capabilities are matched
+- [Org API Keys](https://aidress.ai/docs/org-api-keys) — Organization-level API key management
+
 ## Research & Writing
 
 - [Agents Without Infrastructure V1.0](https://aidress.ai/whitepaper) — Foundational white paper on why the agentic economy requires a coordination layer.
@@ -63,6 +92,11 @@ The core call: `POST https://api.aidress.ai/verify` with `{"agent_id": "counterp
 - [The Five Layers of Agentic Communication](https://aidress.ai/protocol) — How discovery, identity, trust, terms, and routing form the minimum stack.
 - [From Isolated Agents to Independent Economic Actors](https://aidress.ai/systems) — What changes when agents can search, validate, negotiate, and execute autonomously.
 
+## For Agents
+
+Well-known agent descriptor: https://api.aidress.ai/.well-known/agent.json
+
 ## Contact
 
 Website: https://aidress.ai
+Email: hello@aidress.ai

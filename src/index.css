@@ -1,9 +1,145 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ── Geist Pixel font ────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Geist Pixel Square";
+  src: url("/fonts/GeistPixel-Square.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Override Tailwind font-mono to use JetBrains Mono ─────────────── */
+
+@theme {
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ── Theme tokens ─────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #06070a;
+  --bg-card: #0b0b0b;
+  --bg-card-hover: #111111;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.55);
+  --text-faint: rgba(255, 255, 255, 0.3);
+  --text-xfaint: rgba(255, 255, 255, 0.15);
+  --accent: #93c5fd;
+  --accent-hover: #bfdbfe;
+  --accent-bg: rgba(147, 197, 253, 0.08);
+  --dot-color: rgba(255, 255, 255, 0.12);
+  --code-bg: #0d1117;
+  --badge-live-bg: rgba(34, 197, 94, 0.1);
+  --badge-live-text: #4ade80;
+  --badge-soon-bg: rgba(255, 255, 255, 0.06);
+  --badge-soon-text: rgba(255, 255, 255, 0.4);
+
+  /* docs tokens */
+  --docs-bg: #07090f;
+  --docs-sidebar: #0a0c10;
+  --docs-border: #1f2937;
+  --docs-heading: #e2e8f0;
+  --docs-body: #94a3b8;
+  --docs-faint: #6b7280;
+  --docs-code-bg: #0d1117;
+  --docs-code-text: #e2e8f0;
+  --docs-inline-code: #38bdf8;
+  --docs-inline-code-bg: #111827;
+  --docs-accent: #38bdf8;
+  --docs-accent-bg: rgba(56,189,248,0.08);
+  --docs-callout-bg: #111827;
+  --docs-search-bg: rgba(255,255,255,0.05);
+  --docs-search-border: rgba(255,255,255,0.1);
+  --docs-search-text: rgba(255,255,255,0.4);
+  --docs-search-kbd: rgba(255,255,255,0.06);
+  --docs-search-kbd-text: rgba(255,255,255,0.3);
+
+  /* shadcn/magicui token bridge */
+  --background: #06070a;
+  --foreground: #ffffff;
+  --muted: #0b0b0b;
+  --muted-foreground: rgba(255, 255, 255, 0.55);
+  --card: #0b0b0b;
+  --card-foreground: #ffffff;
+  --primary: #93c5fd;
+  --primary-foreground: #06070a;
+  --secondary: #111111;
+  --secondary-foreground: #ffffff;
+  --ring: #93c5fd;
+  --radius: 0.5rem;
+}
+
+:root.light {
+  --bg: #fafbfc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.15);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-faint: #94a3b8;
+  --text-xfaint: #cbd5e1;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-bg: rgba(37, 99, 235, 0.06);
+  --dot-color: rgba(0, 0, 0, 0.06);
+  --code-bg: #f6f8fa;
+  --badge-live-bg: rgba(34, 197, 94, 0.08);
+  --badge-live-text: #16a34a;
+  --badge-soon-bg: rgba(0, 0, 0, 0.04);
+  --badge-soon-text: #94a3b8;
+
+  /* docs tokens */
+  --docs-bg: #ffffff;
+  --docs-sidebar: #f8fafc;
+  --docs-border: #e2e8f0;
+  --docs-heading: #0f172a;
+  --docs-body: #475569;
+  --docs-faint: #94a3b8;
+  --docs-code-bg: #f6f8fa;
+  --docs-code-text: #1e293b;
+  --docs-inline-code: #2563eb;
+  --docs-inline-code-bg: #eff6ff;
+  --docs-accent: #2563eb;
+  --docs-accent-bg: rgba(37,99,235,0.06);
+  --docs-callout-bg: #f8fafc;
+  --docs-search-bg: rgba(0,0,0,0.04);
+  --docs-search-border: rgba(0,0,0,0.1);
+  --docs-search-text: rgba(0,0,0,0.4);
+  --docs-search-kbd: rgba(0,0,0,0.06);
+  --docs-search-kbd-text: rgba(0,0,0,0.4);
+
+  /* shadcn/magicui token bridge */
+  --background: #fafbfc;
+  --foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --ring: #2563eb;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+
 body {
   margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -11,21 +147,176 @@ body {
   min-height: 100vh;
 }
 
-/* Prevent horizontal scroll on mobile */
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Better tap targets on mobile */
-@media (max-width: 768px) {
-  a, button {
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
+/* ── Dot grid hero background ─────────────────────────────────────────── */
+
+.dot-grid {
+  background-image: radial-gradient(
+    circle,
+    var(--dot-color) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+/* ── Terminal ──────────────────────────────────────────────────────────── */
+
+.terminal-window {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.light .terminal-header {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red {
+  background: #ff5f57;
+}
+.terminal-dot.yellow {
+  background: #febc2e;
+}
+.terminal-dot.green {
+  background: #28c840;
+}
+
+.terminal-body {
+  padding: 16px 20px;
+  font-family: "Courier New", Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  min-height: 220px;
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 639px) {
+  .terminal-body {
+    font-size: 11px;
+    padding: 12px 14px;
+    min-height: 180px;
   }
 }
+
+.light .terminal-body {
+  color: #1e293b;
+}
+
+/* ── Monospace font ───────────────────────────────────────────────────── */
+
+.font-mono {
+  font-family: "Courier New", Consolas, "Liberation Mono", monospace;
+}
+
+/* ── Shiki code block overrides ───────────────────────────────────────── */
+
+.shiki-wrapper pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shiki-wrapper code {
+  font-family: inherit;
+}
+
+@media (max-width: 639px) {
+  .shiki-wrapper pre {
+    font-size: 11px;
+  }
+}
+
+/* ── Logo invert for light mode ───────────────────────────────────────── */
+
+.light .logo-auto {
+  filter: invert(1);
+}
+
+/* ── ASCII art heading colors ────────────────────────────────────────── */
+
+.ascii-block { color: rgb(255, 255, 255); }
+.ascii-shadow { color: rgb(68, 68, 68); }
+
+.light .ascii-block { color: rgb(15, 23, 42); }
+.light .ascii-shadow { color: rgb(210, 215, 225); }
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@theme inline {
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  @keyframes aurora {
+  0% {
+    background-position: 0% 50%;
+    transform: rotate(-5deg) scale(0.9);
+    }
+  25% {
+    background-position: 50% 100%;
+    transform: rotate(5deg) scale(1.1);
+    }
+  50% {
+    background-position: 100% 50%;
+    transform: rotate(-3deg) scale(0.95);
+    }
+  75% {
+    background-position: 50% 0%;
+    transform: rotate(3deg) scale(1.05);
+    }
+  100% {
+    background-position: 0% 50%;
+    transform: rotate(-5deg) scale(0.9);
+    }
+  }
+  --animate-blink-cursor: blink-cursor 1.2s step-end infinite
+;
+  @keyframes blink-cursor {
+  0%, 49% {
+    opacity: 1;
+    }
+  50%, 100% {
+    opacity: 0;
+    }
+  }}

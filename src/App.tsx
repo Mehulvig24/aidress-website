@@ -1,876 +1,1715 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useInView } from "react-intersection-observer";
+import { ArrowRight, Play, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X } from "lucide-react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { SearchModal, SearchTrigger } from "./components/SearchModal";
+import DocsPage from "./pages/DocsPage";
 import {
-  ArrowRight,
-  FileText,
-  Route as RouteIcon,
-  Search,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+  WhitePaperPage,
+  ValidationReportPage,
+  ProtocolArticlePage,
+  SystemsArticlePage,
+} from "./papers";
+import { AuroraText } from "@/components/ui/aurora-text";
+import { Terminal, AnimatedSpan, TypingAnimation } from "@/components/ui/terminal";
+import WorldMap from "@/components/ui/world-map";
 import "./index.css";
-// papers imported for future use when access is granted
-// import { WhitePaperPage, ValidationReportPage, ProtocolArticlePage, SystemsArticlePage } from "./papers";
 
-type Layer = {
-  name: string;
-  icon: React.ComponentType<{ className?: string }>;
-  blurb: string;
-};
+// ─── Theme ──────────────────────────────────────────────────────────────────────
 
-type Post = {
-  category: string;
-  title: string;
-  excerpt: string;
-  meta: string;
-  paperId?: "whitepaper" | "validation" | "protocol" | "systems";
-};
+type Theme = "dark" | "light";
 
-type IntegrationTab = "llm" | "hardcoded" | "summary";
-type HardcodedMethod = "sdk" | "http" | "workflow";
+const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({
+  theme: "dark",
+  toggle: () => {},
+});
 
-const layers: Layer[] = [
-  {
-    name: "Discovery",
-    icon: Search,
-    blurb:
-      "A universal registry for locating counterparties by function, capability, and intent.",
-  },
-  {
-    name: "Identity",
-    icon: User,
-    blurb:
-      "A standardized identity layer defining roles, permissions, endpoints, and capabilities.",
-  },
-  {
-    name: "Trust",
-    icon: ShieldCheck,
-    blurb:
-      "A verification and reputation layer for evaluating legitimacy, history, and reliability.",
-  },
-  {
-    name: "Terms",
-    icon: FileText,
-    blurb:
-      "A framework for agents to interpret, agree on, and execute structured terms.",
-  },
-  {
-    name: "Routing",
-    icon: RouteIcon,
-    blurb:
-      "A transaction layer to review routing information and integrate with settlement tools including x402 and programmable payment rails.",
-  },
-];
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("aidress-theme") as Theme) || "dark";
+    }
+    return "dark";
+  });
 
-const posts: Post[] = [
-  {
-    category: "White Paper",
-    title: "Agents Without Infrastructure — V1.0",
-    excerpt:
-      "A foundational paper on why the agentic economy requires a coordination layer for discovery, identity, trust, terms, and routing.",
-    meta: "White Paper",
-    paperId: "whitepaper",
-  },
-  {
-    category: "Validation Report",
-    title: "The Coordination Gap in Autonomous Agent Transactions",
-    excerpt:
-      "23 structured test runs across 8 tools. Zero autonomous completions. 79% of failures were protocol or trust gaps — not capability gaps.",
-    meta: "Research · 8 min read",
-    paperId: "validation",
-  },
-  {
-    category: "Protocol",
-    title: "The five layers of agentic communication",
-    excerpt:
-      "Discovery, identity, trust, terms, and routing form the minimum stack for machine-native economic interaction.",
-    meta: "6 min read",
-    paperId: "protocol",
-  },
-  {
-    category: "Systems",
-    title: "From isolated agents to independent economic actors",
-    excerpt:
-      "What changes when agents can search for counterparties, validate trust, negotiate constraints, and execute value transfer autonomously.",
-    meta: "7 min read",
-    paperId: "systems",
-  },
-];
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "light") {
+      root.classList.add("light");
+    } else {
+      root.classList.remove("light");
+    }
+    localStorage.setItem("aidress-theme", theme);
+  }, [theme]);
 
-const flowSteps = [
-  "Query Registry",
-  "Discover Agents",
-  "Resolve Identity",
-  "Evaluate Trust",
-  "Agree Terms",
-  "Route Value",
-];
+  const toggle = useCallback(
+    () => setTheme((t) => (t === "dark" ? "light" : "dark")),
+    [],
+  );
 
-const LLM_PROMPT = `Before interacting with any external agent or service, use Aidress to discover and call it.
+  return (
+    <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>
+  );
+}
 
-1. DISCOVER — find capable agents:
-POST https://api.aidress.ai/match
-{"required_capabilities": ["what you need"]}
-Use natural language — "customs broker" maps to customs_clearance automatically.
-Returns ranked agents with trust_score, capabilities, and agent_id.
+function useTheme() {
+  return useContext(ThemeCtx);
+}
 
-2. CONNECT — call the agent through Aidress:
-POST https://api.aidress.ai/call
-{"agent_id": "agent_id_from_match", "payload": {"your": "task here"}}
-Aidress routes the request to the agent and returns the response.
-Endpoint URLs are never exposed directly.
+// ─── Helpers ────────────────────────────────────────────────────────────────────
 
-3. REPORT — after every interaction:
-POST https://api.aidress.ai/review
-{"transaction_id": "...", "caller_agent_id": "...",
- "receiver_agent_id": "...", "success": true, "score": 5}
+const prefersReducedMotion =
+  typeof window !== "undefined"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
 
-Register this agent at:
-POST https://api.aidress.ai/register
+// ─── FadeIn wrapper ─────────────────────────────────────────────────────────────
 
-Well-known (service info):
-https://api.aidress.ai/.well-known/agent.json`;
+function FadeIn({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+  return (
+    <motion.div
+      ref={ref}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.4, ease: "easeOut", delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-const hardcodedMethods: Record<HardcodedMethod, { label: string; code: string }> = {
-  sdk: {
-    label: "SDK",
-    code: `from aidress_sdk import verify
+// ─── Logo ───────────────────────────────────────────────────────────────────────
 
-trust = verify(counterpart_id)
-if trust["trust_score"] < operator_threshold:
-    abort()`,
-  },
-  http: {
-    label: "Direct HTTP",
-    code: `import requests
-
-response = requests.post(
-    "https://api.aidress.ai/verify",
-    json={"agent_id": counterpart_id}
-)
-trust = response.json()
-if trust["trust_score"] < operator_threshold:
-    abort()`,
-  },
-  workflow: {
-    label: "Workflow node",
-    code: `HTTP Request node:
-POST https://api.aidress.ai/verify
-Body: {"agent_id": "{{counterpart_id}}"}
-
-IF trust_score < operator_threshold → stop
-IF trust_score >= operator_threshold → continue`,
-  },
-};
-
-const methodDescriptions: Record<HardcodedMethod, string> = {
-  sdk: "Simplest. One import, one call.",
-  http: "No SDK needed. Works in any language.",
-  workflow: "For builders who are not writing code at all.",
-};
-
-function AidressLogo({ className = "", logoHeight = 44 }: { className?: string; logoHeight?: number }) {
-  // Pixel-exact content bounds measured from the 648×644 RGBA PNG
-  const origW = 648, origH = 644;
-  const contentX = 23, contentY = 243, contentW = 593, contentH = 121;
-
+function AidressLogo({
+  className = "",
+  logoHeight = 44,
+}: {
+  className?: string;
+  logoHeight?: number;
+}) {
+  const origW = 648,
+    origH = 644;
+  const contentX = 23,
+    contentY = 243,
+    contentW = 593,
+    contentH = 121;
   const scale = logoHeight / contentH;
-  const imgH  = Math.round(origH * scale);
-  const imgW  = Math.round(origW * scale);
+  const imgH = Math.round(origH * scale);
+  const imgW = Math.round(origW * scale);
   const containerW = Math.round(contentW * scale);
-  const offsetTop  = -Math.round(contentY * scale);
+  const offsetTop = -Math.round(contentY * scale);
   const offsetLeft = -Math.round(contentX * scale);
 
   return (
     <div
-      className={className}
-      style={{ height: logoHeight, width: containerW, overflow: "hidden", position: "relative", flexShrink: 0 }}
+      className={`logo-auto ${className}`}
+      style={{
+        height: logoHeight,
+        width: containerW,
+        overflow: "hidden",
+        position: "relative",
+        flexShrink: 0,
+      }}
     >
       <img
         src="/aidresslogo2.png"
         alt="Aidress"
-        style={{ height: imgH, width: imgW, position: "absolute", top: offsetTop, left: offsetLeft }}
+        style={{
+          height: imgH,
+          width: imgW,
+          position: "absolute",
+          top: offsetTop,
+          left: offsetLeft,
+        }}
       />
     </div>
   );
 }
 
+// ─── Hero Animated Terminal ─────────────────────────────────────────────────────
 
-function ProblemSection() {
+function HeroTerminal() {
+  const { theme } = useTheme();
+  const termColor = theme === "dark" ? "var(--text-muted)" : "#1e293b";
+  const accentGreen = theme === "dark" ? "#4ade80" : "#16a34a";
+  const accentBlue = theme === "dark" ? "#93c5fd" : "#2563eb";
+  const accentYellow = theme === "dark" ? "#facc15" : "#ca8a04";
+
   return (
-    <section id="problem" className="mx-auto max-w-7xl px-4 pb-16 pt-4 md:px-10 md:pb-24">
-      <div className="mb-3 text-xs uppercase tracking-[0.22em] text-white/40">The Problem</div>
-      <div className="flex flex-col gap-10 md:flex-row md:items-start md:gap-20">
-        <div className="md:flex-1">
-          <h2 className="text-3xl tracking-tight text-white md:text-5xl">
-            Agents can act.<br className="hidden md:block" /> They cannot coordinate.
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-white/55 md:text-base">
-            Today's AI agents operate in silos — capable within their own domain, but unable to find or transact with the outside world. Without a universal layer for identity, trust, and settlement, every cross-agent interaction stops and hands control back to a human.
-          </p>
+    <div className="mx-auto w-full max-w-[42rem]">
+    <Terminal
+      className="bg-[var(--code-bg)] border-[var(--border)]"
+    >
+      <TypingAnimation
+        className="font-mono text-[12px] sm:text-[13px]"
+        style={{ color: termColor, whiteSpace: "nowrap" }}
+        duration={25}
+      >
+        {'$ curl -X POST https://api.aidress.ai/match \\'}
+      </TypingAnimation>
+
+      <TypingAnimation
+        className="font-mono text-[12px] sm:text-[13px]"
+        style={{ color: termColor, whiteSpace: "nowrap" }}
+        duration={25}
+      >
+        {'  -d \'{"capabilities": ["freight_booking", "customs"]}\''}
+      </TypingAnimation>
+
+      <AnimatedSpan className="font-mono text-[12px] sm:text-[13px] mt-3" style={{ color: accentBlue, whiteSpace: "nowrap" }}>
+        <span>{'→ Searching registry...'}</span>
+      </AnimatedSpan>
+
+      <AnimatedSpan className="font-mono text-[12px] sm:text-[13px]" style={{ color: accentGreen, whiteSpace: "nowrap" }}>
+        <span>{'→ 3 verified agents found'}</span>
+      </AnimatedSpan>
+
+      <AnimatedSpan className="font-mono text-[12px] sm:text-[13px] mt-3" style={{ color: termColor, whiteSpace: "nowrap" }}>
+        <span>{'[1] freightbot_01   trust: '}<span style={{ color: accentGreen }}>88</span>{'/100  ██████████  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+      </AnimatedSpan>
+
+      <AnimatedSpan className="font-mono text-[12px] sm:text-[13px]" style={{ color: termColor, whiteSpace: "nowrap" }}>
+        <span>{'[2] shipchain_01    trust: '}<span style={{ color: accentGreen }}>76</span>{'/100  █████████░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+      </AnimatedSpan>
+
+      <AnimatedSpan className="font-mono text-[12px] sm:text-[13px]" style={{ color: termColor, whiteSpace: "nowrap" }}>
+        <span>{'[3] tradelens_01    trust: '}<span style={{ color: accentYellow }}>71</span>{'/100  ████████░░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+      </AnimatedSpan>
+    </Terminal>
+    </div>
+  );
+}
+
+// ─── Animated counter ───────────────────────────────────────────────────────────
+
+function AnimatedCounter({
+  end,
+  prefix = "",
+  suffix = "",
+  duration = 2000,
+  pulseRed = false,
+}: {
+  end: number;
+  prefix?: string;
+  suffix?: string;
+  duration?: number;
+  pulseRed?: boolean;
+}) {
+  const [count, setCount] = useState(0);
+  const [pulsing, setPulsing] = useState(false);
+  const ran = useRef(false);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  useEffect(() => {
+    if (!inView || ran.current) return;
+    ran.current = true;
+
+    if (prefersReducedMotion || end === 0) {
+      setCount(end);
+      if (pulseRed) {
+        setPulsing(true);
+        setTimeout(() => setPulsing(false), 800);
+      }
+      return;
+    }
+
+    const t0 = performance.now();
+    function tick(now: number) {
+      const p = Math.min((now - t0) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setCount(Math.round(eased * end));
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }, [inView, end, duration, pulseRed]);
+
+  return (
+    <span
+      ref={ref}
+      style={{
+        color: pulsing ? "#f87171" : undefined,
+        transition: "color 0.4s",
+      }}
+    >
+      {prefix}
+      {count}
+      {suffix}
+    </span>
+  );
+}
+
+// ─── Code block with shiki ──────────────────────────────────────────────────────
+
+function CodeBlock({ code, lang }: { code: string; lang: string }) {
+  const { theme } = useTheme();
+  const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    import("shiki")
+      .then(async ({ codeToHtml }) => {
+        const result = await codeToHtml(code, {
+          lang,
+          theme:
+            theme === "dark" ? "github-dark-dimmed" : "github-light",
+        });
+        if (!cancelled) setHtml(result);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [code, lang, theme]);
+
+  if (!html) {
+    return (
+      <pre
+        className="font-mono text-[13px] leading-[1.7]"
+        style={{ color: "var(--text)" }}
+      >
+        {code}
+      </pre>
+    );
+  }
+
+  return (
+    <div
+      className="shiki-wrapper"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+// ─── Data ───────────────────────────────────────────────────────────────────────
+
+const stats = [
+  { end: 15, prefix: "$", suffix: "T", label: "B2B spend flowing through AI agents by 2028 (Gartner)" },
+  { end: 23, prefix: "", suffix: "", label: "agentic transactions tested across 8 platforms" },
+  { end: 0, prefix: "", suffix: "", label: "autonomous completions without human intervention", pulseRed: true },
+  { end: 5, prefix: "", suffix: "", label: "coordination layers built into Aidress" },
+];
+
+const engineLayersMeta = [
+  {
+    name: "Discovery",
+    icon: Search,
+    description: "A universal registry for locating counterparties by function, capability, and intent.",
+    status: "live" as const,
+  },
+  {
+    name: "Identity",
+    icon: Shield,
+    description: "A standardized identity layer defining roles, permissions, endpoints, and capabilities.",
+    status: "soon" as const,
+  },
+  {
+    name: "Trust",
+    icon: CheckCircle,
+    description: "A verification and reputation layer for evaluating legitimacy, history, and reliability.",
+    status: "live" as const,
+  },
+  {
+    name: "Terms",
+    icon: Handshake,
+    description: "A framework for agents to interpret, agree on, and execute structured terms.",
+    status: "soon" as const,
+  },
+  {
+    name: "Routing & Settlement",
+    icon: Zap,
+    description: "A transaction layer to route and settle value using x402 and programmable payment rails.",
+    status: "live" as const,
+  },
+];
+
+const codeSnippets = {
+  python: {
+    lang: "python",
+    code: `pip install aidress-sdk
+
+from aidress_sdk import match
+
+agents = match(["freight_booking", "customs_clearance"])
+best = agents[0]  # ranked by trust score`,
+  },
+  curl: {
+    lang: "bash",
+    code: `curl -X POST https://api.aidress.ai/verify \\
+  -H "Content-Type: application/json" \\
+  -d '{"agent_id": "agent_freightbot_01"}'`,
+  },
+  mcp: {
+    lang: "json",
+    code: `{
+  "mcpServers": {
+    "aidress": {
+      "url": "https://api.aidress.ai/mcp-http/mcp"
+    }
+  }
+}`,
+  },
+  systemprompt: {
+    lang: "markdown",
+    code: `Before transacting with any unknown agent, call:
+POST https://api.aidress.ai/verify
+Body: {"agent_id": "<counterpart_id>"}
+
+Decision rules:
+- trust_score >= 70  → proceed
+- trust_score 50–69  → proceed with reduced limits
+- trust_score < 50   → abort
+
+Always call POST /review after the transaction completes.`,
+  },
+};
+
+const missionPosts = [
+  {
+    category: "WHITE PAPER",
+    title: "Agents Without Infrastructure — V1.0",
+    description:
+      "A foundational paper on why the agentic economy requires a coordination layer for discovery, identity, trust, terms, and routing.",
+    meta: "Foundational · 12 min read",
+    date: "2025",
+    route: "/whitepaper",
+    image: "/white paper cover.png",
+  },
+  {
+    category: "VALIDATION REPORT",
+    title: "The Coordination Gap in Autonomous Agent Transactions",
+    description: "23 runs. 8 platforms. 0 autonomous completions. 79% of failures were protocol gaps, not capability gaps.",
+    meta: "Research · 8 min read",
+    date: "2025",
+    route: "/validation",
+    image: "/validation-cover.png",
+  },
+  {
+    category: "PROTOCOL",
+    title: "The five layers of agentic communication",
+    description: "Discovery, identity, trust, terms, and routing — the protocol stack for agent-to-agent transactions.",
+    meta: "6 min read",
+    date: "2025",
+    route: "/protocol",
+    image: "/protocol-cover.png",
+  },
+  {
+    category: "SYSTEMS",
+    title: "From isolated agents to independent economic actors",
+    description: "Why agents need infrastructure to move from demos to real economic participation.",
+    meta: "7 min read",
+    date: "2025",
+    route: "/systems",
+    image: "/systems-cover.png",
+  },
+];
+
+// ─── Engine Layer Interactive Panels ────────────────────────────────────────────
+
+// ─── Discovery ──────────────────────────────────────────────────────────────
+
+function DiscoveryPanel() {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  return (
+    <div ref={ref}>
+      <pre
+        className="text-[13px] leading-relaxed tracking-tight"
+        style={{ color: "var(--text-muted)", fontFamily: "'JetBrains Mono', monospace" }}
+      >
+        <span style={{ color: "var(--text-faint)" }}>$</span> aidress search --caps freight_booking{"\n"}
+        {"\n"}
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.4 }}
+        >
+          <span style={{ color: "var(--text-faint)" }}>searching registry...</span>{"\n"}
+          <span style={{ color: "var(--text-faint)" }}>3 agents matched</span>{"\n"}
+          {"\n"}
+        </motion.span>
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.8 }}
+        >
+          {"  "}<span style={{ color: "var(--text)" }}>freightbot_01</span>{"    "}
+          <span style={{ color: "#22c55e" }}>94%</span>{"  "}
+          <span style={{ color: "var(--text-faint)" }}>US-WEST  freight_booking, rates</span>{"\n"}
+        </motion.span>
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.1 }}
+        >
+          {"  "}<span style={{ color: "var(--text)" }}>shipchain_01</span>{"     "}
+          <span style={{ color: "var(--accent)" }}>82%</span>{"  "}
+          <span style={{ color: "var(--text-faint)" }}>EU       customs, tracking</span>{"\n"}
+        </motion.span>
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.4 }}
+        >
+          {"  "}<span style={{ color: "var(--text)" }}>tradelens_01</span>{"     "}
+          <span style={{ color: "var(--accent)" }}>71%</span>{"  "}
+          <span style={{ color: "var(--text-faint)" }}>APAC     freight, docs</span>{"\n"}
+        </motion.span>
+        {"\n"}
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.8 }}
+        >
+          <span style={{ color: "var(--text-faint)" }}>→ select agent or refine query</span>
+        </motion.span>
+      </pre>
+    </div>
+  );
+}
+
+// ─── Identity ───────────────────────────────────────────────────────────────
+
+function IdentityPanel() {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Passport-style card */}
+      <div
+        className="overflow-hidden"
+        style={{ border: "1px solid var(--border)" }}
+      >
+        {/* Top band */}
+        <div className="px-5 py-2" style={{ backgroundColor: "var(--accent)", color: "var(--bg)" }}>
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em]">Aidress Agent Identity</span>
         </div>
 
-        <div className="flex flex-row gap-8 md:flex-col md:gap-7 md:pt-2">
-          {[
-            { value: "0 / 23", label: "tasks completed autonomously", color: "text-red-400" },
-            { value: "79%", label: "failures from protocol or trust gaps", color: "text-yellow-300" },
-            { value: "2.6×", label: "avg human interventions per task", color: "text-blue-300" },
-          ].map(({ value, label, color }, i) => (
-            <motion.div
-              key={value}
-              initial={{ opacity: 0, x: 12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex flex-col"
+        <div className="p-5" style={{ backgroundColor: "var(--code-bg)" }}>
+          <div className="flex gap-5">
+            {/* ID photo area */}
+            <div
+              className="flex h-24 w-20 shrink-0 items-center justify-center"
+              style={{ border: "1px solid var(--border)" }}
             >
-              <span className={`text-3xl font-light tracking-tight md:text-4xl ${color}`}>{value}</span>
-              <span className="mt-1 text-xs leading-snug text-white/40">{label}</span>
+              <span className="text-3xl font-light" style={{ color: "var(--text-faint)" }}>F1</span>
+            </div>
+
+            {/* Fields — tight, no boxes */}
+            <div className="flex-1 space-y-3 text-[13px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>Agent ID</div>
+                <div style={{ color: "var(--text)" }}>agent_freightbot_01</div>
+              </div>
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>Operator</div>
+                <div style={{ color: "var(--text)" }}>FreightCo Inc.</div>
+              </div>
+              <div>
+                <div className="text-[9px] uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>Capabilities</div>
+                <div style={{ color: "var(--text-muted)" }}>freight_booking · rate_negotiation</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom line */}
+          <div
+            className="mt-4 flex items-center justify-between pt-3"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            <span className="text-[10px] tracking-wider" style={{ color: "var(--text-faint)", fontFamily: "'JetBrains Mono', monospace" }}>
+              AID-2025-0847 · agents.freightco.com/v1
+            </span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ delay: 0.8 }}
+              className="text-[11px] font-bold uppercase tracking-wider"
+              style={{ color: "#22c55e" }}
+            >
+              ✓ Verified
+            </motion.span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Trust ──────────────────────────────────────────────────────────────────
+
+function TrustPanel() {
+  const [value, setValue] = useState(0);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  useEffect(() => {
+    if (!inView) return;
+    const timer = setTimeout(() => setValue(88), 300);
+    return () => clearTimeout(timer);
+  }, [inView]);
+
+  return (
+    <div ref={ref}>
+      <div className="flex items-baseline gap-3">
+        <span
+          className="text-5xl font-light tabular-nums tracking-tight"
+          style={{ color: value >= 70 ? "#22c55e" : "#f59e0b" }}
+        >
+          {value}
+        </span>
+        <span className="text-sm" style={{ color: "var(--text-faint)" }}>/100 trust score</span>
+      </div>
+
+      <div className="mt-1 h-1 w-full overflow-hidden" style={{ backgroundColor: "var(--border)" }}>
+        <motion.div
+          className="h-full"
+          initial={{ width: 0 }}
+          animate={inView ? { width: "88%" } : {}}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+          style={{ backgroundColor: "#22c55e" }}
+        />
+      </div>
+
+      <div className="mt-6 space-y-0" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>
+        {[
+          { check: "Cryptographic signature valid", ok: true },
+          { check: "Operator KYB complete", ok: true },
+          { check: "142 transactions, 0.7% dispute rate", ok: true },
+          { check: "Sanctions screening clear", ok: true },
+          { check: "Active for 14 months", ok: true },
+        ].map((c, i) => (
+          <motion.div
+            key={c.check}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.5 + i * 0.15 }}
+            className="flex items-center gap-3 py-1.5"
+            style={{ borderBottom: "1px solid var(--border)" }}
+          >
+            <span style={{ color: "#22c55e" }}>✓</span>
+            <span style={{ color: "var(--text-muted)" }}>{c.check}</span>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ delay: 1.5 }}
+        className="mt-4 text-[13px]"
+        style={{ fontFamily: "'JetBrains Mono', monospace", color: "var(--text-faint)" }}
+      >
+        decision: <span style={{ color: "#22c55e" }}>PROCEED</span>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Terms ──────────────────────────────────────────────────────────────────
+
+function TermsPanel() {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  return (
+    <div ref={ref}>
+      <div
+        className="overflow-hidden"
+        style={{ border: "1px solid var(--border)" }}
+      >
+        <div className="px-5 py-2.5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--code-bg)" }}>
+          <span className="text-xs uppercase tracking-[0.15em]" style={{ color: "var(--text-faint)" }}>
+            Transaction Agreement
+          </span>
+          <span style={{ color: "var(--text-faint)", fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>
+            terms_a7f3c
+          </span>
+        </div>
+
+        <div className="px-5 py-4 space-y-3" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, backgroundColor: "var(--code-bg)" }}>
+          {[
+            { clause: "Service", val: "Freight booking, US-West → EU" },
+            { clause: "Price", val: "$2,300.00 USD" },
+            { clause: "Delivery", val: "6 business days" },
+            { clause: "Liability", val: "Capped at $25,000" },
+            { clause: "Disputes", val: "Aidress arbitration" },
+          ].map((c, i) => (
+            <motion.div
+              key={c.clause}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ delay: 0.2 + i * 0.12 }}
+              className="flex justify-between"
+            >
+              <span style={{ color: "var(--text-faint)" }}>{c.clause}</span>
+              <span style={{ color: "var(--text)" }}>{c.val}</span>
             </motion.div>
           ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.2 }}
+          className="px-5 py-2.5 flex items-center justify-between"
+          style={{ borderTop: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+        >
+          <span style={{ color: "var(--text-faint)", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
+            agent_a ✓ · agent_b ✓
+          </span>
+          <span style={{ color: "#22c55e", fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>
+            AGREED
+          </span>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Routing & Settlement ───────────────────────────────────────────────────
+
+function RoutingPanel() {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+
+  return (
+    <div ref={ref} className="space-y-5">
+      {/* Payment rails — styled with brand personality */}
+      <div className="space-y-3">
+        {[
+          {
+            name: "x402",
+            brandStyle: { fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, letterSpacing: "0.05em" } as React.CSSProperties,
+            desc: "HTTP 402 · micropayment protocol",
+            speed: "~200ms",
+            selected: true,
+          },
+          {
+            name: "stripe",
+            brandStyle: { fontWeight: 700, letterSpacing: "-0.02em", textTransform: "lowercase" as const } as React.CSSProperties,
+            desc: "Card / ACH · traditional settlement",
+            speed: "2–3 days",
+            selected: false,
+          },
+          {
+            name: "USDC",
+            brandStyle: { fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, letterSpacing: "0.1em" } as React.CSSProperties,
+            desc: "Circle · on-chain stablecoin",
+            speed: "~30s",
+            selected: false,
+          },
+        ].map((r, i) => (
+          <motion.div
+            key={r.name}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.15 + i * 0.2 }}
+            className="flex items-center gap-4"
+          >
+            {/* Line + dot */}
+            <div className="flex items-center gap-1 shrink-0">
+              <div className="h-px w-8" style={{ backgroundColor: r.selected ? "#22c55e" : "var(--border)" }} />
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{
+                  backgroundColor: r.selected ? "#22c55e" : "transparent",
+                  border: `1.5px solid ${r.selected ? "#22c55e" : "var(--text-faint)"}`,
+                }}
+              />
+            </div>
+
+            {/* Rail info */}
+            <div className="flex flex-1 items-center justify-between py-2" style={{ borderBottom: "1px solid var(--border)" }}>
+              <div>
+                <span className="text-base" style={{ ...r.brandStyle, color: r.selected ? "#22c55e" : "var(--text)" }}>
+                  {r.name}
+                </span>
+                {r.selected && (
+                  <span className="ml-2 text-[10px] uppercase tracking-wider" style={{ color: "#22c55e" }}>← selected</span>
+                )}
+                <div className="text-[11px] mt-0.5" style={{ color: "var(--text-faint)" }}>{r.desc}</div>
+              </div>
+              <span style={{ color: "var(--text-faint)", fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
+                {r.speed}
+              </span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Receipt — minimal */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ delay: 1 }}
+        className="pt-3"
+        style={{ borderTop: "1px solid var(--border)", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "var(--text-faint)" }}
+      >
+        txn_a7f3c settled · <span style={{ color: "var(--text)" }}>$2,300</span> via x402 · 187ms · <span style={{ color: "#22c55e" }}>complete</span>
+      </motion.div>
+    </div>
+  );
+}
+
+const enginePanels = [DiscoveryPanel, IdentityPanel, TrustPanel, TermsPanel, RoutingPanel];
+
+// ─── ASCII Art Heading ──────────────────────────────────────────────────────────
+
+const asciiLines = [
+  // INTEGRATE
+  "██╗███╗░░░██╗████████╗███████╗░██████╗░██████╗░░█████╗░████████╗███████╗",
+  "██║████╗░░██║╚══██╔══╝██╔════╝██╔════╝░██╔══██╗██╔══██╗╚══██╔══╝██╔════╝",
+  "██║██╔██╗░██║░░░██║░░░█████╗░░██║░░███╗██████╔╝███████║░░░██║░░░█████╗░░",
+  "██║██║╚██╗██║░░░██║░░░██╔══╝░░██║░░░██║██╔══██╗██╔══██║░░░██║░░░██╔══╝░░",
+  "██║██║░╚████║░░░██║░░░███████╗╚██████╔╝██║░░██║██║░░██║░░░██║░░░███████╗",
+  "╚═╝╚═╝░░╚═══╝░░░╚═╝░░░╚══════╝░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚══════╝",
+  // spacer
+  "",
+  // IN MINUTES
+  "██╗███╗░░░██╗░░░░███╗░░░███╗██╗███╗░░░██╗██╗░░░██╗████████╗███████╗███████╗",
+  "██║████╗░░██║░░░░████╗░████║██║████╗░░██║██║░░░██║╚══██╔══╝██╔════╝██╔════╝",
+  "██║██╔██╗░██║░░░░██╔████╔██║██║██╔██╗░██║██║░░░██║░░░██║░░░█████╗░░███████╗",
+  "██║██║╚██╗██║░░░░██║╚██╔╝██║██║██║╚██╗██║██║░░░██║░░░██║░░░██╔══╝░░╚════██║",
+  "██║██║░╚████║░░░░██║░╚═╝░██║██║██║░╚████║╚██████╔╝░░░██║░░░███████╗███████║",
+  "╚═╝╚═╝░░╚═══╝░░░░╚═╝░░░░░╚═╝╚═╝╚═╝░░╚═══╝░╚═════╝░░░░╚═╝░░░╚══════╝╚══════╝",
+];
+
+function AsciiHeading() {
+  return (
+    <pre
+      className="select-none font-bold leading-tight overflow-x-auto"
+      style={{
+        fontFamily: "Menlo, Consolas, monospace",
+        fontSize: "clamp(3.5px, 0.95vw, 7px)",
+        lineHeight: 1.15,
+        letterSpacing: "0.05em",
+      }}
+      aria-label="INTEGRATE IN MINUTES"
+    >
+      {asciiLines.map((line, i) => (
+        <div key={i} style={{ height: line === "" ? "0.5em" : undefined }}>
+          {[...line].map((char, j) => (
+            <span
+              key={j}
+              className={char === "░" ? "ascii-shadow" : "ascii-block"}
+            >
+              {char}
+            </span>
+          ))}
+        </div>
+      ))}
+    </pre>
+  );
+}
+
+// ─── Nav ────────────────────────────────────────────────────────────────────────
+
+function Nav() {
+  const { theme, toggle } = useTheme();
+  const [solid, setSolid] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const h = () => setSolid(window.scrollY > 60);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const navLinks = [
+    { href: "#logs", label: "Mission Logs" },
+    { href: "#engine", label: "Engine" },
+    { href: "#integrate", label: "Integrate" },
+    { href: "#crew", label: "Crew" },
+  ];
+
+  return (
+    <header
+      className="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+      style={{
+        borderBottom: `1px solid ${solid ? "var(--border)" : "transparent"}`,
+        backgroundColor: solid ? "var(--bg)" : "transparent",
+        backdropFilter: solid ? "blur(16px)" : "none",
+      }}
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-10">
+        {/* Left: logo + page anchors */}
+        <div className="flex items-center gap-6">
+          <a href="#hero">
+            <AidressLogo logoHeight={30} />
+          </a>
+          <nav className="hidden items-center gap-5 lg:flex">
+            {navLinks.map((l) => (
+              <a key={l.href} href={l.href} className="text-[13px] transition hover:opacity-80" style={{ color: "var(--text-faint)" }}>{l.label}</a>
+            ))}
+          </nav>
+        </div>
+
+        {/* Right: docs + API ref + search + theme + hamburger */}
+        <nav className="flex items-center gap-4 lg:gap-5">
+          <a href="/docs" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Docs</a>
+          <a href="/docs/register" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>API Reference</a>
+
+          <SearchTrigger onClick={() => setSearchOpen(true)} className="hidden lg:flex" />
+
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex items-center justify-center rounded-lg p-2 transition"
+            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
+          {/* Hamburger — mobile/tablet only */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="flex items-center justify-center rounded-lg p-2 transition lg:hidden"
+            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        </nav>
+      </div>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden"
+            style={{ backgroundColor: "var(--bg)", borderBottom: "1px solid var(--border)" }}
+          >
+            <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-5 pb-5 pt-2">
+              {navLinks.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-md px-3 py-2.5 text-[14px] transition"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {l.label}
+                </a>
+              ))}
+              <div className="my-2" style={{ borderTop: "1px solid var(--border)" }} />
+              <a
+                href="/docs"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-md px-3 py-2.5 text-[14px] font-medium transition"
+                style={{ color: "var(--text)" }}
+              >
+                Docs
+              </a>
+              <a
+                href="/docs/register"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-md px-3 py-2.5 text-[14px] font-medium transition"
+                style={{ color: "var(--text)" }}
+              >
+                API Reference
+              </a>
+              <div className="my-2" style={{ borderTop: "1px solid var(--border)" }} />
+              <button
+                type="button"
+                onClick={() => { setMobileOpen(false); setSearchOpen(true); }}
+                className="flex items-center gap-2 rounded-md px-3 py-2.5 text-[14px] transition"
+                style={{ color: "var(--text-muted)" }}
+              >
+                <Search size={14} />
+                Search docs
+              </button>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </header>
+  );
+}
+
+// ─── Section 1: Hero ────────────────────────────────────────────────────────────
+
+function HeroSection() {
+  const { theme } = useTheme();
+
+  return (
+    <section
+      id="hero"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 pt-16 text-center"
+    >
+      {/* World map background */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
+        style={{ opacity: theme === "dark" ? 0.45 : 0.3 }}
+      >
+        <WorldMap
+          dots={[
+            { start: { lat: 37.7749, lng: -122.4194 }, end: { lat: 51.5074, lng: -0.1278 } },
+            { start: { lat: 51.5074, lng: -0.1278 }, end: { lat: 1.3521, lng: 103.8198 } },
+            { start: { lat: 35.6762, lng: 139.6503 }, end: { lat: -33.8688, lng: 151.2093 } },
+            { start: { lat: 40.7128, lng: -74.006 }, end: { lat: 19.076, lng: 72.8777 } },
+            { start: { lat: 48.8566, lng: 2.3522 }, end: { lat: -23.5505, lng: -46.6333 } },
+          ]}
+          lineColor={theme === "dark" ? "#93c5fd" : "#2563eb"}
+        />
+      </div>
+
+      {/* Radial fade so map doesn't dominate edges */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{
+          background: `radial-gradient(ellipse 70% 60% at 50% 40%, transparent 0%, var(--bg) 100%)`,
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-4xl">
+        {/* Headline */}
+        <FadeIn>
+          <h1
+            className="text-[1.75rem] leading-[1.1] tracking-[-0.03em] sm:text-5xl md:text-[68px]"
+            style={{ color: "var(--text)" }}
+          >
+            The{" "}
+            <AuroraText
+              colors={
+                theme === "dark"
+                  ? ["#93c5fd", "#60a5fa", "#93c5fd", "#bfdbfe"]
+                  : ["#2563eb", "#1d4ed8", "#2563eb", "#3b82f6"]
+              }
+              speed={0.8}
+            >
+              coordination
+            </AuroraText>{" "}
+            layer for the agentic economy
+          </h1>
+        </FadeIn>
+
+        {/* Subline */}
+        <FadeIn delay={0.2}>
+          <p
+            className="mx-auto mt-6 max-w-lg text-base md:text-lg"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Everyone&apos;s building agents. We&apos;re building the infrastructure they need to transact.
+          </p>
+        </FadeIn>
+
+        {/* CTAs */}
+        <FadeIn delay={0.3}>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+            <a
+              href="/docs"
+              className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium no-underline transition-all"
+              style={{
+                backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "var(--accent)",
+                color: theme === "dark" ? "var(--text)" : "#fff",
+                border: theme === "dark" ? "1px solid var(--border)" : "1px solid var(--accent)",
+              }}
+            >
+              <span>Read the docs</span>
+              <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+              </svg>
+            </a>
+            <a
+              href="mailto:hello@aidress.ai"
+              className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium no-underline transition-all"
+              style={{
+                backgroundColor: "transparent",
+                color: "var(--text-muted)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <span>Talk to us</span>
+              <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+              </svg>
+            </a>
+          </div>
+        </FadeIn>
+
+        {/* Animated terminal */}
+        <FadeIn delay={0.45} className="mt-16 w-full max-w-2xl mx-auto text-left">
+          <HeroTerminal />
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 2: Registry Stats ──────────────────────────────────────────────────
+
+function StatsSection() {
+  return (
+    <section className="mx-auto max-w-5xl px-5 py-20 md:px-10 md:py-28">
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
+        {stats.map((s, i) => (
+          <FadeIn key={s.label} delay={i * 0.08}>
+            <div className="flex flex-col">
+              <span
+                className="text-4xl font-light tracking-tight md:text-5xl"
+                style={{ color: "var(--accent)" }}
+              >
+                <AnimatedCounter
+                  end={s.end}
+                  prefix={s.prefix}
+                  suffix={s.suffix}
+                  pulseRed={s.pulseRed}
+                />
+              </span>
+              <span
+                className="mt-2 text-xs leading-snug md:text-sm"
+                style={{ color: "var(--text-faint)" }}
+              >
+                {s.label}
+              </span>
+            </div>
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 3: Mission Logs ────────────────────────────────────────────────────
+
+function MissionLogsSection() {
+  const navigate = useNavigate();
+  const featured = missionPosts[0];
+  const rest = missionPosts.slice(1);
+
+  return (
+    <section id="logs" className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
+      <FadeIn>
+        <p className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-faint)", letterSpacing: "0.12em" }}>
+          The problem is real &mdash; 23 test runs across 8 platforms, 0 fully autonomous completions
+        </p>
+      </FadeIn>
+      <h2 className="mt-3 text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
+        Mission Logs
+      </h2>
+
+      {/* Featured white paper — large */}
+      <FadeIn className="mt-10">
+        <button
+          type="button"
+          onClick={() => navigate(featured.route)}
+          className="group w-full text-left"
+        >
+          <div className="overflow-hidden rounded-xl">
+            <img
+              src={featured.image}
+              alt={featured.title}
+              className="aspect-[2/1] w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+            />
+          </div>
+          <h3
+            className="mt-4 text-base leading-snug group-hover:underline"
+            style={{ color: "var(--text)" }}
+          >
+            {featured.title}
+          </h3>
+          <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
+            {featured.meta}
+          </span>
+        </button>
+      </FadeIn>
+
+      {/* Rest — 3 column */}
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {rest.map((post, i) => (
+          <FadeIn key={post.title} delay={i * 0.06}>
+            <button
+              type="button"
+              onClick={() => navigate(post.route)}
+              className="group flex w-full flex-col text-left"
+            >
+              <div className="overflow-hidden rounded-xl">
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+              </div>
+              <h3
+                className="mt-4 text-sm leading-snug group-hover:underline"
+                style={{ color: "var(--text)" }}
+              >
+                {post.title}
+              </h3>
+              <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
+                {post.meta}
+              </span>
+            </button>
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 4: Engine (5 Layers) ───────────────────────────────────────────────
+
+function EngineSection() {
+  const [active, setActive] = useState(0);
+  const layer = engineLayersMeta[active];
+  const PanelComponent = enginePanels[active];
+
+  return (
+    <section id="engine" className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
+      <FadeIn>
+        <h2 className="text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
+          The Engine
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm md:text-base" style={{ color: "var(--text-muted)" }}>
+          Everything an agent needs to transact with an unknown counterpart &mdash; without a human in the loop.
+        </p>
+      </FadeIn>
+
+      <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
+        {/* Layer selector — minimal, no backgrounds */}
+        <div className="flex flex-row gap-0 overflow-x-auto md:flex-col">
+          {engineLayersMeta.map((l, i) => (
+            <button
+              key={l.name}
+              type="button"
+              onClick={() => setActive(i)}
+              className="relative whitespace-nowrap px-4 py-2.5 text-left text-[13px] tracking-wide transition-colors duration-150"
+              style={{
+                borderLeft: i === active ? "1.5px solid var(--text)" : "1.5px solid transparent",
+                color: i === active ? "var(--text)" : "var(--text-faint)",
+                fontWeight: i === active ? 500 : 400,
+              }}
+            >
+              {l.name}
+            </button>
+          ))}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <div className="mb-2 flex items-center gap-3">
+              <h3 className="text-lg font-medium" style={{ color: "var(--text)" }}>{layer.name}</h3>
+              <span
+                className="text-[10px] uppercase tracking-wider"
+                style={{
+                  color: layer.status === "live" ? "#22c55e" : "var(--text-faint)",
+                }}
+              >
+                {layer.status === "live" ? "Live" : "Coming soon"}
+              </span>
+            </div>
+            <p className="mb-6 text-sm" style={{ color: "var(--text-faint)" }}>{layer.description}</p>
+            <PanelComponent />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 5: Demo Video ──────────────────────────────────────────────────────
+
+function DemoSection() {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
+      <FadeIn>
+        <h2 className="mb-8 text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
+          See it working
+        </h2>
+      </FadeIn>
+      <FadeIn delay={0.1}>
+        <div
+          className="flex h-64 items-center justify-center rounded-[14px] md:h-96"
+          style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div
+              className="flex h-16 w-16 items-center justify-center rounded-full"
+              style={{ border: "1px solid var(--border)", color: "var(--text-faint)" }}
+            >
+              <Play size={28} />
+            </div>
+            <span className="text-sm" style={{ color: "var(--text-faint)" }}>Demo coming soon</span>
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+// ─── Section 6: Launch Control ──────────────────────────────────────────────────
+
+type CodeTab = "python" | "curl" | "mcp" | "systemprompt";
+
+function LaunchControlSection() {
+  const [tab, setTab] = useState<CodeTab>("python");
+  const snippet = codeSnippets[tab];
+
+  return (
+    <section id="integrate" className="mx-auto max-w-5xl px-5 py-12 md:px-10 md:py-16">
+      <FadeIn>
+        <AsciiHeading />
+        <p className="mt-3 text-sm md:text-base" style={{ color: "var(--text-muted)" }}>
+          One API call. Verified identity. Informed decision.
+        </p>
+      </FadeIn>
+
+      {/* Two cards */}
+      <FadeIn delay={0.1} className="mt-7">
+        <div className="grid gap-3 md:grid-cols-2">
+          {/* Quick Start card */}
+          <div
+            className="rounded-[10px] p-4 md:p-5"
+            style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+          >
+            <div
+              className="text-[10px] font-semibold uppercase tracking-wider"
+              style={{ color: "var(--accent)" }}
+            >
+              Quick Start
+            </div>
+            <ol className="mt-3 space-y-2 text-[12px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+              <li className="flex gap-2">
+                <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>1.</span>
+                Install the SDK or copy the curl command
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>2.</span>
+                <span>Call <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>/match</code> to discover trusted agents by capability</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>3.</span>
+                <span>Check <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>trust_score</code> &mdash; proceed at 70+, caution at 50&ndash;69, abort below 50</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>4.</span>
+                <span>Call <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>/review</code> after every transaction to build the registry</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>5.</span>
+                <span>Add your own agent via <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>/register</code></span>
+              </li>
+            </ol>
+          </div>
+
+          {/* The One Call card */}
+          <div
+            className="rounded-[10px] p-4 md:p-5"
+            style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+          >
+            <div
+              className="text-[10px] font-semibold uppercase tracking-wider"
+              style={{ color: "var(--accent)" }}
+            >
+              The One Call
+            </div>
+            <div className="mt-3">
+              <div className="font-mono text-[11px]" style={{ color: "var(--text-muted)" }}>
+                <span style={{ color: "var(--accent)" }}>POST</span> https://api.aidress.ai/match
+              </div>
+              <pre
+                className="mt-1.5 overflow-x-auto rounded-md px-2.5 py-2 font-mono text-[11px] leading-relaxed"
+                style={{ backgroundColor: "var(--code-bg)", color: "var(--text)" }}
+              >
+{`{"required_capabilities": ["what you need"]}`}
+              </pre>
+              <div className="mt-2.5 space-y-0.5 font-mono text-[11px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                <div><span style={{ color: "var(--text-faint)" }}>&rarr;</span> trust_score &nbsp;&nbsp;<span style={{ color: "var(--text-faint)" }}>0&ndash;100</span></div>
+                <div><span style={{ color: "var(--text-faint)" }}>&rarr;</span> verified &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "var(--text-faint)" }}>true | false</span></div>
+                <div><span style={{ color: "var(--text-faint)" }}>&rarr;</span> flags &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "var(--text-faint)" }}>[]</span></div>
+                <div><span style={{ color: "var(--text-faint)" }}>&rarr;</span> routing &nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: "var(--text-faint)" }}>{"{ protocol, settlement_rail }"}</span></div>
+                <div><span style={{ color: "var(--text-faint)" }}>&rarr;</span> capabilities <span style={{ color: "var(--text-faint)" }}>[]</span></div>
+              </div>
+              <p className="mt-2 text-[10px]" style={{ color: "var(--text-faint)" }}>Returns in &lt;50ms.</p>
+            </div>
+          </div>
+        </div>
+      </FadeIn>
+
+      {/* Code tabs */}
+      <FadeIn delay={0.15} className="mt-4">
+        <div
+          className="overflow-hidden rounded-[14px]"
+          style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}
+        >
+          <div className="flex overflow-x-auto text-sm" style={{ borderBottom: "1px solid var(--border)", WebkitOverflowScrolling: "touch" }}>
+            {([
+              { key: "python" as CodeTab, label: "Python" },
+              { key: "curl" as CodeTab, label: "cURL" },
+              { key: "mcp" as CodeTab, label: "MCP" },
+              { key: "systemprompt" as CodeTab, label: "System Prompt" },
+            ] as const).map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setTab(key)}
+                className="relative shrink-0 px-4 py-3 text-[13px] transition sm:px-5 sm:text-sm"
+                style={{
+                  color: tab === key ? "var(--text)" : "var(--text-faint)",
+                  borderBottom: tab === key ? "2px solid var(--accent)" : "2px solid transparent",
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="p-5 md:p-6">
+            <CodeBlock code={snippet.code} lang={snippet.lang} />
+            {tab === "mcp" && (
+              <p className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
+                Add to Claude Desktop or Claude Code config. Restart and ask Claude to verify any agent.
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <a href="/docs/register" className="inline-flex items-center gap-2 text-sm transition" style={{ color: "var(--accent)" }}>
+            Read the full API reference
+            <ArrowRight size={14} />
+          </a>
+          <a
+            href="https://api.aidress.ai/.well-known/agent.json"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 font-mono text-[11px] transition hover:opacity-70"
+            style={{ color: "var(--text-faint)" }}
+          >
+            For Agents &middot; GET /.well-known/agent.json
+            <ArrowRight size={11} />
+          </a>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+// ─── System Status Strip ────────────────────────────────────────────────────────
+
+function StatusDashes({ density = 8, className = "" }: { density?: number; className?: string }) {
+  return (
+    <span
+      className={`shrink-0 ${className}`}
+      style={{
+        height: "10px",
+        background: `repeating-linear-gradient(
+          to right,
+          var(--text-faint) 0px,
+          var(--text-faint) 1px,
+          transparent 1px,
+          transparent ${density}px
+        )`,
+        opacity: 0.4,
+      }}
+      aria-hidden="true"
+    />
+  );
+}
+
+function SystemStatusStrip() {
+  return (
+    <div
+      className="relative flex items-center overflow-hidden px-5 py-3 font-mono md:px-10"
+      style={{ color: "var(--text-faint)" }}
+    >
+      {/* Block icon */}
+      <span
+        className="mr-2 h-2.5 w-2 shrink-0"
+        style={{ backgroundColor: "var(--text-faint)" }}
+        aria-hidden="true"
+      />
+
+      {/* System name */}
+      <span className="mr-4 shrink-0 text-[11px] -tracking-[0.05em]">
+        SYSTEM: AIDRESS PROTOCOL
+      </span>
+
+      {/* Dense dashes */}
+      <StatusDashes density={4} className="basis-8" />
+
+      {/* Medium dashes — fills space */}
+      <StatusDashes density={8} className="min-w-4 flex-1" />
+
+      {/* Sparse dashes */}
+      <StatusDashes density={18} className="hidden basis-44 lg:block" />
+
+      {/* Status */}
+      <span className="mx-1.5 shrink-0 text-[11px] -tracking-[0.05em]">
+        [ STATUS: ONLINE ]
+      </span>
+
+      {/* Sparse dashes */}
+      <StatusDashes density={18} className="hidden basis-24 md:block" />
+
+      {/* Medium dashes */}
+      <StatusDashes density={8} className="hidden basis-44 lg:block" />
+
+      {/* Dense dashes */}
+      <StatusDashes density={4} className="hidden basis-10 lg:block" />
+
+      {/* Connection */}
+      <span className="ml-1.5 hidden shrink-0 text-[11px] -tracking-[0.05em] md:inline">
+        [ CONNECTION: STABLE ]
+      </span>
+    </div>
+  );
+}
+
+// ─── Let's Talk CTA ─────────────────────────────────────────────────────────────
+
+function LetsTalkSection() {
+  const { theme } = useTheme();
+
+  return (
+    <section className="relative overflow-hidden py-20 md:py-28">
+      <div className="relative mx-auto max-w-7xl px-5 md:px-10">
+        <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
+          {/* Left: heading + subtitle */}
+          <div className="max-w-lg">
+            <FadeIn>
+              <h2
+                className="text-4xl font-bold tracking-tight sm:text-5xl"
+                style={{ color: "var(--accent)" }}
+              >
+                Let&apos;s Talk
+              </h2>
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <p className="mt-4 text-base" style={{ color: "var(--text-muted)" }}>
+                Whether you&apos;re building agents, infrastructure, or systems &mdash; plug into the layer that connects it all.
+              </p>
+            </FadeIn>
+          </div>
+
+          {/* Right: buttons */}
+          <FadeIn delay={0.2}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <a
+                href="mailto:hello@aidress.ai"
+                className="group relative inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium no-underline transition-all"
+                style={{
+                  backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "var(--accent)",
+                  color: theme === "dark" ? "var(--text)" : "#fff",
+                  border: theme === "dark" ? "1px solid var(--border)" : "1px solid var(--accent)",
+                }}
+              >
+                <span>Start a conversation</span>
+                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                </svg>
+              </a>
+              <a
+                href="mailto:partnerships@aidress.ai"
+                className="group relative inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium no-underline transition-all"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "var(--text-muted)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <span>Become a partner</span>
+                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                </svg>
+              </a>
+            </div>
+          </FadeIn>
         </div>
       </div>
     </section>
   );
 }
 
-function SurfaceCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+// ─── Section 8: Crew ────────────────────────────────────────────────────────────
+
+const crewMembers = [
+  {
+    name: "Mehul Vig",
+    role: "Co-Founder",
+    photo: "/mehul.jpg",
+    linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/",
+    description: "Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.",
+  },
+  {
+    name: "Kabir Sadani",
+    role: "Co-Founder",
+    photo: "/kabir.jpg",
+    linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/",
+    description: "Experience in product design and data-driven systems at Sportz Interactive. Co-founding Aidress.",
+  },
+  {
+    name: "Prashanth Ranganathan",
+    role: "Advisor",
+    photo: "/prashanth.jpg",
+    linkedin: "https://www.linkedin.com/in/prashanthr/",
+    description: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.",
+  },
+  {
+    name: "Milind Sanghavi",
+    role: "Advisor",
+    photo: "/milind.jpg",
+    linkedin: "https://www.linkedin.com/in/milindsanghavi/",
+    description: "Founder at Xweave, building the future of global cross border payments rails.",
+  },
+];
+
+function CrewSection() {
   return (
-    <div
-      className={[
-        "rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_10px_40px_rgba(0,0,0,0.25)]",
-        className,
-      ].join(" ")}
-    >
-      {children}
-    </div>
+    <section id="crew" className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
+      <FadeIn>
+        <h2 className="text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
+          The Crew
+        </h2>
+      </FadeIn>
+      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-8">
+        {crewMembers.map((m, i) => (
+          <FadeIn key={m.name} delay={i * 0.06}>
+            <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="group block">
+              <div
+                className="mb-3 aspect-square w-full max-w-[120px] overflow-hidden rounded-[10px] sm:max-w-[140px]"
+                style={{ border: "1px solid var(--border)" }}
+              >
+                <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top" style={{ filter: "grayscale(100%)" }} />
+              </div>
+              <div className="text-sm font-medium" style={{ color: "var(--text)" }}>{m.name}</div>
+              <div className="text-xs" style={{ color: "var(--text-faint)" }}>{m.role}</div>
+              <div className="mt-0.5 text-xs transition group-hover:underline" style={{ color: "var(--accent)" }}>LinkedIn &#x2197;</div>
+              <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--text-faint)" }}>{m.description}</p>
+            </a>
+          </FadeIn>
+        ))}
+      </div>
+    </section>
   );
 }
 
-function IntegrationSection() {
-  const [tab, setTab] = useState<IntegrationTab>("llm");
-  const [hardcodedMethod, setHardcodedMethod] = useState<HardcodedMethod>("sdk");
-  const [copied, setCopied] = useState(false);
+// ─── Footer ─────────────────────────────────────────────────────────────────────
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(LLM_PROMPT);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
-
+function Footer() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_420px] md:gap-6">
-      {/* Left panel */}
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b0b]">
-        {/* Tabs */}
-        <div className="flex border-b border-white/10 text-xs text-white/60">
-          {(
-            [
-              { key: "llm" as IntegrationTab, label: "LLM agents" },
-              { key: "hardcoded" as IntegrationTab, label: "Hardcoded agents" },
-              { key: "summary" as IntegrationTab, label: "Summary" },
-            ]
-          ).map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setTab(key)}
-              className={`px-5 py-3 transition ${
-                tab === key
-                  ? "border-b-2 border-white text-white"
-                  : "hover:text-white/80"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+    <footer style={{ borderTop: "1px solid var(--border)", backgroundColor: "var(--bg)" }}>
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 md:flex-row md:items-center md:justify-between md:px-10">
+        {/* Left: logo + year */}
+        <div className="flex items-center gap-3">
+          <AidressLogo logoHeight={20} className="opacity-70" />
+          <span className="text-xs" style={{ color: "var(--text-faint)" }}>
+            &middot;&nbsp; &copy; {new Date().getFullYear()}
+          </span>
         </div>
 
-        <div className="p-5 md:p-6">
-          {tab === "llm" && (
-            <div className="flex flex-col gap-5">
-              <p className="text-xs text-white/50">
-                LLM agents read instructions at runtime. Paste this into any Claude, GPT, or Gemini system prompt.
-              </p>
-              <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-white/80">
-                {LLM_PROMPT}
-              </pre>
-              <div>
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="rounded-lg border border-white/20 bg-white/[0.06] px-4 py-2 text-xs text-white/80 transition hover:bg-white/10 hover:text-white"
-                >
-                  {copied ? "Copied!" : "Copy prompt"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {tab === "hardcoded" && (
-            <div className="flex flex-col gap-5">
-              <p className="text-xs text-white/50">
-                A hardcoded agent executes code — the integration lives in the code itself. Choose a method:
-              </p>
-              <div className="flex gap-2">
-                {(Object.keys(hardcodedMethods) as HardcodedMethod[]).map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setHardcodedMethod(m)}
-                    className={`rounded-lg px-3 py-1.5 text-xs transition ${
-                      hardcodedMethod === m
-                        ? "bg-white/10 text-white"
-                        : "text-white/50 hover:text-white/80"
-                    }`}
-                  >
-                    {hardcodedMethods[m].label}
-                  </button>
-                ))}
-              </div>
-              <pre className="whitespace-pre-wrap rounded-xl bg-black/40 p-4 font-mono text-sm leading-relaxed text-white/80">
-                {hardcodedMethods[hardcodedMethod].code}
-              </pre>
-              <p className="text-xs text-white/50">{methodDescriptions[hardcodedMethod]}</p>
-            </div>
-          )}
-
-          {tab === "summary" && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-left text-xs uppercase tracking-[0.16em] text-white/50">
-                    <th className="pb-3 pr-6 font-normal">Method</th>
-                    <th className="pb-3 pr-6 font-normal">LLM Agent</th>
-                    <th className="pb-3 font-normal">Hardcoded Agent</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {[
-                    { method: "System prompt", llm: "✓ only method", hard: "✗ agent can't read it" },
-                    { method: "SDK", llm: "✗ not needed", hard: "✓ method 1" },
-                    { method: "Direct HTTP", llm: "✗ not needed", hard: "✓ method 2" },
-                    { method: "Workflow node", llm: "✗ not needed", hard: "✓ method 3" },
-                  ].map((row) => (
-                    <tr key={row.method}>
-                      <td className="py-3 pr-6 font-mono text-xs text-white/70">{row.method}</td>
-                      <td className={`py-3 pr-6 text-xs ${row.llm.startsWith("✓") ? "text-blue-300" : "text-white/30"}`}>
-                        {row.llm}
-                      </td>
-                      <td className={`py-3 text-xs ${row.hard.startsWith("✓") ? "text-blue-300" : "text-white/30"}`}>
-                        {row.hard}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        {/* Right: links */}
+        <nav className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "var(--text-faint)" }}>
+          <a href="#engine" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Engine</a>
+          <a href="#logs" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Logs</a>
+          <a href="#" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>API</a>
+          <span style={{ color: "var(--text-xfaint)" }}>&middot;</span>
+          <a href="https://x.com/aidabornnative" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>X</a>
+          <a href="https://www.instagram.com/aidress.ai" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Instagram</a>
+          <a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>LinkedIn</a>
+          <a href="mailto:hello@aidress.ai" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
+        </nav>
       </div>
-
-      {/* Right panels */}
-      <div className="flex flex-col gap-4 md:gap-5">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <div className="mb-4 text-xs uppercase tracking-[0.22em] text-white/50">
-            Quick Start
-          </div>
-          <ol className="flex flex-col gap-2 font-mono text-sm text-white/80">
-            <li>1. Choose your agent type (LLM or hardcoded)</li>
-            <li>2. Pick your integration method</li>
-            <li>3. POST /match to discover and verify in one call</li>
-            <li>4. Use trust_score + flags to decide</li>
-            <li>5. POST /register to list your agent</li>
-          </ol>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <div className="mb-4 text-xs uppercase tracking-[0.22em] text-white/50">
-            The One Call
-          </div>
-          <pre className="whitespace-pre-wrap font-mono text-sm text-white/80">{`POST https://api.aidress.ai/match\n{"required_capabilities": ["what you need"]}`}</pre>
-          <div className="mt-4 flex flex-col gap-1.5 font-mono text-sm">
-            {[
-              { label: "trust_score", value: "0–100" },
-              { label: "verified", value: "true | false" },
-              { label: "flags", value: "[]" },
-              { label: "routing", value: "{ endpoint_url, protocol, settlement_rail }" },
-              { label: "capabilities", value: "[]" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex gap-3">
-                <span className="text-white/40">→ {label}</span>
-                <span className="text-white/70">{value}</span>
-              </div>
-            ))}
-          </div>
-          <p className="mt-4 text-xs text-white/40">Use natural language. Returns in &lt;50ms.</p>
-        </div>
-      </div>
-    </div>
+    </footer>
   );
 }
 
+// ─── Home page ──────────────────────────────────────────────────────────────────
 
 function HomePage() {
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}>
+      <Helmet>
+        <title>Aidress — The Coordination Layer for the Agentic Economy</title>
+        <meta name="description" content="A2A transaction infrastructure across discovery, identity, trust, terms, and routing. The missing coordination layer for autonomous AI agents." />
+        <link rel="canonical" href="https://aidress.ai" />
+      </Helmet>
+      <Nav />
+      <main>
+        <HeroSection />
+        <StatsSection />
+        <MissionLogsSection />
+        <EngineSection />
+        <DemoSection />
+        <LaunchControlSection />
+        <SystemStatusStrip />
+        <CrewSection />
+        <LetsTalkSection />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+// ─── Paper route wrapper ────────────────────────────────────────────────────────
+
+function PaperRoute({ Component }: { Component: React.ComponentType<{ onBack: () => void }> }) {
   const navigate = useNavigate();
-  const { scrollY } = useScroll();
-  const yBg = useTransform(scrollY, [0, 500], [0, -100]);
-  const yGrid = useTransform(scrollY, [0, 500], [0, -40]);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-  const [headerSolid, setHeaderSolid] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setHeaderSolid(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  const marquee = useMemo(() => [...flowSteps, ...flowSteps], []);
-
-  const driftX = (mouse.x - (typeof window !== "undefined" ? window.innerWidth / 2 : 0)) / 30;
-  const driftY = (mouse.y - (typeof window !== "undefined" ? window.innerHeight / 2 : 0)) / 30;
-  const slowX = driftX * 0.3;
-  const slowY = driftY * 0.3;
-  const midX = driftX * 0.6;
-  const midY = driftY * 0.6;
-  const fastX = driftX;
-  const fastY = driftY;
-
-  return (
-    <div
-      className="min-h-screen overflow-hidden bg-[#06070a] text-white selection:bg-white/20"
-      onMouseMove={(event: React.MouseEvent<HTMLDivElement>) => {
-        setMouse({ x: event.clientX, y: event.clientY });
-      }}
-    >
-      <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
-        <div
-          className="absolute h-[420px] w-[420px] rounded-full blur-[110px]"
-          style={{
-            background: "radial-gradient(circle, rgba(147,197,253,0.14), rgba(147,197,253,0.02) 45%, transparent 70%)",
-            left: mouse.x - 210,
-            top: mouse.y - 210,
-          }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(72,120,255,0.12),transparent_30%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.03),transparent_18%)]" />
-      </div>
-
-      <div className="relative z-10">
-        <header className={`fixed inset-x-0 top-0 z-30 transition-all duration-300 border-b border-white/10 bg-[#06070a]/80 backdrop-blur-xl ${!headerSolid ? "md:border-transparent md:bg-transparent md:backdrop-blur-none" : ""}`}>
-          <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:h-16 md:px-6 lg:px-10">
-            <div className="flex items-center gap-3">
-              <AidressLogo logoHeight={36} />
-            </div>
-            <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex lg:gap-8">
-              <a href="#problem" className="transition hover:text-white">The Problem</a>
-              <a href="#layers" className="transition hover:text-white">The Engine</a>
-              <a href="#team" className="transition hover:text-white">The Crew</a>
-              <a href="#blog" className="transition hover:text-white">Mission Logs</a>
-              <a href="#terminal" className="transition hover:text-white">Launch Control</a>
-            </nav>
-            <a href="#reach" className="inline-block rounded-full border border-white/30 px-4 py-1.5 text-xs font-medium text-white transition hover:border-white hover:bg-white hover:text-black md:px-5 md:py-2 md:text-sm">
-              Reach Us
-            </a>
-          </div>
-        </header>
-
-        <main className="pt-14 md:pt-16">
-          <section className="relative overflow-hidden pb-16 pt-20 md:pb-28 md:pt-28">
-            <div className="absolute inset-0 left-1/2 w-screen -translate-x-1/2">
-              <motion.div style={{ y: yBg, x: slowX, translateY: slowY }} className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-blue-400/20 blur-[140px]" />
-              <motion.div style={{ y: yGrid, x: midX, translateY: midY }} className="absolute inset-0 opacity-[0.06] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] [background-size:60px_60px]" />
-              <motion.div
-                style={{ x: fastX, translateY: fastY }}
-                animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.4, 0.25] }}
-                transition={{ duration: 6, repeat: Infinity }}
-                className="absolute -left-20 -top-20 h-[500px] w-[500px] rounded-full bg-blue-400/25 blur-[120px]"
-              />
-              <div className="absolute inset-0 opacity-[0.06] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] [background-size:60px_60px]" />
-            </div>
-
-            <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-10">
-              <motion.h1
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="relative z-10 max-w-5xl text-[2.4rem] leading-[1.05] tracking-[-0.04em] sm:text-5xl md:text-7xl lg:text-8xl"
-              >
-                <span className="bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent">
-                  The Agentic Economy Launch:
-                </span>
-                <br />
-                <motion.span
-                  animate={{ opacity: [0.6, 1, 0.6] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-white"
-                >
-                  From Theory to Fact
-                </motion.span>
-              </motion.h1>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="relative z-10 mt-4 max-w-xl md:mt-6 md:max-w-2xl"
-              >
-                <div className="text-base leading-relaxed text-blue-300 md:text-lg">
-                  The agent economy is coming. We're building the engine it runs on.
-                </div>
-              </motion.div>
-            </div>
-          </section>
-
-          <section className="overflow-hidden py-6 md:py-10">
-            <motion.div
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
-              className="flex w-max gap-6 whitespace-nowrap px-4 text-xs text-white/80 md:gap-10 md:px-10 md:text-sm"
-            >
-              {marquee.map((step, index) => (
-                <div key={`${step}-${index}`} className="flex items-center gap-3">
-                  <span>{step}</span>
-                  <ArrowRight className="h-4 w-4 text-blue-300" />
-                </div>
-              ))}
-            </motion.div>
-          </section>
-
-          <ProblemSection />
-
-          <section id="layers" className="mx-auto max-w-7xl px-4 pb-16 md:px-10 md:pb-24">
-            <div className="mb-10">
-              <h2 className="text-4xl tracking-tight text-blue-300 md:text-6xl">The Engine</h2>
-              <p className="mt-3 max-w-2xl text-white/80">The core primitives connected as a single interaction pipeline.</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-5">
-              {layers.map((layer, index) => {
-                const Icon = layer.icon;
-                const step = index + 1;
-                return (
-                  <motion.div
-                    key={layer.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ delay: index * 0.2 }}
-                    className="relative"
-                  >
-                    <motion.div
-                      className="absolute -top-1 left-1/2 hidden h-2 w-2 -translate-x-1/2 rounded-full bg-blue-300 xl:flex"
-                      initial={{ scale: 0.5, opacity: 0.3 }}
-                      whileInView={{ scale: [0.5, 1.2, 1], opacity: [0.3, 1, 0.8] }}
-                      transition={{ delay: index * 0.2, duration: 0.6 }}
-                    />
-                    <motion.div whileHover={{ y: -6 }} className="h-full">
-                      <SurfaceCard className="h-full">
-                        <div className="p-5">
-                          <div className="mb-4 flex items-center gap-2">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-300 text-xs font-semibold text-black">{step}</div>
-                            <Icon className="h-4 w-4 text-blue-300" />
-                          </div>
-                          <div className="mb-2 text-base font-medium text-blue-300">{layer.name}</div>
-                          <p className="text-sm leading-relaxed text-white/80">{layer.blurb}</p>
-                        </div>
-                      </SurfaceCard>
-                    </motion.div>
-                    {index !== layers.length - 1 ? (
-                      <motion.div
-                        className="absolute right-[-18px] top-9 hidden text-white/30 xl:flex"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: index * 0.2 + 0.3 }}
-                      >
-                        →
-                      </motion.div>
-                    ) : null}
-                  </motion.div>
-                );
-              })}
-            </div>
-          </section>
-
-          <section id="team" className="mx-auto max-w-7xl px-4 pb-12 md:px-10">
-            <div className="mb-8">
-              <h2 className="text-2xl tracking-tight text-blue-300 md:text-4xl">The Crew</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4">
-              {[
-                { name: "Mehul Vig", initials: "MV", photo: "/mehul.jpg", role: "Co-Founder", bio: "Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/", gradient: "from-blue-500/30 to-blue-300/10" },
-                { name: "Kabir Sadani", initials: "KS", photo: "/kabir.jpg", role: "Co-Founder", bio: "Experience in product design and data-driven systems at Sportz Interactive. Co-founding Aidress.", linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/", gradient: "from-indigo-500/30 to-purple-300/10" },
-                { name: "Prashanth Ranganathan", initials: "PR", photo: "/prashanth.jpg", role: "Advisor", bio: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.", linkedin: "https://www.linkedin.com/in/prashanthr/", gradient: "from-slate-500/30 to-slate-300/10" },
-                { name: "Milind Sanghavi", initials: "MS", photo: "/milind.jpg", role: "Advisor", bio: "Founder at Xweave, building the future of global cross border payments rails.", linkedin: "https://www.linkedin.com/in/milindsanghavi/", gradient: "from-slate-500/30 to-slate-300/10" },
-              ].map((person, index) => (
-                <motion.div key={person.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} whileHover={{ y: -4 }} className="flex flex-col">
-                  <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="mb-4 block">
-                    <div className={`aspect-square w-full overflow-hidden rounded-2xl border border-white/10 ${person.photo ? "" : `bg-gradient-to-br ${person.gradient} flex items-center justify-center`}`}>
-                      {person.photo
-                        ? <img src={person.photo} alt={person.name} className="h-full w-full object-cover object-top" style={{ filter: "grayscale(100%)" }} />
-                        : <span className="text-3xl font-light tracking-wide text-white/50 md:text-4xl">{person.initials}</span>
-                      }
-                    </div>
-                  </a>
-                  <div className="text-sm font-medium text-white">{person.name}</div>
-                  <div className="mb-1 text-xs text-white/50">{person.role}</div>
-                  <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="mb-2 text-[10px] text-blue-300/50 transition hover:text-blue-300">LinkedIn ↗</a>
-                  <p className="text-xs leading-relaxed text-white/50">{person.bio}</p>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          <section id="blog" className="mx-auto max-w-7xl px-4 pb-16 md:px-10 md:pb-24">
-            <div className="mb-10 flex items-end justify-between gap-6">
-              <h2 className="text-4xl tracking-tight md:text-6xl">Mission Logs</h2>
-              <div className="hidden text-sm text-white/55 md:block">Architecture notes, protocol thinking, and system design.</div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
-              <button type="button" onClick={() => posts[0].paperId && navigate(`/${posts[0].paperId}`)} className="text-left lg:col-span-2">
-                <motion.div whileHover={{ scale: 1.01 }} className="h-full cursor-pointer">
-                  <SurfaceCard className="h-full overflow-hidden">
-                    <div className="flex h-28 w-full items-center justify-center bg-gradient-to-br from-blue-400/20 to-white/5 text-sm text-white/30 md:h-48">White Paper</div>
-                    <div className="flex h-full flex-col p-6">
-                      <div className="mb-2 text-xs uppercase tracking-[0.16em] text-white/60">{posts[0].category}</div>
-                      <h3 className="mb-3 text-2xl text-blue-300">{posts[0].title}</h3>
-                      <p className="flex-grow text-sm leading-relaxed text-white/80">{posts[0].excerpt}</p>
-                      <div className="mt-5 flex items-center justify-between text-sm text-white/55">
-                        <span>{posts[0].meta}</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    </div>
-                  </SurfaceCard>
-                </motion.div>
-              </button>
-              <div className="grid h-full gap-4 md:grid-rows-3">
-                {posts.slice(1, 4).map((post) => (
-                  <motion.div
-                    key={post.title}
-                    whileHover={{ y: -3 }}
-                    className={`h-full ${post.paperId ? "cursor-pointer" : ""}`}
-                    onClick={() => post.paperId && navigate(`/${post.paperId}`)}
-                  >
-                    <SurfaceCard className="h-full">
-                      <div className="flex h-full flex-col p-4">
-                        <div className="mb-1 text-xs uppercase tracking-[0.16em] text-white/60">{post.category}</div>
-                        <h3 className="mb-2 text-sm text-blue-300">{post.title}</h3>
-                        <div className="mt-auto flex items-center justify-between text-xs text-white/55">
-                          <span>{post.meta}</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </div>
-                      </div>
-                    </SurfaceCard>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            {posts.slice(4).length > 0 && (
-              <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {posts.slice(4).map((post) => (
-                  <motion.div key={post.title} whileHover={{ y: -3 }} className="h-full">
-                    <SurfaceCard className="h-full">
-                      <div className="flex h-full flex-col p-5">
-                        <div className="mb-2 text-xs uppercase tracking-[0.16em] text-white/60">{post.category}</div>
-                        <h3 className="mb-2 text-base text-blue-300">{post.title}</h3>
-                        <p className="flex-grow text-xs leading-relaxed text-white/75">{post.excerpt}</p>
-                        <div className="mt-4 flex items-center justify-between text-xs text-white/55">
-                          <span>{post.meta}</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </div>
-                      </div>
-                    </SurfaceCard>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section id="terminal" className="mx-auto max-w-6xl px-4 pb-16 md:px-10">
-            <div className="mb-8">
-              <div className="mb-3 text-xs uppercase tracking-[0.22em] text-white/50">Integrate in minutes</div>
-              <h2 className="text-3xl tracking-tight text-blue-300 md:text-5xl">Launch Control</h2>
-            </div>
-            <IntegrationSection />
-
-            {/* Agent Well-Known Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-6 rounded-2xl border border-blue-300/20 bg-blue-300/[0.03] p-6 md:p-8"
-            >
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="flex-1">
-                  <div className="mb-2 flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-blue-300" />
-                    <span className="text-xs uppercase tracking-[0.22em] text-blue-300/70">For AI Agents</span>
-                  </div>
-                  <h3 className="mb-2 text-lg text-white">Agent Discovery File</h3>
-                  <p className="text-sm leading-relaxed text-white/50">
-                    AI agents can access our machine-readable agent card for a full guide on how to discover, verify, and transact through Aidress — including all endpoints, schemas, and authentication details.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-3 md:items-end">
-                  <a
-                    href="https://api.aidress.ai/.well-known/agent.json"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-xl border border-blue-300/30 bg-blue-300/5 px-4 py-2.5 text-xs text-blue-300 transition hover:bg-blue-300/10"
-                  >
-                    <span className="font-mono">GET /.well-known/agent.json</span>
-                    <ArrowRight className="h-3 w-3" />
-                  </a>
-                  <span className="text-[10px] text-white/30">api.aidress.ai · A2A agent card standard</span>
-                </div>
-              </div>
-            </motion.div>
-          </section>
-
-          <section id="reach" className="relative overflow-hidden border-t border-white/10 py-14 md:py-20">
-            <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-10">
-              <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-10">
-                <div>
-                  <h2 className="text-3xl tracking-tight text-blue-300 md:text-6xl">Let's Talk</h2>
-                  <p className="mt-4 max-w-md text-white/70">
-                    Whether you're building agents, infrastructure, or systems — plug into the layer that connects it all.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <a href="mailto:teamaidress@gmail.com?subject=Starting a conversation" className="flex-1 rounded-xl bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90 active:scale-95">Start a conversation</a>
-                    <a href="mailto:teamaidress@gmail.com?subject=Partner inquiry" className="flex-1 rounded-xl border border-white/30 px-6 py-3 text-center text-sm text-white transition hover:border-white active:scale-95">Become a partner</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <footer className="border-t border-white/10 bg-[#06070a]">
-          <div className="mx-auto max-w-7xl px-4 md:px-10">
-            <div className="flex flex-col items-center justify-between gap-3 py-4 text-[10px] text-white/60 sm:flex-row md:text-xs">
-              <div className="flex items-center gap-3">
-                <AidressLogo logoHeight={24} className="opacity-60" />
-                <span className="text-white/30">•</span>
-                <span>© {new Date().getFullYear()}</span>
-              </div>
-              <div className="flex items-center gap-5">
-                <a href="#layers" className="transition hover:text-white">Engine</a>
-                <a href="#blog" className="transition hover:text-white">Logs</a>
-                <a href="#terminal" className="transition hover:text-white">API</a>
-                <span className="text-white/30">•</span>
-                <a href="https://x.com/AIDRESS_AI" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">X</a>
-                <a href="https://www.instagram.com/aidress_ai/" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
-                <a href="https://www.linkedin.com/company/aidress/about/" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">LinkedIn</a>
-                <a href="mailto:teamaidress@gmail.com" className="transition hover:text-white">Email</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </div>
-  );
+  return <Component onBack={() => navigate("/")} />;
 }
 
-const paperMeta: Record<string, { title: string; category: string; description: string }> = {
-  whitepaper: {
-    title: "Agents Without Infrastructure — V1.0",
-    category: "White Paper",
-    description: "A foundational paper on why the agentic economy requires a coordination layer for discovery, identity, trust, terms, and routing.",
-  },
-  validation: {
-    title: "The Coordination Gap in Autonomous Agent Transactions",
-    category: "Validation Report",
-    description: "23 structured test runs across 8 tools. Zero autonomous completions. 79% of failures were protocol or trust gaps — not capability gaps.",
-  },
-  protocol: {
-    title: "The Five Layers of Agentic Communication",
-    category: "Protocol",
-    description: "Discovery, identity, trust, terms, and routing form the minimum stack for machine-native economic interaction.",
-  },
-  systems: {
-    title: "From Isolated Agents to Independent Economic Actors",
-    category: "Systems",
-    description: "What changes when agents can search for counterparties, validate trust, negotiate constraints, and execute value transfer autonomously.",
-  },
-};
-
-function RequestAccessPage({ paperId }: { paperId: string }) {
-  const [email, setEmail] = useState("");
-  const meta = paperMeta[paperId];
-
-  useEffect(() => { window.scrollTo(0, 0); }, []);
-
-  const handleRequest = () => {
-    if (!email.trim()) return;
-    const subject = encodeURIComponent(`Access Request: ${meta.title}`);
-    const body = encodeURIComponent(`Hi Aidress team,\n\nI'd like to request access to: ${meta.title}\n\nMy email: ${email}\n\nThank you.`);
-    window.location.href = `mailto:teamaidress@gmail.com?subject=${subject}&body=${body}`;
-  };
-
-  return (
-    <div className="min-h-screen bg-[#06070a] text-white flex flex-col">
-      <div className="mx-auto w-full max-w-2xl px-6 py-16 md:px-10 md:py-28 flex flex-col items-start">
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="mb-12 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/80"
-        >
-          ← Back
-        </button>
-
-        {/* Lock icon */}
-        <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
-          <svg className="h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-          </svg>
-        </div>
-
-        <div className="mb-2 text-xs uppercase tracking-[0.22em] text-white/40">{meta.category}</div>
-        <h1 className="mb-4 text-3xl tracking-tight text-white md:text-4xl">{meta.title}</h1>
-        <p className="mb-10 text-base leading-relaxed text-white/55">{meta.description}</p>
-
-        <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-          <div className="mb-1 text-sm font-medium text-white">Request Access</div>
-          <p className="mb-6 text-xs text-white/40">Enter your email and we'll reach out with access.</p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleRequest()}
-              placeholder="you@company.com"
-              className="flex-1 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder-white/30 transition focus:border-blue-300 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={handleRequest}
-              className="rounded-xl bg-white px-6 py-3 text-sm font-medium text-black transition hover:bg-white/90 active:scale-95"
-            >
-              Request Access
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// ─── App ────────────────────────────────────────────────────────────────────────
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/whitepaper" element={<RequestAccessPage paperId="whitepaper" />} />
-        <Route path="/validation" element={<RequestAccessPage paperId="validation" />} />
-        <Route path="/protocol" element={<RequestAccessPage paperId="protocol" />} />
-        <Route path="/systems" element={<RequestAccessPage paperId="systems" />} />
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/docs/:slug" element={<DocsPage />} />
+            <Route path="/whitepaper" element={<PaperRoute Component={WhitePaperPage} />} />
+            <Route path="/validation" element={<PaperRoute Component={ValidationReportPage} />} />
+            <Route path="/protocol" element={<PaperRoute Component={ProtocolArticlePage} />} />
+            <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
