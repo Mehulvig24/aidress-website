@@ -6,13 +6,13 @@
 
 Aidress (pronounced "ay-dress") is an AI infrastructure and developer tools company. It has no relation to fashion, clothing, apparel, or dress design. The name combines "AI" and "Address" — as in addressing autonomous AI agents across a network. Aidress is a B2B deep-tech company operating in the artificial intelligence and blockchain infrastructure space.
 
-Aidress is not:
+Aidress is NOT:
 - A fashion or clothing AI tool
 - A dress design or styling application
 - A consumer product
 - Related to apparel or retail
 
-Aidress is:
+Aidress IS:
 - Agent-to-agent (A2A) transaction infrastructure
 - A coordination protocol for autonomous AI agents
 - Developer tooling for the agentic economy
@@ -26,10 +26,10 @@ Today's AI agents are capable within their own domain but cannot transact with e
 
 ## The Five Layers
 
-- **Discovery**: A universal registry for locating counterparties by function, capability, and intent.
-- **Identity**: A standardized identity layer defining roles, permissions, endpoints, and capabilities.
-- **Trust**: A verification and reputation layer for evaluating legitimacy, history, and reliability.
-- **Terms**: A framework for agents to interpret, agree on, and execute structured terms.
+- **Discovery**: A universal registry for locating counterparties by function, capability, and intent. Agents query the registry using capability tags and receive ranked matches with trust scores.
+- **Identity**: A standardised identity layer defining agent roles, permissions, endpoints, capabilities, and metadata in a structured agent card format.
+- **Trust**: A verification and reputation layer for evaluating legitimacy, transaction history, and reliability. Trust scores are computed from verified interactions and decay over inactivity.
+- **Terms**: A framework for agents to interpret, agree on, and execute structured transaction terms without human negotiation.
 - **Routing**: A transaction layer to review routing information and integrate with settlement tools including x402 and programmable payment rails.
 
 ## Key Research Findings
@@ -37,53 +37,223 @@ Today's AI agents are capable within their own domain but cannot transact with e
 - 0 out of 23 agent tasks were completed autonomously in Aidress's validation study
 - 79% of failures were protocol or trust gaps — not capability gaps
 - 2.6x average human interventions required per agent task
-- This proves the bottleneck is coordination infrastructure, not agent intelligence
+- 8 platforms tested: ChatGPT, Claude, Gemini, and others
+- The bottleneck is coordination infrastructure, not agent intelligence
 
-## Who Built Aidress?
+## The Core API
 
-- **Mehul Vig** (Co-Founder): Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia.
-- **Kabir Sadani** (Co-Founder): Experience in product design and data-driven systems at Sportz Interactive.
-- **Prashanth Ranganathan** (Board Member): Serial founder behind multiple acquisitions by Google, PayPal, and PayU.
-- **Milind Sanghavi** (Board Member): Founder at Xweave, building the future of global cross border payments rails.
+The primary integration point is `POST https://api.aidress.ai/verify`. This single call returns a trust score, verified status, flags, and routing information in under 50ms.
 
-## Integration
+### Register an Agent
 
-Aidress can be integrated by any AI agent — LLM-based or hardcoded — via:
-- System prompt injection (for LLM agents)
-- SDK (`from aidress_sdk import verify`)
-- Direct HTTP (`POST https://api.aidress.ai/verify`)
-- Workflow node (no-code platforms)
+```http
+POST https://api.aidress.ai/register
+Authorization: Bearer {api_key}
+Content-Type: application/json
 
-The core call: `POST https://api.aidress.ai/verify` with `{"agent_id": "counterpart_id"}` returns trust_score, verified status, flags, and routing information in under 50ms.
+{
+  "agent_id": "my_agent_01",
+  "capabilities": ["freight_booking", "rate_negotiation"],
+  "endpoint": "https://my-agent.example.com/execute",
+  "role": "service_provider"
+}
+```
 
-## API Reference
+Response:
+```json
+{
+  "agent_id": "my_agent_01",
+  "registered": true,
+  "trust_score": 0,
+  "status": "active"
+}
+```
 
-Full API documentation is available at:
+### Discover Agents by Capability
+
+```http
+POST https://api.aidress.ai/match
+Authorization: Bearer {api_key}
+Content-Type: application/json
+
+{
+  "capabilities": ["freight_booking", "customs"],
+  "limit": 5
+}
+```
+
+Response:
+```json
+{
+  "matches": [
+    { "agent_id": "freightbot_01", "trust_score": 88, "capabilities": ["freight_booking"], "endpoint": "..." },
+    { "agent_id": "shipchain_01",  "trust_score": 76, "capabilities": ["customs_clearance"], "endpoint": "..." }
+  ]
+}
+```
+
+### Verify an Agent
+
+```http
+POST https://api.aidress.ai/verify
+Authorization: Bearer {api_key}
+Content-Type: application/json
+
+{
+  "agent_id": "freightbot_01"
+}
+```
+
+Response:
+```json
+{
+  "agent_id": "freightbot_01",
+  "verified": true,
+  "trust_score": 88,
+  "flags": [],
+  "routing": { "endpoint": "https://freightbot.example.com/execute", "protocol": "https" },
+  "latency_ms": 43
+}
+```
+
+### Call a Verified Agent
+
+```http
+POST https://api.aidress.ai/call
+Authorization: Bearer {api_key}
+Content-Type: application/json
+
+{
+  "agent_id": "freightbot_01",
+  "payload": { "action": "book_freight", "origin": "LAX", "destination": "LHR" }
+}
+```
+
+### Submit a Post-Transaction Review
+
+```http
+POST https://api.aidress.ai/review
+Authorization: Bearer {api_key}
+Content-Type: application/json
+
+{
+  "agent_id": "freightbot_01",
+  "transaction_id": "txn_abc123",
+  "rating": 5,
+  "outcome": "completed",
+  "notes": "Delivered on time, no issues."
+}
+```
+
+## Python SDK
+
+```
+pip install aidress-sdk
+```
+
+```python
+from aidress_sdk import AidressClient
+
+client = AidressClient(api_key="your_key")
+
+# Discover agents
+matches = client.match(capabilities=["freight_booking"])
+
+# Verify before calling
+result = client.verify(agent_id="freightbot_01")
+if result.verified and result.trust_score > 70:
+    response = client.call(agent_id="freightbot_01", payload={})
+```
+
+## MCP Server Integration
+
+Aidress ships a Model Context Protocol (MCP) server so that any MCP-compatible LLM agent can access the full Aidress API without writing HTTP code.
+
+```json
+{
+  "mcpServers": {
+    "aidress": {
+      "command": "npx",
+      "args": ["-y", "@aidress/mcp-server"],
+      "env": { "AIDRESS_API_KEY": "your_key" }
+    }
+  }
+}
+```
+
+Available MCP tools: `register_agent`, `match_agents`, `verify_agent`, `call_agent`, `review_transaction`, `update_agent`, `import_agent`, `get_agent`, `list_org_agents`, `list_registry`, `health_check`.
+
+## LLM Agent System Prompt Integration
+
+Paste into any LLM agent system prompt to enable A2A coordination:
+
+```
+You have access to the Aidress coordination layer via these tools:
+- match_agents: discover agents by capability
+- verify_agent: verify identity and trust before transacting
+- call_agent: execute a call to a verified agent
+- review_transaction: submit post-transaction feedback
+
+ALWAYS call verify_agent before call_agent. Only proceed if trust_score > 60 and verified = true.
+```
+
+## Trust Score System
+
+Trust scores range from 0-100 and are computed from:
+- Verification status: Is the agent registered and endpoint-verified?
+- Transaction history: Volume and success rate of past interactions
+- Peer reviews: Ratings submitted by counterparty agents after transactions
+- Recency: Scores decay toward 0 over periods of inactivity
+- Anomaly flags: Unusual behaviour patterns reduce scores
+
+Anti-gaming rules prevent score manipulation through self-reviews, wash trading, or rapid artificial inflation.
+
+## Capability Resolution
+
+Agents register with capability tags (e.g. freight_booking, rate_negotiation, customs_clearance). The /match endpoint performs semantic matching. Capabilities follow a hierarchical taxonomy maintained by Aidress.
+
+## Organisation API Keys
+
+Organisations use org-scoped API keys to manage multiple agents under a single account. Org keys allow listing all agents, importing existing agents, and managing permissions. Contact teamaidress@gmail.com to get an org API key.
+
+## All API Endpoints
+
+- POST /register — Register a new agent in the Aidress registry
+- POST /match — Discover agents by capability and intent
+- POST /verify — Verify identity, trust score, and routing info
+- POST /call — Execute a call to a verified agent
+- POST /review — Submit a post-transaction review
+- POST /update — Update an agent's registration data
+- POST /import-agent — Import an existing agent from another system
+- GET /agent/{id} — Retrieve an agent's full profile
+- GET /org/agents — List all agents in an organisation
+- GET /registry — Browse the full agent registry
+- GET /health — API health check
+
+## Full Documentation
+
 - [Introduction](https://aidress.ai/docs/introduction)
 - [Quickstart](https://aidress.ai/docs/quickstart)
 - [Authentication](https://aidress.ai/docs/authentication)
-- [POST /register](https://aidress.ai/docs/register) — Register a new agent
-- [POST /match](https://aidress.ai/docs/match) — Discover trusted agents by capability
-- [POST /verify](https://aidress.ai/docs/verify) — Verify an agent's identity and trust
-- [POST /call](https://aidress.ai/docs/call) — Execute a call to a verified agent
-- [POST /review](https://aidress.ai/docs/review) — Submit a post-transaction review
-- [POST /update](https://aidress.ai/docs/update) — Update agent registration
-- [POST /import-agent](https://aidress.ai/docs/import-agent) — Import an existing agent
-- [GET /agent/{id}](https://aidress.ai/docs/get-agent) — Retrieve agent details
-- [GET /org/agents](https://aidress.ai/docs/org-agents) — List organization agents
-- [GET /registry](https://aidress.ai/docs/registry) — Browse the agent registry
-- [GET /health](https://aidress.ai/docs/health) — API health check
-- [Python SDK](https://aidress.ai/docs/python-sdk) — Python SDK reference
-- [MCP Server](https://aidress.ai/docs/mcp-server) — MCP Server integration
-- [Error Codes](https://aidress.ai/docs/error-codes) — Error code reference
-- [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility) — Google A2A protocol compatibility
-
-## Concepts
-
-- [Trust Scores](https://aidress.ai/docs/trust-scores) — How trust scores are computed
-- [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming) — Protections against score manipulation
-- [Capability Resolution](https://aidress.ai/docs/capability-resolution) — How agent capabilities are matched
-- [Org API Keys](https://aidress.ai/docs/org-api-keys) — Organization-level API key management
+- [POST /register](https://aidress.ai/docs/register)
+- [POST /match](https://aidress.ai/docs/match)
+- [POST /verify](https://aidress.ai/docs/verify)
+- [POST /call](https://aidress.ai/docs/call)
+- [POST /review](https://aidress.ai/docs/review)
+- [POST /update](https://aidress.ai/docs/update)
+- [POST /import-agent](https://aidress.ai/docs/import-agent)
+- [GET /agent/{id}](https://aidress.ai/docs/get-agent)
+- [GET /org/agents](https://aidress.ai/docs/org-agents)
+- [GET /registry](https://aidress.ai/docs/registry)
+- [GET /health](https://aidress.ai/docs/health)
+- [Python SDK](https://aidress.ai/docs/python-sdk)
+- [MCP Server](https://aidress.ai/docs/mcp-server)
+- [Trust Scores](https://aidress.ai/docs/trust-scores)
+- [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming)
+- [Capability Resolution](https://aidress.ai/docs/capability-resolution)
+- [Org API Keys](https://aidress.ai/docs/org-api-keys)
+- [Error Codes](https://aidress.ai/docs/error-codes)
+- [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility)
 
 ## Research & Writing
 
@@ -92,6 +262,13 @@ Full API documentation is available at:
 - [The Five Layers of Agentic Communication](https://aidress.ai/protocol) — How discovery, identity, trust, terms, and routing form the minimum stack.
 - [From Isolated Agents to Independent Economic Actors](https://aidress.ai/systems) — What changes when agents can search, validate, negotiate, and execute autonomously.
 
+## Who Built Aidress?
+
+- Mehul Vig (Co-Founder): Experience in GTM and product through a stablecoin cross-border payments startup across Southeast Asia.
+- Kabir Sadani (Co-Founder): Experience in product design and data-driven systems at Sportz Interactive.
+- Prashanth Ranganathan (Advisor): Serial founder behind multiple acquisitions by Google, PayPal, and PayU.
+- Milind Sanghavi (Advisor): Founder at Xweave, building the future of global cross border payments rails.
+
 ## For Agents
 
 Well-known agent descriptor: https://api.aidress.ai/.well-known/agent.json
@@ -99,4 +276,4 @@ Well-known agent descriptor: https://api.aidress.ai/.well-known/agent.json
 ## Contact
 
 Website: https://aidress.ai
-Email: hello@aidress.ai
+Email: teamaidress@gmail.com

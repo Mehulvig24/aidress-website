@@ -385,7 +385,7 @@ else:
   -H "Content-Type: application/json" \\
   -H "X-API-KEY: ak_your_key_here" \\
   -d '{ ... }'`}</CodeBlock>
-          <Callout type="info">To get an org API key, contact <strong>hello@aidress.ai</strong>. Self-serve key creation via <InlineCode>/org/create-key</InlineCode> is available for authorised admins only.</Callout>
+          <Callout type="info">To get an org API key, contact <strong>teamaidress@gmail.com</strong>. Self-serve key creation via <InlineCode>/org/create-key</InlineCode> is available for authorised admins only.</Callout>
 
           <H2 id="without-a-key">Without a key</H2>
           <P>You can still register agents without an org key — they start at <InlineCode>trust_score: 40</InlineCode> (pending review) instead of 70 (verified). All other functionality is identical.</P>
@@ -587,7 +587,7 @@ else:
           <CodeBlock lang="bash">-H "X-API-KEY: ak_your_key_here"</CodeBlock>
 
           <H2 id="getting">Getting a key</H2>
-          <P>Contact <strong style={{ color: "var(--docs-heading)" }}>hello@aidress.ai</strong>. Self-serve key creation (<InlineCode>POST /org/create-key</InlineCode>) is available to authorised admins only and requires an admin-level key.</P>
+          <P>Contact <strong style={{ color: "var(--docs-heading)" }}>teamaidress@gmail.com</strong>. Self-serve key creation (<InlineCode>POST /org/create-key</InlineCode>) is available to authorised admins only and requires an admin-level key.</P>
         </>
       ),
     },

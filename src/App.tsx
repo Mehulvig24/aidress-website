@@ -1049,7 +1049,7 @@ function HeroSection() {
               </svg>
             </a>
             <a
-              href="mailto:hello@aidress.ai"
+              href="mailto:teamaidress@gmail.com"
               className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium no-underline transition-all"
               style={{
                 backgroundColor: "transparent",
@@ -1112,76 +1112,244 @@ function StatsSection() {
 
 function MissionLogsSection() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const featured = missionPosts[0];
   const rest = missionPosts.slice(1);
 
+  // ── Request-access gate ────────────────────────────────────────────────────
+  const [gateTarget, setGateTarget] = useState<string | null>(null);
+  const [gateName, setGateName] = useState("");
+  const [gateEmail, setGateEmail] = useState("");
+  const [gateBuilding, setGateBuilding] = useState("");
+  const [gateLoading, setGateLoading] = useState(false);
+  const [gateError, setGateError] = useState("");
+
+  function openGate(route: string) {
+    if (sessionStorage.getItem("aidress_paper_access")) {
+      navigate(route);
+      return;
+    }
+    setGateTarget(route);
+    setGateError("");
+  }
+
+  async function handleGateSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setGateLoading(true);
+    setGateError("");
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/teamaidress@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: gateName,
+          email: gateEmail,
+          building: gateBuilding || "—",
+          paper: gateTarget,
+          _subject: "New research access request — Aidress",
+          _captcha: "false",
+        }),
+      });
+      if (!res.ok) throw new Error("submit failed");
+      sessionStorage.setItem("aidress_paper_access", "1");
+      navigate(gateTarget!);
+      setGateTarget(null);
+    } catch {
+      setGateError("Something went wrong. Try again.");
+    } finally {
+      setGateLoading(false);
+    }
+  }
+
+  const isDark = theme === "dark";
+
   return (
-    <section id="logs" className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
-      <FadeIn>
-        <p className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-faint)", letterSpacing: "0.12em" }}>
-          The problem is real &mdash; 23 test runs across 8 platforms, 0 fully autonomous completions
-        </p>
-      </FadeIn>
-      <h2 className="mt-3 text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
-        Mission Logs
-      </h2>
-
-      {/* Featured white paper — large */}
-      <FadeIn className="mt-10">
-        <button
-          type="button"
-          onClick={() => navigate(featured.route)}
-          className="group w-full text-left"
-        >
-          <div className="overflow-hidden rounded-xl">
-            <img
-              src={featured.image}
-              alt={featured.title}
-              className="aspect-[2/1] w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-            />
-          </div>
-          <h3
-            className="mt-4 text-base leading-snug group-hover:underline"
-            style={{ color: "var(--text)" }}
+    <>
+      {/* ── Request-access modal ─────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {gateTarget && (
+          <motion.div
+            key="gate-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-4"
+            style={{ backgroundColor: "rgba(0,0,0,0.72)", backdropFilter: "blur(4px)" }}
+            onClick={(e) => { if (e.target === e.currentTarget) setGateTarget(null); }}
           >
-            {featured.title}
-          </h3>
-          <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
-            {featured.meta}
-          </span>
-        </button>
-      </FadeIn>
-
-      {/* Rest — 3 column */}
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-        {rest.map((post, i) => (
-          <FadeIn key={post.title} delay={i * 0.06}>
-            <button
-              type="button"
-              onClick={() => navigate(post.route)}
-              className="group flex w-full flex-col text-left"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="w-full max-w-md rounded-2xl p-8"
+              style={{
+                backgroundColor: isDark ? "var(--bg-card)" : "#fff",
+                border: "1px solid var(--border)",
+              }}
             >
-              <div className="overflow-hidden rounded-xl">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-                />
+              {/* Lock icon */}
+              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "#f1f5f9", border: "1px solid var(--border)" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-muted)" }}>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
               </div>
-              <h3
-                className="mt-4 text-sm leading-snug group-hover:underline"
-                style={{ color: "var(--text)" }}
-              >
-                {post.title}
+
+              <h3 className="text-lg font-medium tracking-tight" style={{ color: "var(--text)" }}>
+                Request access
               </h3>
-              <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
-                {post.meta}
+              <p className="mt-1.5 text-sm" style={{ color: "var(--text-muted)" }}>
+                Leave your details and we'll send the paper straight to your inbox.
+              </p>
+
+              <form onSubmit={handleGateSubmit} className="mt-6 flex flex-col gap-3">
+                <input
+                  required
+                  type="text"
+                  placeholder="Your name"
+                  value={gateName}
+                  onChange={(e) => setGateName(e.target.value)}
+                  className="w-full rounded-lg px-4 py-2.5 text-sm outline-none transition"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "#f8fafc",
+                    border: "1px solid var(--border)",
+                    color: "var(--text)",
+                  }}
+                />
+                <input
+                  required
+                  type="email"
+                  placeholder="Work email"
+                  value={gateEmail}
+                  onChange={(e) => setGateEmail(e.target.value)}
+                  className="w-full rounded-lg px-4 py-2.5 text-sm outline-none transition"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "#f8fafc",
+                    border: "1px solid var(--border)",
+                    color: "var(--text)",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="What are you building? (optional)"
+                  value={gateBuilding}
+                  onChange={(e) => setGateBuilding(e.target.value)}
+                  className="w-full rounded-lg px-4 py-2.5 text-sm outline-none transition"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "#f8fafc",
+                    border: "1px solid var(--border)",
+                    color: "var(--text)",
+                  }}
+                />
+
+                {gateError && (
+                  <p className="text-xs" style={{ color: "#ef4444" }}>{gateError}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={gateLoading}
+                  className="mt-1 w-full rounded-lg py-2.5 text-sm font-medium transition-opacity disabled:opacity-60"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "var(--accent)",
+                    color: isDark ? "var(--text)" : "#fff",
+                    border: isDark ? "1px solid var(--border)" : "none",
+                  }}
+                >
+                  {gateLoading ? "Sending…" : "Get access →"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setGateTarget(null)}
+                  className="text-xs transition hover:underline"
+                  style={{ color: "var(--text-faint)" }}
+                >
+                  Cancel
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <section id="logs" className="mx-auto max-w-7xl px-5 py-16 md:px-10 md:py-24">
+        <FadeIn>
+          <p className="text-xs font-medium uppercase tracking-widest" style={{ color: "var(--text-faint)", letterSpacing: "0.12em" }}>
+            The problem is real &mdash; 23 test runs across 8 platforms, 0 fully autonomous completions
+          </p>
+        </FadeIn>
+        <h2 className="mt-3 text-3xl tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
+          Mission Logs
+        </h2>
+
+        {/* Featured white paper — large */}
+        <FadeIn className="mt-10">
+          <button
+            type="button"
+            onClick={() => openGate(featured.route)}
+            className="group w-full text-left"
+          >
+            <div className="relative overflow-hidden rounded-xl">
+              <img
+                src={featured.image}
+                alt={featured.title}
+                className="aspect-[2/1] w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+              />
+              <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ backgroundColor: "rgba(0,0,0,0.55)", color: "#fff", backdropFilter: "blur(6px)" }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Request access
               </span>
-            </button>
-          </FadeIn>
-        ))}
-      </div>
-    </section>
+            </div>
+            <h3
+              className="mt-4 text-base leading-snug group-hover:underline"
+              style={{ color: "var(--text)" }}
+            >
+              {featured.title}
+            </h3>
+            <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
+              {featured.meta}
+            </span>
+          </button>
+        </FadeIn>
+
+        {/* Rest — 3 column */}
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {rest.map((post, i) => (
+            <FadeIn key={post.title} delay={i * 0.06}>
+              <button
+                type="button"
+                onClick={() => openGate(post.route)}
+                className="group flex w-full flex-col text-left"
+              >
+                <div className="relative overflow-hidden rounded-xl">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                  <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: "rgba(0,0,0,0.55)", color: "#fff", backdropFilter: "blur(6px)" }}>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Request access
+                  </span>
+                </div>
+                <h3
+                  className="mt-4 text-sm leading-snug group-hover:underline"
+                  style={{ color: "var(--text)" }}
+                >
+                  {post.title}
+                </h3>
+                <span className="mt-1.5 text-xs" style={{ color: "var(--text-faint)" }}>
+                  {post.meta}
+                </span>
+              </button>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -1498,7 +1666,7 @@ function LetsTalkSection() {
           <FadeIn delay={0.2}>
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
               <a
-                href="mailto:hello@aidress.ai"
+                href="mailto:teamaidress@gmail.com"
                 className="group relative inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium no-underline transition-all"
                 style={{
                   backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "var(--accent)",
@@ -1512,7 +1680,7 @@ function LetsTalkSection() {
                 </svg>
               </a>
               <a
-                href="mailto:partnerships@aidress.ai"
+                href="mailto:teamaidress@gmail.com"
                 className="group relative inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium no-underline transition-all"
                 style={{
                   backgroundColor: "transparent",
@@ -1619,7 +1787,7 @@ function Footer() {
           <a href="https://x.com/aidabornnative" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>X</a>
           <a href="https://www.instagram.com/aidress.ai" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Instagram</a>
           <a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>LinkedIn</a>
-          <a href="mailto:hello@aidress.ai" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
+          <a href="mailto:teamaidress@gmail.com" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
         </nav>
       </div>
     </footer>
