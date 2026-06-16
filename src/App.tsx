@@ -1076,6 +1076,31 @@ function HeroSection() {
 
 // ─── Section 2: Registry Stats ──────────────────────────────────────────────────
 
+function ProblemSection() {
+  return (
+    <section className="pt-12 pb-0 md:pt-16">
+      <div className="mx-auto max-w-3xl px-5 text-center md:px-10">
+        <FadeIn>
+          <h2
+            className="text-[1.45rem] font-semibold leading-tight tracking-tight sm:text-3xl md:text-[2.25rem]"
+            style={{ color: "var(--text)" }}
+          >
+            Not a capability gap. A coordination gap.
+          </h2>
+          <p
+            className="mx-auto mt-4 max-w-lg text-sm leading-relaxed md:text-base"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Today&apos;s agents can reason, plan, and act — but when they need
+            to find a counterparty, verify trust, or route value, they hand
+            back to a human. Every time.
+          </p>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
 function StatsSection() {
   return (
     <section className="mx-auto max-w-5xl px-5 py-20 md:px-10 md:py-28">
@@ -1807,6 +1832,7 @@ function HomePage() {
       <Nav />
       <main>
         <HeroSection />
+        <ProblemSection />
         <StatsSection />
         <EngineSection />
         <LaunchControlSection />
