@@ -76,7 +76,7 @@ function Callout({ type, children }: { type: "info" | "warning" | "tip"; childre
 function ParamTable({ params }: { params: { name: string; type: string; required?: boolean | string; description: string }[] }) {
   return (
     <div className="my-4 overflow-x-auto">
-      <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+      <table className="w-full min-w-[480px] text-sm" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--docs-border)" }}>
             <th className="py-2 pr-4 text-left text-[11px] font-medium uppercase tracking-wider" style={{ color: "var(--docs-faint)" }}>Name</th>
@@ -105,7 +105,7 @@ function ParamTable({ params }: { params: { name: string; type: string; required
 function SimpleTable({ headers, rows }: { headers: string[]; rows: (string | React.ReactNode)[][] }) {
   return (
     <div className="my-4 overflow-x-auto">
-      <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+      <table className="w-full min-w-[380px] text-sm" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--docs-border)" }}>
             {headers.map((h) => (
@@ -152,19 +152,19 @@ function StatusBadge({ code }: { code: number | string }) {
 }
 
 function H1({ id, children }: { id?: string; children: React.ReactNode }) {
-  return <h1 id={id} className="text-[32px] font-semibold tracking-tight" style={{ color: "var(--docs-heading)" }}>{children}</h1>;
+  return <h1 id={id} className="text-[22px] font-semibold tracking-tight md:text-[32px]" style={{ color: "var(--docs-heading)" }}>{children}</h1>;
 }
 
 function H2({ id, children }: { id?: string; children: React.ReactNode }) {
-  return <h2 id={id} className="mt-10 pt-8 text-[22px] font-semibold tracking-tight" style={{ color: "var(--docs-heading)", borderTop: "1px solid var(--docs-border)" }}>{children}</h2>;
+  return <h2 id={id} className="mt-8 pt-6 text-[17px] font-semibold tracking-tight md:mt-10 md:pt-8 md:text-[22px]" style={{ color: "var(--docs-heading)", borderTop: "1px solid var(--docs-border)" }}>{children}</h2>;
 }
 
 function H3({ id, children }: { id?: string; children: React.ReactNode }) {
-  return <h3 id={id} className="mt-6 text-[16px] font-semibold" style={{ color: "var(--docs-heading)" }}>{children}</h3>;
+  return <h3 id={id} className="mt-5 text-[15px] font-semibold md:mt-6 md:text-[16px]" style={{ color: "var(--docs-heading)" }}>{children}</h3>;
 }
 
 function P({ children }: { children: React.ReactNode }) {
-  return <p className="mt-3 text-[15px] leading-relaxed" style={{ color: "var(--docs-body)" }}>{children}</p>;
+  return <p className="mt-3 text-[14px] leading-relaxed md:text-[15px]" style={{ color: "var(--docs-body)" }}>{children}</p>;
 }
 
 // ─── Sidebar structure ──────────────────────────────────────────────────────
@@ -1705,7 +1705,7 @@ export default function DocsPage() {
   );
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: "var(--docs-bg)" }}>
+    <div className="flex h-[100dvh]" style={{ backgroundColor: "var(--docs-bg)" }}>
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -1753,22 +1753,26 @@ export default function DocsPage() {
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
         <header
-          className="flex h-14 shrink-0 items-center justify-between px-5 md:px-8"
+          className="flex h-14 shrink-0 items-center justify-between gap-2 px-4 md:px-8"
           style={{ borderBottom: "1px solid var(--docs-border)", backgroundColor: "var(--docs-bg)" }}
         >
-          <div className="flex items-center gap-3">
-            <button type="button" className="md:hidden" onClick={() => setMobileMenuOpen(true)} style={{ color: "var(--docs-body)" }}><Menu size={18} /></button>
-            <div className="flex items-center gap-1.5 text-[13px]" style={{ color: "var(--docs-faint)" }}>
+          <div className="flex min-w-0 items-center gap-2">
+            <button type="button" className="shrink-0 md:hidden" onClick={() => setMobileMenuOpen(true)} style={{ color: "var(--docs-body)" }}><Menu size={18} /></button>
+            {/* Desktop breadcrumb */}
+            <div className="hidden items-center gap-1.5 text-[13px] md:flex" style={{ color: "var(--docs-faint)" }}>
               <Link to="/docs/introduction" className="hover:underline" style={{ color: "var(--docs-faint)" }}>Docs</Link>
               <ChevronRight size={12} />
-              <span style={{ color: "var(--docs-faint)" }}>{page.breadcrumb}</span>
+              <span>{page.breadcrumb}</span>
               <ChevronRight size={12} />
               <span style={{ color: "var(--docs-body)" }}>{page.title}</span>
             </div>
+            {/* Mobile: just page title */}
+            <span className="truncate text-[14px] font-medium md:hidden" style={{ color: "var(--docs-body)" }}>{page.title}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2">
             <SearchTrigger onClick={() => setSearchOpen(true)} className="hidden md:flex" />
-            <Link to="/" className="text-[13px] transition-colors hover:underline" style={{ color: "var(--docs-faint)" }}>← Back to site</Link>
+            <Link to="/" className="hidden text-[13px] transition-colors hover:underline sm:block" style={{ color: "var(--docs-faint)" }}>← Back</Link>
+            <Link to="/" className="flex h-8 w-8 items-center justify-center sm:hidden" style={{ color: "var(--docs-faint)" }}>←</Link>
             <button type="button" onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-md transition-colors" style={{ color: "var(--docs-body)" }}>
               {dark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
@@ -1778,12 +1782,12 @@ export default function DocsPage() {
 
         {/* Content + Right nav */}
         <div className="flex flex-1 overflow-hidden">
-          <main ref={contentRef} className="flex-1 overflow-y-auto px-6 py-10 md:px-12 lg:px-16">
+          <main ref={contentRef} className="flex-1 overflow-x-hidden overflow-y-auto px-4 py-8 md:px-12 lg:px-16">
             <TracingBeam className="max-w-[720px]" scrollContainerRef={contentRef}>
               <H1>{page.title}</H1>
               {page.content}
               {/* Prev/Next navigation */}
-              <div className="mt-16 flex items-center justify-between pt-6" style={{ borderTop: "1px solid var(--docs-border)" }}>
+              <div className="mt-12 flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between" style={{ borderTop: "1px solid var(--docs-border)" }}>
                 {(() => {
                   const allItems = sidebarNav.flatMap((g) => g.items);
                   const idx = allItems.findIndex((item) => item.slug === slug);
