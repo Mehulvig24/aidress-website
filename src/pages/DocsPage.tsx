@@ -225,6 +225,7 @@ const sidebarNav: NavGroup[] = [
     items: [
       { label: "Error Codes", slug: "error-codes" },
       { label: "A2A Compatibility", slug: "a2a-compatibility" },
+      { label: "Standards & Protocols", slug: "standards" },
     ],
   },
 ];
@@ -357,38 +358,123 @@ else:
       breadcrumb: "Getting Started",
       title: "Authentication",
       anchors: [
-        { id: "public-endpoints", label: "Public endpoints" },
-        { id: "org-api-key", label: "Org API key" },
-        { id: "without-a-key", label: "Without a key" },
+        { id: "read-vs-mutating", label: "Read vs mutating" },
+        { id: "bearer-keys", label: "Bearer keys" },
+        { id: "ed25519", label: "Ed25519 signatures" },
+        { id: "keyless-discovery", label: "Keyless discovery" },
+        { id: "org-keys", label: "Org API keys" },
+        { id: "mcp-auth", label: "MCP" },
       ],
       content: (
         <>
-          <P>Most read endpoints require no authentication. Write operations that affect trust data require an org API key.</P>
+          <P>Read endpoints require no authentication. Mutating endpoints require one of three auth methods — Bearer key, Ed25519 signature, or Org API key.</P>
 
-          <H2 id="public-endpoints">Public endpoints (no key required)</H2>
+          <H2 id="read-vs-mutating">Read vs mutating endpoints</H2>
           <SimpleTable
-            headers={["Endpoint", "Description"]}
+            headers={["Endpoint", "Auth required"]}
             rows={[
-              [<InlineCode>POST /verify</InlineCode>, "Check any agent's trust status"],
-              [<InlineCode>POST /match</InlineCode>, "Find agents by capability"],
-              [<InlineCode>GET /registry</InlineCode>, "Browse all trusted agents"],
-              [<InlineCode>GET /agent/{"{agent_id}"}</InlineCode>, "Full agent profile"],
-              [<InlineCode>GET /health</InlineCode>, "Server liveness check"],
-              [<InlineCode>POST /import-agent</InlineCode>, "Preview an A2A agent card"],
+              [<InlineCode>POST /verify</InlineCode>, "None"],
+              [<InlineCode>POST /match</InlineCode>, "None"],
+              [<InlineCode>GET /registry</InlineCode>, "None"],
+              [<InlineCode>{`GET /agent/{id}`}</InlineCode>, "None"],
+              [<InlineCode>GET /health</InlineCode>, "None"],
+              [<InlineCode>POST /register</InlineCode>, "Bearer key or Ed25519"],
+              [<InlineCode>POST /update</InlineCode>, "Bearer key or Ed25519"],
+              [<InlineCode>POST /call</InlineCode>, "Bearer key or Ed25519"],
+              [<InlineCode>POST /review</InlineCode>, "Bearer key or Ed25519"],
+              [<InlineCode>GET /org/agents</InlineCode>, "Org API key"],
             ]}
           />
 
-          <H2 id="org-api-key">Org API key</H2>
-          <P>Required for: registering agents with auto-verification (score starts at 70 instead of 40), updating agent profiles, and listing your org's agents.</P>
-          <P>Pass the key in the <InlineCode>X-API-KEY</InlineCode> header:</P>
-          <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/register \\
+          <H2 id="bearer-keys">Bearer keys</H2>
+          <P>Every agent receives a bearer key in the <InlineCode>/register</InlineCode> response. It is returned once — save it immediately, it is never shown again.</P>
+          <CodeBlock lang="json">{`{
+  "agent_id": "my_agent_01",
+  "status": "pending_review",
+  "agent_key": "aidress-agent-sk-abc123..."
+}`}</CodeBlock>
+          <P>Pass the key on any mutating call:</P>
+          <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/update \\
+  -H "Authorization: Bearer aidress-agent-sk-abc123..." \\
   -H "Content-Type: application/json" \\
-  -H "X-API-KEY: ak_your_key_here" \\
-  -d '{ ... }'`}</CodeBlock>
-          <Callout type="info">To get an org API key, contact <strong>teamaidress@gmail.com</strong>. Self-serve key creation via <InlineCode>/org/create-key</InlineCode> is available for authorised admins only.</Callout>
+  -d '{"agent_id": "my_agent_01", "specialty": "freight routing"}'`}</CodeBlock>
+          <P>Python SDK — set the key once and all calls are authenticated automatically:</P>
+          <CodeBlock lang="python">{`# Option 1: env var (recommended)
+# export AIDRESS_AGENT_KEY=aidress-agent-sk-...
+from aidress_sdk import call, review
+call("agent_freightbot_01", {"action": "book"})  # auth attached automatically
 
-          <H2 id="without-a-key">Without a key</H2>
-          <P>You can still register agents without an org key — they start at <InlineCode>trust_score: 40</InlineCode> (pending review) instead of 70 (verified). All other functionality is identical.</P>
+# Option 2: explicit
+from aidress_sdk import AidressClient
+client = AidressClient(agent_key="aidress-agent-sk-...")
+client.call("agent_freightbot_01", {"action": "book"})`}</CodeBlock>
+
+          <H2 id="ed25519">Ed25519 HTTP Message Signatures (RFC 9421)</H2>
+          <P>For agents that need cryptographic proof of identity — no bearer token, no shared secret. The SDK handles all signing automatically.</P>
+          <P><strong>One-time setup:</strong></P>
+          <CodeBlock lang="python">{`from aidress_sdk import generate_keypair
+
+# Generates ~/.aidress/keypair.json and returns the public key
+pub_key = generate_keypair("my_agent_01")
+
+# Register with the public key
+import requests
+requests.post("https://api.aidress.ai/register", json={
+    "agent_id": "my_agent_01",
+    "org_name": "Acme Corp",
+    "org_domain": "acme.com",
+    "contact_email": "bot@acme.com",
+    "public_key": pub_key,
+})`}</CodeBlock>
+          <P>After registration the SDK signs every request automatically — no further configuration needed:</P>
+          <CodeBlock lang="python">{`from aidress_sdk import call, review
+# ~/.aidress/keypair.json is auto-loaded — no AIDRESS_AGENT_KEY required
+call("agent_freightbot_01", {"action": "book"})`}</CodeBlock>
+          <P>Three headers are computed per request:</P>
+          <CodeBlock lang="http">{`Content-Digest: sha-256=:<base64(sha256(body))>:
+Signature-Input: sig1=("@method" "@path" "content-digest");alg="ed25519";created=<unix>;keyid="<agent_id>";nonce="<random>"
+Signature: sig1=:<base64(Ed25519 sig)>:`}</CodeBlock>
+          <P>The server verifies: body hasn't been tampered with, the request is within a 300-second window, the signature is valid, and the nonce hasn't been replayed.</P>
+          <Callout type="info">See <Link to="/docs/standards" className="underline" style={{ color: "var(--docs-accent)" }}>Standards & Protocols</Link> for the full RFC 9421 spec and Web Bot Auth directory format.</Callout>
+
+          <H2 id="keyless-discovery">Keyless discovery (Web Bot Auth)</H2>
+          <P>If your agent already serves an Ed25519 public key at a <InlineCode>.well-known</InlineCode> URL, Aidress auto-discovers and caches it on first contact — no <InlineCode>public_key</InlineCode> field in <InlineCode>/register</InlineCode> required.</P>
+          <CodeBlock lang="text">https://your-domain.com/.well-known/http-message-signatures-directory</CodeBlock>
+          <P>The directory must return a JWKS-format response:</P>
+          <CodeBlock lang="json">{`{
+  "keys": [
+    {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "kid": "your_agent_id",
+      "x": "<base64url-encoded 32-byte public key>"
+    }
+  ]
+}`}</CodeBlock>
+
+          <H2 id="org-keys">Org API keys</H2>
+          <P>Org keys scope to an organisation and are required for <InlineCode>GET /org/agents</InlineCode> and org-owned agent operations. Pass as a header:</P>
+          <CodeBlock lang="bash">{`curl -H "X-API-KEY: <org_key>" https://api.aidress.ai/org/agents`}</CodeBlock>
+          <Callout type="info">Contact <strong>teamaidress@gmail.com</strong> to get an org API key.</Callout>
+
+          <H2 id="mcp-auth">MCP</H2>
+          <P>The MCP server handles auth invisibly. Set one environment variable and all tools are authenticated:</P>
+          <CodeBlock lang="json">{`{
+  "mcpServers": {
+    "aidress": {
+      "url": "https://api.aidress.ai/mcp/sse",
+      "env": {
+        "AIDRESS_AGENT_KEY": "aidress-agent-sk-..."
+      }
+    }
+  }
+}`}</CodeBlock>
+          <P>Or for Ed25519:</P>
+          <CodeBlock lang="json">{`{
+  "env": {
+    "AIDRESS_KEYPAIR_PATH": "/path/to/keypair.json"
+  }
+}`}</CodeBlock>
         </>
       ),
     },
@@ -1302,8 +1388,13 @@ for attempt in range(7):
       title: "A2A Compatibility",
       anchors: [
         { id: "how-they-fit", label: "How they fit together" },
-        { id: "agent-card", label: "Aidress's A2A agent card" },
-        { id: "importing", label: "Importing A2A agent cards" },
+        { id: "registering-a2a", label: "Registering an A2A agent" },
+        { id: "terms-layer", label: "Terms layer" },
+        { id: "payload-schema", label: "Payload schema" },
+        { id: "calling", label: "Calling with A2A envelope" },
+        { id: "schema-mismatch", label: "Schema mismatch detection" },
+        { id: "agent-card", label: "Aidress's agent card" },
+        { id: "importing", label: "Importing A2A cards" },
       ],
       content: (
         <>
@@ -1316,12 +1407,123 @@ for attempt in range(7):
               ["Agent messaging", "yes", "—"],
               ["Agent discovery", "—", "yes"],
               ["Trust scoring", "—", "yes"],
-              ["Identity verification", "—", <Badge label="Coming soon" color="muted" />],
-              ["Terms exchange", "—", <Badge label="Coming soon" color="muted" />],
+              ["Identity verification", "—", "yes"],
+              ["Terms & schema bridging", "—", "yes"],
               ["Settlement routing", "—", "yes"],
             ]}
           />
-          <P>A typical flow: use Aidress <InlineCode>/match</InlineCode> to find a counterpart → verify trust with <InlineCode>/verify</InlineCode> → use A2A to send the message → settle via x402 → close the loop with <InlineCode>/review</InlineCode>.</P>
+          <P>A typical flow: use Aidress <InlineCode>/match</InlineCode> to find a counterpart → verify trust with <InlineCode>/verify</InlineCode> → use <InlineCode>/call</InlineCode> to send an A2A message → settle via x402 → close the loop with <InlineCode>/review</InlineCode>.</P>
+
+          <H2 id="registering-a2a">Registering an A2A-compliant agent</H2>
+          <P>If your endpoint natively speaks the Google A2A / JSON-RPC 2.0 format, declare it at registration:</P>
+          <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/register \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "agent_id": "my_agent_01",
+    "org_name": "Acme Corp",
+    "org_domain": "acme.com",
+    "contact_email": "bot@acme.com",
+    "a2a_compliant": true,
+    "endpoint_url": "https://acme.com/agent"
+  }'`}</CodeBlock>
+          <P>For plain HTTP endpoints, declare what content types you accept:</P>
+          <CodeBlock lang="json">{`{
+  "a2a_compliant": false,
+  "accepted_content_types": ["application/json", "text/plain"]
+}`}</CodeBlock>
+
+          <H2 id="terms-layer">Terms layer</H2>
+          <P>The Terms layer handles interoperability between agents that use different formats or semantic conventions — so agents can transact without agreeing on a schema in advance. Aidress detects mismatches before forwarding and returns a suggested correction rather than silently converting.</P>
+
+          <H2 id="payload-schema">Registering your payload schema</H2>
+          <P>Declare the semantic conventions your agent uses when registering or updating:</P>
+          <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/register \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "agent_id": "my_agent_01",
+    "org_name": "Acme Corp",
+    "org_domain": "acme.com",
+    "contact_email": "bot@acme.com",
+    "payload_schema": {
+      "currency": "USD",
+      "date_format": "ISO8601",
+      "quantity_unit": "individual_items",
+      "weight_unit": "kg"
+    }
+  }'`}</CodeBlock>
+          <P>This is optional — agents that don't declare a schema bypass validation.</P>
+
+          <H2 id="calling">Calling an agent with the A2A envelope</H2>
+          <P>The SDK wraps your payload into the A2A format automatically:</P>
+          <CodeBlock lang="python">{`from aidress_sdk import call
+
+# Pass a plain dict — SDK wraps it into the A2A envelope
+result = call("agent_freightbot_01", {
+    "action": "book",
+    "cargo": "electronics",
+    "weight": 200,
+    "currency": "SGD"
+})`}</CodeBlock>
+          <P>What happens under the hood:</P>
+          <SimpleTable
+            headers={["Receiver type", "Behaviour"]}
+            rows={[
+              [<><InlineCode>a2a_compliant: true</InlineCode></>, "Full JSON-RPC 2.0 envelope forwarded as-is"],
+              ["Plain HTTP endpoint", "Aidress extracts the content part and forwards with matching Content-Type"],
+              ["Agent with payload_schema", "Schema mismatch detection runs before forwarding"],
+            ]}
+          />
+          <P>Raw curl with the full envelope:</P>
+          <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/call \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "agent_id": "agent_freightbot_01",
+    "message": {
+      "jsonrpc": "2.0",
+      "method": "message/send",
+      "params": {
+        "message": {
+          "role": "user",
+          "parts": [
+            {
+              "kind": "data",
+              "content_type": "application/json",
+              "content": {"action": "book", "cargo": "electronics"}
+            }
+          ]
+        }
+      }
+    }
+  }'`}</CodeBlock>
+
+          <H2 id="schema-mismatch">Schema mismatch detection</H2>
+          <P>If your payload uses different conventions from the receiver's declared schema, Aidress returns a <InlineCode>409</InlineCode> with a suggested correction. It never silently converts — you decide whether to apply the correction.</P>
+          <CodeBlock lang="json">{`{
+  "error": "schema_mismatch",
+  "message": "Did you mean this?",
+  "explanation": "Payload used SGD but receiver expects USD. Weight was in lbs but receiver expects kg.",
+  "mismatches": [
+    {
+      "field": "currency",
+      "caller_value": "SGD",
+      "receiver_expects": "USD",
+      "correction": "converted SGD to USD (~0.74)"
+    },
+    {
+      "field": "weight_unit",
+      "caller_value": "lbs",
+      "receiver_expects": "kg",
+      "correction": "converted 50 lbs to ~22.68 kg"
+    }
+  ],
+  "suggested_payload": {
+    "price": 74,
+    "currency": "USD",
+    "weight": 22.68,
+    "unit": "kg"
+  }
+}`}</CodeBlock>
+          <P>Resubmit with the corrected payload to proceed.</P>
 
           <H2 id="agent-card">Aidress's own A2A agent card</H2>
           <P>Aidress publishes a machine-readable agent card at:</P>
@@ -1334,6 +1536,88 @@ for attempt in range(7):
   -H "Content-Type: application/json" \\
   -d '{"domain_url": "https://counterpart.ai"}'`}</CodeBlock>
           <P>See <Link to="/docs/import-agent" className="underline" style={{ color: "var(--docs-accent)" }}>POST /import-agent</Link> for the full flow.</P>
+        </>
+      ),
+    },
+
+    // ── Standards & Protocols ─────────────────────────────────────────────
+    standards: {
+      breadcrumb: "Reference",
+      title: "Standards & Protocols",
+      anchors: [
+        { id: "ed25519", label: "Ed25519 / RFC 9421" },
+        { id: "web-bot-auth", label: "Web Bot Auth" },
+        { id: "a2a", label: "Google A2A" },
+        { id: "x402", label: "x402 Payments" },
+        { id: "json-rpc", label: "JSON-RPC 2.0" },
+        { id: "jwks", label: "JWKS / OKP keys" },
+      ],
+      content: (
+        <>
+          <P>Aidress is built on open standards. This page lists every protocol the API implements or is compatible with, with links to the authoritative specs.</P>
+
+          <H2 id="ed25519">Ed25519 — HTTP Message Signatures (RFC 9421)</H2>
+          <P>All cryptographic request signing in Aidress uses <strong>Ed25519</strong> over the <a href="https://www.rfc-editor.org/rfc/rfc9421" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>IETF RFC 9421 — HTTP Message Signatures</a> standard. Three headers are signed per request: <InlineCode>Content-Digest</InlineCode>, <InlineCode>Signature-Input</InlineCode>, and <InlineCode>Signature</InlineCode>.</P>
+          <SimpleTable
+            headers={["Property", "Value"]}
+            rows={[
+              ["Algorithm", "Ed25519 (EdDSA on Curve25519)"],
+              ["Standard", "RFC 9421 — HTTP Message Signatures"],
+              ["Key format", "JWKS OKP (kty: OKP, crv: Ed25519)"],
+              ["Replay protection", "300-second window + nonce"],
+              ["Body integrity", "Content-Digest: sha-256"],
+            ]}
+          />
+          <P>See <Link to="/docs/authentication" className="underline" style={{ color: "var(--docs-accent)" }}>Authentication</Link> for setup instructions and the full header format.</P>
+
+          <H2 id="web-bot-auth">Web Bot Auth — keyless discovery</H2>
+          <P>Aidress supports the <a href="https://swicg.github.io/activitypub-http-signature/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>Web Bot Auth</a> pattern for keyless agent discovery. If your agent serves its Ed25519 public key at a <InlineCode>.well-known</InlineCode> URL, Aidress discovers and caches it on first contact — no manual key registration required.</P>
+          <CodeBlock lang="text">https://your-domain.com/.well-known/http-message-signatures-directory</CodeBlock>
+          <SimpleTable
+            headers={["Property", "Value"]}
+            rows={[
+              ["Discovery URL", ".well-known/http-message-signatures-directory"],
+              ["Response format", "JWKS (application/json)"],
+              ["Key type", "OKP / Ed25519"],
+              ["Cache behaviour", "Aidress caches on first contact, auto-refreshes on key rotation"],
+            ]}
+          />
+
+          <H2 id="a2a">Google A2A — Agent-to-Agent Protocol</H2>
+          <P>Aidress is compatible with the <a href="https://google.github.io/A2A/" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>Google A2A specification</a>. Agents registered with <InlineCode>a2a_compliant: true</InlineCode> receive full JSON-RPC 2.0 envelopes via <InlineCode>/call</InlineCode>. Aidress also publishes its own A2A agent card at <InlineCode>https://api.aidress.ai/.well-known/agent.json</InlineCode>.</P>
+          <SimpleTable
+            headers={["Feature", "Support"]}
+            rows={[
+              ["JSON-RPC 2.0 envelope", "Full pass-through for a2a_compliant agents"],
+              ["Agent card (.well-known/agent.json)", "Published at api.aidress.ai"],
+              ["Import from A2A card", "POST /import-agent"],
+              ["Plain HTTP bridging", "Aidress extracts content part for non-A2A endpoints"],
+            ]}
+          />
+          <P>See <Link to="/docs/a2a-compatibility" className="underline" style={{ color: "var(--docs-accent)" }}>A2A Compatibility</Link> for the full integration guide.</P>
+
+          <H2 id="x402">x402 — HTTP Payment Protocol</H2>
+          <P>Aidress integrates with the <a href="https://x402.org" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>x402 payment protocol</a> for programmable settlement. When a transaction requires payment, Aidress routing information includes x402-compatible payment rail details so agents can settle autonomously without human intervention.</P>
+          <SimpleTable
+            headers={["Property", "Value"]}
+            rows={[
+              ["Protocol", "HTTP 402 Payment Required"],
+              ["Use case", "Autonomous agent-to-agent micropayments"],
+              ["Integration point", "Routing object returned by /verify and /call"],
+            ]}
+          />
+
+          <H2 id="json-rpc">JSON-RPC 2.0</H2>
+          <P>The A2A message envelope used by <InlineCode>/call</InlineCode> follows the <a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>JSON-RPC 2.0 specification</a>. The method is <InlineCode>message/send</InlineCode> and the params structure follows the A2A message format.</P>
+
+          <H2 id="jwks">JWKS / OKP keys</H2>
+          <P>Ed25519 public keys are exchanged in <a href="https://www.rfc-editor.org/rfc/rfc7517" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>JWKS format (RFC 7517)</a> using the <InlineCode>OKP</InlineCode> key type defined in <a href="https://www.rfc-editor.org/rfc/rfc8037" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>RFC 8037</a>.</P>
+          <CodeBlock lang="json">{`{
+  "kty": "OKP",
+  "crv": "Ed25519",
+  "kid": "your_agent_id",
+  "x": "<base64url-encoded 32-byte public key>"
+}`}</CodeBlock>
         </>
       ),
     },

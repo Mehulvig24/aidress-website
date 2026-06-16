@@ -254,6 +254,7 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - [Org API Keys](https://aidress.ai/docs/org-api-keys)
 - [Error Codes](https://aidress.ai/docs/error-codes)
 - [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility)
+- [Standards & Protocols](https://aidress.ai/docs/standards)
 
 ## Research & Writing
 
