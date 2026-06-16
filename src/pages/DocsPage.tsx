@@ -1247,7 +1247,7 @@ if "error" in trust:
     abort()  # treat as untrusted`}</CodeBlock>
 
           <H2 id="retry">Retry behaviour</H2>
-          <P>The client retries automatically on <StatusBadge code={503} /> (Render cold starts) — up to 7 attempts with 5-second intervals. No configuration needed.</P>
+          <P>The client retries automatically on <StatusBadge code={503} /> — up to 7 attempts with 5-second intervals. No configuration needed.</P>
         </>
       ),
     },
@@ -1352,12 +1352,12 @@ if "error" in trust:
               [<StatusBadge code={404} />, "Not Found", "Agent ID does not exist"],
               [<StatusBadge code={409} />, "Conflict", "agent_id or org_domain already registered"],
               [<StatusBadge code={422} />, "Unprocessable", "Validation error — field format, missing required field"],
-              [<StatusBadge code={503} />, "Unavailable", "Server cold start (Render free tier). Retry with backoff."],
+              [<StatusBadge code={503} />, "Unavailable", "Service temporarily unavailable. Retry with backoff."],
             ]}
           />
 
           <H2 id="handling-503">Handling 503</H2>
-          <P>Aidress runs on Render's free tier. Cold starts can take up to 60 seconds after a period of inactivity. The Python SDK handles this automatically (7 retries, 5s interval). For raw HTTP clients:</P>
+          <P>If the API returns <StatusBadge code={503} />, retry with backoff. The Python SDK handles this automatically (7 retries, 5s interval). For raw HTTP clients:</P>
           <CodeBlock lang="python">{`import time, requests
 
 for attempt in range(7):
