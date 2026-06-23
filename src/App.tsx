@@ -9,7 +9,7 @@ import React, {
 import { motion, AnimatePresence } from "framer-motion";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X } from "lucide-react";
+import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X, Volume2, VolumeX } from "lucide-react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { SearchModal, SearchTrigger } from "./components/SearchModal";
 import DocsPage from "./pages/DocsPage";
@@ -972,7 +972,7 @@ function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 pt-16 text-center"
+      className="relative flex min-h-[78vh] flex-col items-center justify-center overflow-hidden px-5 pt-16 text-center"
     >
       {/* World map background */}
       <div
@@ -1076,35 +1076,28 @@ function HeroSection() {
 
 // ─── Section 2: Registry Stats ──────────────────────────────────────────────────
 
-function ProblemSection() {
+function StatsSection() {
   return (
-    <section className="pt-12 pb-0 md:pt-16">
-      <div className="mx-auto max-w-3xl px-5 text-center md:px-10">
-        <FadeIn>
+    <section className="mx-auto max-w-5xl px-5 pt-12 pb-8 md:px-10 md:pt-16 md:pb-10">
+      <FadeIn>
+        <div className="mb-8 md:mb-10">
           <h2
-            className="text-[1.45rem] font-semibold leading-tight tracking-tight sm:text-3xl md:text-[2.25rem]"
+            className="text-[1.35rem] font-semibold leading-tight tracking-tight sm:text-2xl md:text-[1.9rem]"
             style={{ color: "var(--text)" }}
           >
             Not a capability gap. A coordination gap.
           </h2>
           <p
-            className="mx-auto mt-4 max-w-lg text-sm leading-relaxed md:text-base"
+            className="mt-3 max-w-lg text-sm leading-relaxed md:text-base"
             style={{ color: "var(--text-muted)" }}
           >
             Today&apos;s agents can reason, plan, and act — but when they need
             to find a counterparty, verify trust, or route value, they hand
             back to a human. Every time.
           </p>
-        </FadeIn>
-      </div>
-    </section>
-  );
-}
-
-function StatsSection() {
-  return (
-    <section className="mx-auto max-w-5xl px-5 py-20 md:px-10 md:py-28">
-      <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
+        </div>
+      </FadeIn>
+      <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-6">
         {stats.map((s, i) => (
           <FadeIn key={s.label} delay={i * 0.08}>
             <div className="flex flex-col">
@@ -1129,6 +1122,98 @@ function StatsSection() {
           </FadeIn>
         ))}
       </div>
+    </section>
+  );
+}
+
+// ─── Demo Video ─────────────────────────────────────────────────────────────────
+
+function DemoVideoSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [muted, setMuted] = useState(true);
+  const { theme } = useTheme();
+
+  // Play/pause based on visibility
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoRef.current?.play().catch(() => {});
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  function toggleMute() {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !muted;
+    setMuted((m) => !m);
+  }
+
+  return (
+    <section className="mx-auto max-w-5xl px-5 pb-4 pt-4 md:px-10">
+      <FadeIn>
+        <div className="relative">
+          {/* Accent glow */}
+          <div
+            className="pointer-events-none absolute -inset-px -z-10 rounded-3xl"
+            style={{
+              background: theme === "dark"
+                ? "radial-gradient(ellipse 70% 50% at 50% 110%, rgba(139,92,246,0.2) 0%, transparent 70%)"
+                : "radial-gradient(ellipse 70% 50% at 50% 110%, rgba(37,99,235,0.12) 0%, transparent 70%)",
+              filter: "blur(32px)",
+            }}
+          />
+
+          {/* Card */}
+          <div
+            ref={cardRef}
+            className="relative overflow-hidden rounded-2xl"
+            style={{
+              border: "1px solid var(--border)",
+              boxShadow: theme === "dark"
+                ? "0 0 0 1px rgba(255,255,255,0.04), 0 24px 64px rgba(0,0,0,0.5)"
+                : "0 2px 24px rgba(0,0,0,0.08)",
+            }}
+          >
+            <video
+              ref={videoRef}
+              className="w-full"
+              style={{ display: "block", aspectRatio: "16/9" }}
+              muted
+              loop
+              playsInline
+              preload="auto"
+            >
+              <source src="/demo.mp4" type="video/mp4" />
+            </video>
+
+            {/* Volume toggle */}
+            <button
+              type="button"
+              onClick={toggleMute}
+              className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full transition-opacity hover:opacity-100"
+              style={{
+                backgroundColor: "rgba(0,0,0,0.45)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                backdropFilter: "blur(8px)",
+                opacity: 0.7,
+              }}
+              aria-label={muted ? "Unmute" : "Mute"}
+            >
+              {muted
+                ? <VolumeX size={14} color="white" />
+                : <Volume2 size={14} color="white" />}
+            </button>
+          </div>
+        </div>
+      </FadeIn>
     </section>
   );
 }
@@ -1832,8 +1917,8 @@ function HomePage() {
       <Nav />
       <main>
         <HeroSection />
-        <ProblemSection />
         <StatsSection />
+        <DemoVideoSection />
         <EngineSection />
         <LaunchControlSection />
         <SystemStatusStrip />

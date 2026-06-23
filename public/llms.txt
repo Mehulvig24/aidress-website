@@ -270,6 +270,10 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - Prashanth Ranganathan (Advisor): Serial founder behind multiple acquisitions by Google, PayPal, and PayU.
 - Milind Sanghavi (Advisor): Founder at Xweave, building the future of global cross border payments rails.
 
+## Product Demo
+
+A 2-minute 17-second video demo of Aidress is available at https://aidress.ai/demo.mp4 and embedded on the homepage. It shows agent discovery, trust verification, and the coordination flow end-to-end.
+
 ## For Agents
 
 Well-known agent descriptor: https://api.aidress.ai/.well-known/agent.json
