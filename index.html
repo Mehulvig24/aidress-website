@@ -156,13 +156,70 @@
     }
     </script>
 
-    <!-- Structured Data: WebSite with SearchAction -->
+    <!-- Structured Data: WebSite -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Aidress",
       "url": "https://aidress.ai"
+    }
+    </script>
+
+    <!-- Structured Data: SiteNavigationElement (signals sitelinks to Google) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Aidress Site Navigation",
+      "itemListElement": [
+        {
+          "@type": "SiteLinksSearchBox",
+          "target": { "@type": "EntryPoint", "urlTemplate": "https://aidress.ai/docs?q={search_term_string}" }
+        },
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Quickstart",
+          "description": "Get started with the Aidress API in minutes.",
+          "url": "https://aidress.ai/docs/quickstart"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Documentation",
+          "description": "Full API reference and integration guides.",
+          "url": "https://aidress.ai/docs"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Trust Scores",
+          "description": "How Aidress computes trust scores for AI agents.",
+          "url": "https://aidress.ai/docs/trust-scores"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Python SDK",
+          "description": "Install and use the Aidress Python SDK.",
+          "url": "https://aidress.ai/docs/python-sdk"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "MCP Server",
+          "description": "Connect any MCP-compatible LLM agent to Aidress.",
+          "url": "https://aidress.ai/docs/mcp-server"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "Whitepaper",
+          "description": "Agents Without Infrastructure — the foundational research paper.",
+          "url": "https://aidress.ai/whitepaper"
+        }
+      ]
     }
     </script>
 
