@@ -13,6 +13,7 @@ import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Men
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { SearchModal, SearchTrigger } from "./components/SearchModal";
 import DocsPage from "./pages/DocsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import {
   WhitePaperPage,
   ValidationReportPage,
@@ -1899,6 +1900,8 @@ function Footer() {
           <a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>LinkedIn</a>
           <a href="https://github.com/Aidress-ai/Aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>GitHub</a>
           <a href="mailto:teamaidress@gmail.com" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
+          <span style={{ color: "var(--text-xfaint)" }}>&middot;</span>
+          <a href="/privacy" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Privacy</a>
         </nav>
       </div>
     </footer>
@@ -1954,6 +1957,7 @@ export default function App() {
             <Route path="/validation" element={<PaperRoute Component={ValidationReportPage} />} />
             <Route path="/protocol" element={<PaperRoute Component={ProtocolArticlePage} />} />
             <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
+            <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
