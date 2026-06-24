@@ -1897,6 +1897,7 @@ function Footer() {
           <a href="https://x.com/aidabornnative" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>X</a>
           <a href="https://www.instagram.com/aidress.ai" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Instagram</a>
           <a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>LinkedIn</a>
+          <a href="https://github.com/Aidress-ai/Aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>GitHub</a>
           <a href="mailto:teamaidress@gmail.com" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
         </nav>
       </div>
