@@ -1877,32 +1877,111 @@ function CrewSection() {
 
 // ─── Footer ─────────────────────────────────────────────────────────────────────
 
+function FooterCol({ heading, links }: { heading: string; links: { label: string; href: string; external?: boolean }[] }) {
+  return (
+    <div className="col-span-1">
+      <h3 className="mb-3 text-[0.7rem] font-medium uppercase tracking-widest" style={{ color: "var(--text-faint)" }}>{heading}</h3>
+      <ul className="flex flex-col gap-2.5">
+        {links.map((l) => (
+          <li key={l.label}>
+            <a
+              href={l.href}
+              {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="text-[0.8rem] leading-none transition-opacity hover:opacity-100"
+              style={{ color: "var(--text-muted)", opacity: 0.7 }}
+            >
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Footer() {
   return (
-    <footer style={{ borderTop: "1px solid var(--border)", backgroundColor: "var(--bg)" }}>
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 md:flex-row md:items-center md:justify-between md:px-10">
-        {/* Left: logo + year */}
-        <div className="flex items-center gap-3">
-          <AidressLogo logoHeight={20} className="opacity-70" />
-          <span className="text-xs" style={{ color: "var(--text-faint)" }}>
-            &middot;&nbsp; &copy; {new Date().getFullYear()}
-          </span>
+    <footer className="px-5 pb-6 pt-2 md:px-10">
+      <div
+        className="mx-auto max-w-7xl rounded-2xl p-6 md:p-8"
+        style={{
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          boxShadow: "0 0 80px 0 rgba(0,0,0,0.25)",
+        }}
+      >
+        {/* Top grid: logo + columns */}
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-[auto_1fr] md:gap-10">
+          {/* Logo */}
+          <div className="col-span-2 md:col-span-1">
+            <AidressLogo logoHeight={22} className="opacity-80" />
+          </div>
+
+          {/* Nav columns */}
+          <div className="col-span-2 grid grid-cols-2 gap-6 md:col-span-1 md:grid-cols-4 md:gap-8">
+            <FooterCol heading="Product" links={[
+              { label: "Discovery", href: "#engine" },
+              { label: "Identity", href: "#engine" },
+              { label: "Trust", href: "#engine" },
+              { label: "Terms", href: "#engine" },
+              { label: "Routing", href: "#engine" },
+            ]} />
+            <FooterCol heading="Developers" links={[
+              { label: "Quickstart", href: "/docs/quickstart" },
+              { label: "API Reference", href: "/docs/verify" },
+              { label: "Python SDK", href: "/docs/python-sdk" },
+              { label: "MCP Server", href: "/docs/mcp-server" },
+              { label: "A2A Compatibility", href: "/docs/a2a-compatibility" },
+            ]} />
+            <FooterCol heading="Resources" links={[
+              { label: "Docs", href: "/docs" },
+              { label: "Whitepaper", href: "/whitepaper" },
+              { label: "Validation Report", href: "/validation" },
+              { label: "Discord (support)", href: "https://discord.gg/DG2VjeB7T", external: true },
+              { label: "Contact", href: "mailto:teamaidress@gmail.com" },
+            ]} />
+            <FooterCol heading="Company" links={[
+              { label: "Mission", href: "#logs" },
+              { label: "Team", href: "#crew" },
+              { label: "GitHub", href: "https://github.com/Aidress-ai/Aidress", external: true },
+              { label: "Privacy", href: "/privacy" },
+            ]} />
+          </div>
         </div>
 
-        {/* Right: links */}
-        <nav className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "var(--text-faint)" }}>
-          <a href="#engine" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Engine</a>
-          <a href="#logs" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Logs</a>
-          <a href="#" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>API</a>
-          <span style={{ color: "var(--text-xfaint)" }}>&middot;</span>
-          <a href="https://x.com/aidabornnative" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>X</a>
-          <a href="https://www.instagram.com/aidress.ai" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Instagram</a>
-          <a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>LinkedIn</a>
-          <a href="https://github.com/Aidress-ai/Aidress" target="_blank" rel="noopener noreferrer" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>GitHub</a>
-          <a href="mailto:teamaidress@gmail.com" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Email</a>
-          <span style={{ color: "var(--text-xfaint)" }}>&middot;</span>
-          <a href="/privacy" className="transition hover:underline" style={{ color: "var(--text-muted)" }}>Privacy</a>
-        </nav>
+        {/* Bottom bar */}
+        <div className="mt-8 flex flex-col gap-4 border-t pt-6 md:flex-row md:items-center md:justify-between" style={{ borderColor: "var(--border)" }}>
+          {/* Copyright + legal */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.72rem]" style={{ color: "var(--text-faint)" }}>
+            <span>&copy; {new Date().getFullYear()} Aidress</span>
+            <a href="/privacy" className="transition hover:opacity-100" style={{ opacity: 0.6 }}>Privacy policy</a>
+            <a href="mailto:teamaidress@gmail.com" className="transition hover:opacity-100" style={{ opacity: 0.6 }}>Contact</a>
+          </div>
+
+          {/* Social icons */}
+          <ul className="flex items-center gap-4">
+            {/* X */}
+            <li><a href="https://x.com/aidabornnative" target="_blank" rel="noopener noreferrer" aria-label="X" className="transition-opacity hover:opacity-100" style={{ opacity: 0.5, color: "var(--text)" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M14.503 2.917h2.401l-5.246 6 6.172 8.166h-4.833l-3.785-4.952-4.332 4.952H2.477l5.612-6.418-5.921-7.748h4.956l3.421 4.526 3.958-4.526Zm-.843 12.728h1.33L6.4 4.279H4.974l8.687 11.366Z" fill="currentColor"/></svg>
+            </a></li>
+            {/* Instagram */}
+            <li><a href="https://www.instagram.com/aidress.ai" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="transition-opacity hover:opacity-100" style={{ opacity: 0.5, color: "var(--text)" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><rect x="2.5" y="2.5" width="15" height="15" rx="4" stroke="currentColor" strokeWidth="1.5"/><circle cx="10" cy="10" r="3.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="14.5" cy="5.5" r="1" fill="currentColor"/></svg>
+            </a></li>
+            {/* LinkedIn */}
+            <li><a href="https://www.linkedin.com/company/aidress" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-opacity hover:opacity-100" style={{ opacity: 0.5, color: "var(--text)" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M16.375 2.5H3.625A1.125 1.125 0 0 0 2.5 3.625v12.75A1.125 1.125 0 0 0 3.625 17.5h12.75a1.125 1.125 0 0 0 1.125-1.125V3.625A1.125 1.125 0 0 0 16.375 2.5ZM7 15.25H4.75V8.5H7v6.75ZM5.875 7.187a1.313 1.313 0 1 1 1.35-1.312 1.335 1.335 0 0 1-1.35 1.313Zm9.375 8.063H13v-3.555c0-1.065-.45-1.447-1.035-1.447a1.304 1.304 0 0 0-1.215 1.395v3.607H8.5V8.5h2.175v.975a2.332 2.332 0 0 1 2.025-1.05c1.163 0 2.52.645 2.52 2.745l.03 4.08Z" fill="currentColor"/></svg>
+            </a></li>
+            {/* GitHub */}
+            <li><a href="https://github.com/Aidress-ai/Aidress" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="transition-opacity hover:opacity-100" style={{ opacity: 0.5, color: "var(--text)" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M10.001 1.625a8.331 8.331 0 0 1 8.334 8.334 8.346 8.346 0 0 1-5.677 7.906c-.417.083-.573-.177-.573-.396 0-.281.01-1.177.01-2.291 0-.782-.26-1.282-.562-1.542 1.854-.208 3.802-.917 3.802-4.115 0-.916-.323-1.656-.855-2.24.084-.208.375-1.062-.083-2.208 0 0-.698-.229-2.292.855a7.733 7.733 0 0 0-2.083-.282c-.708 0-1.417.094-2.083.282-1.594-1.073-2.292-.855-2.292-.855-.458 1.146-.167 2-.083 2.209a3.243 3.243 0 0 0-.854 2.24c0 3.187 1.937 3.906 3.791 4.114-.24.208-.458.573-.53 1.115-.48.218-1.678.572-2.428-.688-.156-.25-.625-.865-1.281-.854-.698.01-.282.396.01.552.354.198.76.937.854 1.177.167.469.709 1.365 2.802.98 0 .697.01 1.353.01 1.551 0 .219-.155.469-.572.396A8.329 8.329 0 0 1 1.668 9.96a8.331 8.331 0 0 1 8.333-8.334Z" fill="currentColor"/></svg>
+            </a></li>
+            {/* Discord */}
+            <li><a href="https://discord.gg/DG2VjeB7T" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="transition-opacity hover:opacity-100" style={{ opacity: 0.5, color: "var(--text)" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M16.93 3.76A16.3 16.3 0 0 0 13.22 2.6a.06.06 0 0 0-.07.03c-.15.28-.32.64-.44.92a15.06 15.06 0 0 0-4.52 0 9.3 9.3 0 0 0-.45-.92.06.06 0 0 0-.07-.03A16.25 16.25 0 0 0 3.06 3.76a.06.06 0 0 0-.03.02C1.04 6.9.48 9.96.6 12.98c0 .02.01.03.03.04a16.38 16.38 0 0 0 4.94 2.5.06.06 0 0 0 .07-.02c.38-.52.72-1.07 1.01-1.65a.06.06 0 0 0-.03-.09 10.8 10.8 0 0 1-1.54-.74.06.06 0 0 1-.01-.1l.31-.24a.06.06 0 0 1 .06-.01c3.23 1.48 6.73 1.48 9.92 0a.06.06 0 0 1 .07.01l.3.24a.06.06 0 0 1-.01.1c-.49.29-1 .54-1.54.73a.06.06 0 0 0-.03.1c.3.58.64 1.13 1.01 1.65a.06.06 0 0 0 .07.02 16.33 16.33 0 0 0 4.95-2.5.06.06 0 0 0 .03-.04c.17-3.44-.57-6.47-2.4-9.2a.05.05 0 0 0-.03-.02ZM7.01 11.15c-.97 0-1.78-.9-1.78-2s.78-2 1.78-2c1.01 0 1.8.91 1.78 2 0 1.1-.78 2-1.78 2Zm6.58 0c-.97 0-1.77-.9-1.77-2s.78-2 1.77-2c1.01 0 1.8.91 1.78 2 0 1.1-.77 2-1.78 2Z" fill="currentColor"/></svg>
+            </a></li>
+          </ul>
+        </div>
       </div>
     </footer>
   );
