@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Copy, Check, ChevronRight, Menu, X, Sun, Moon, MessageCircle, FileText, Sparkles } from "lucide-react";
-import { SearchModal, SearchTrigger } from "@/components/SearchModal";
+import { SearchModal, searchDocs } from "@/components/SearchModal";
+import { GooeyInput } from "@/components/ui/gooey-input";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { Timeline } from "@/components/ui/timeline";
 
@@ -1982,6 +1983,18 @@ export default function DocsPage() {
     setMobileMenuOpen(false);
   }, [slug]);
 
+  // ⌘K / Ctrl+K opens the full search modal
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   // Intersection observer for "On this page" anchor tracking
   useEffect(() => {
     if (!page) return;
@@ -2107,7 +2120,21 @@ export default function DocsPage() {
             <span className="truncate text-[14px] font-medium md:hidden" style={{ color: "var(--docs-body)" }}>{page.title}</span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <SearchTrigger onClick={() => setSearchOpen(true)} className="hidden md:flex" />
+            <GooeyInput
+              className="hidden md:flex"
+              placeholder="Search docs…"
+              collapsedWidth={150}
+              expandedWidth={240}
+              onSubmit={(q) => {
+                const r = searchDocs(q);
+                if (r[0]) navigate(`/docs/${r[0].slug}`);
+              }}
+              classNames={{
+                trigger: "!bg-[var(--docs-callout-bg)] !text-[var(--docs-faint)] !ring-1 !ring-[var(--docs-border)] !justify-start",
+                input: "!text-[var(--docs-heading)] placeholder:!text-[var(--docs-faint)]",
+                bubbleSurface: "!bg-[var(--docs-callout-bg)] !text-[var(--docs-heading)] !ring-1 !ring-[var(--docs-border)]",
+              }}
+            />
             <Link to="/" className="hidden text-[13px] transition-colors hover:underline sm:block" style={{ color: "var(--docs-faint)" }}>← Back</Link>
             <Link to="/" className="flex h-8 w-8 items-center justify-center sm:hidden" style={{ color: "var(--docs-faint)" }}>←</Link>
             <button type="button" onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-md transition-colors" style={{ color: "var(--docs-body)" }}>

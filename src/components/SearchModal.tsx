@@ -36,7 +36,7 @@ const searchIndex: SearchEntry[] = [
   { slug: "a2a-compatibility", title: "A2A Compatibility", section: "Reference", keywords: "a2a compatibility google agent to agent messaging discovery import agent card well known" },
 ];
 
-function searchDocs(query: string): SearchEntry[] {
+export function searchDocs(query: string): SearchEntry[] {
   if (!query.trim()) return [];
   const q = query.toLowerCase();
   const terms = q.split(/\s+/);

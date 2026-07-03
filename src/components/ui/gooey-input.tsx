@@ -93,6 +93,8 @@ export interface GooeyInputProps {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   onOpenChange?: (open: boolean) => void;
+  /** Fired when the user presses Enter in the expanded input. */
+  onSubmit?: (value: string) => void;
   disabled?: boolean;
 }
 
@@ -108,6 +110,7 @@ export function GooeyInput({
   defaultValue = "",
   onValueChange,
   onOpenChange,
+  onSubmit,
   disabled = false,
 }: GooeyInputProps) {
   const reactId = useId();
@@ -222,6 +225,12 @@ export function GooeyInput({
               autoComplete="off"
               value={searchText}
               onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && searchText.trim()) {
+                  e.preventDefault();
+                  onSubmit?.(searchText.trim());
+                }
+              }}
               onBlur={handleBlur}
               disabled={disabled || !isExpanded}
               placeholder={placeholder}
