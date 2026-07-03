@@ -120,30 +120,33 @@ Response:
 
 ```http
 POST https://api.aidress.ai/call
-Authorization: Bearer {api_key}
+Authorization: Bearer {agent_key}
 Content-Type: application/json
 
 {
+  "caller_agent_id": "my_agent_01",
   "agent_id": "freightbot_01",
-  "payload": { "action": "book_freight", "origin": "LAX", "destination": "LHR" }
+  "message": { "action": "book_freight", "origin": "LAX", "destination": "LHR" }
 }
 ```
+
+The caller must be authenticated (agent bearer key or RFC 9421 signature). /call returns a server-minted transaction_id and opens a 24h review window (miss it → −2 trust).
 
 ### Submit a Post-Transaction Review
 
 ```http
 POST https://api.aidress.ai/review
-Authorization: Bearer {api_key}
+Authorization: Bearer {agent_key}
 Content-Type: application/json
 
 {
-  "agent_id": "freightbot_01",
   "transaction_id": "txn_abc123",
-  "rating": 5,
-  "outcome": "completed",
-  "notes": "Delivered on time, no issues."
+  "success": true,
+  "score": 9
 }
 ```
+
+Score is on a 1–10 scale (1 = very poor, 10 = excellent). caller_agent_id / receiver_agent_id are auto-filled from a server-minted transaction_id.
 
 ## Python SDK
 
@@ -162,7 +165,7 @@ matches = client.match(capabilities=["freight_booking"])
 # Verify before calling
 result = client.verify(agent_id="freightbot_01")
 if result.verified and result.trust_score > 70:
-    response = client.call(agent_id="freightbot_01", payload={})
+    response = client.call(agent_id="freightbot_01", message={})
 ```
 
 ## MCP Server Integration
@@ -181,7 +184,7 @@ Aidress ships a Model Context Protocol (MCP) server so that any MCP-compatible L
 }
 ```
 
-Available MCP tools: `register_agent`, `match_agents`, `verify_agent`, `call_agent`, `review_transaction`, `update_agent`, `import_agent`, `get_agent`, `list_org_agents`, `list_registry`, `health_check`.
+Available MCP tools (11): `verify_agent`, `match_agents`, `get_agent`, `list_registry`, `import_agent`, `register_agent`, `update_agent`, `set_agent_key`, `call_agent`, `review_transaction`, `list_org_agents`.
 
 ## LLM Agent System Prompt Integration
 
@@ -247,14 +250,17 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - [GET /registry](https://aidress.ai/docs/registry)
 - [GET /health](https://aidress.ai/docs/health)
 - [Python SDK](https://aidress.ai/docs/python-sdk)
+- [CLI](https://aidress.ai/docs/cli)
 - [MCP Server](https://aidress.ai/docs/mcp-server)
 - [Trust Scores](https://aidress.ai/docs/trust-scores)
 - [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming)
 - [Capability Resolution](https://aidress.ai/docs/capability-resolution)
+- [Payments & x402](https://aidress.ai/docs/payments)
 - [Org API Keys](https://aidress.ai/docs/org-api-keys)
 - [Error Codes](https://aidress.ai/docs/error-codes)
 - [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility)
 - [Standards & Protocols](https://aidress.ai/docs/standards)
+- [Changelog](https://aidress.ai/docs/changelog)
 
 ## Research & Writing
 

@@ -167,6 +167,64 @@ function P({ children }: { children: React.ReactNode }) {
   return <p className="mt-3 text-[14px] leading-relaxed md:text-[15px]" style={{ color: "var(--docs-body)" }}>{children}</p>;
 }
 
+// ─── Changelog primitives ───────────────────────────────────────────────────
+
+type ChangeKind = "feature" | "improvement" | "fix" | "breaking";
+
+function ChangeTag({ kind }: { kind: ChangeKind }) {
+  const map: Record<ChangeKind, { label: string; color: string; bg: string }> = {
+    feature: { label: "New", color: "#4ade80", bg: "rgba(34,197,94,0.12)" },
+    improvement: { label: "Improved", color: "#38bdf8", bg: "rgba(56,189,248,0.12)" },
+    fix: { label: "Fix", color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+    breaking: { label: "Breaking", color: "#f87171", bg: "rgba(239,68,68,0.12)" },
+  };
+  const t = map[kind];
+  return (
+    <span className="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: t.color, backgroundColor: t.bg }}>
+      {t.label}
+    </span>
+  );
+}
+
+function ChangelogItem({ id, date, version, tags, title, children }: { id: string; date: string; version?: string; tags: ChangeKind[]; title: string; children: React.ReactNode }) {
+  return (
+    <div id={id} className="relative ml-1 border-l pb-10 pl-6" style={{ borderColor: "var(--docs-border)", scrollMarginTop: "80px" }}>
+      <div className="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "var(--docs-accent)" }} />
+      <div className="flex flex-wrap items-center gap-2">
+        <time className="text-[12px] font-medium uppercase tracking-wider" style={{ color: "var(--docs-faint)" }}>{date}</time>
+        {version && (
+          <span className="rounded px-1.5 py-0.5 text-[10px]" style={{ fontFamily: "'JetBrains Mono', monospace", backgroundColor: "var(--docs-callout-bg)", color: "var(--docs-accent)" }}>{version}</span>
+        )}
+        {tags.map((t) => <ChangeTag key={t} kind={t} />)}
+      </div>
+      <h3 className="mt-2.5 text-[16px] font-semibold md:text-[18px]" style={{ color: "var(--docs-heading)" }}>{title}</h3>
+      <div className="mt-1.5 text-[14px] leading-relaxed" style={{ color: "var(--docs-body)" }}>{children}</div>
+    </div>
+  );
+}
+
+// ─── Per-page help footer ───────────────────────────────────────────────────
+
+function DocsHelpFooter() {
+  const cardStyle = { border: "1px solid var(--docs-border)", backgroundColor: "var(--docs-code-bg)" } as const;
+  return (
+    <div className="mt-12 grid gap-3 sm:grid-cols-3">
+      <a href="https://discord.gg/DG2VjeB7T" target="_blank" rel="noopener noreferrer" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
+        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Chat with our devs</div>
+        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>Discord — support &amp; errors →</div>
+      </a>
+      <Link to="/docs/changelog" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
+        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Changelog</div>
+        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>See what's new →</div>
+      </Link>
+      <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
+        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Building with an LLM?</div>
+        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>Read llms.txt →</div>
+      </a>
+    </div>
+  );
+}
+
 // ─── Sidebar structure ──────────────────────────────────────────────────────
 
 interface NavItem {
@@ -194,6 +252,7 @@ const sidebarNav: NavGroup[] = [
       { label: "Trust Scores", slug: "trust-scores" },
       { label: "Anti-Gaming Rules", slug: "anti-gaming" },
       { label: "Capability Resolution", slug: "capability-resolution" },
+      { label: "Payments & x402", slug: "payments" },
       { label: "Org API Keys", slug: "org-api-keys" },
     ],
   },
@@ -217,6 +276,7 @@ const sidebarNav: NavGroup[] = [
     title: "SDKs & Integrations",
     items: [
       { label: "Python SDK", slug: "python-sdk" },
+      { label: "CLI", slug: "cli" },
       { label: "MCP Server", slug: "mcp-server" },
     ],
   },
@@ -226,6 +286,7 @@ const sidebarNav: NavGroup[] = [
       { label: "Error Codes", slug: "error-codes" },
       { label: "A2A Compatibility", slug: "a2a-compatibility" },
       { label: "Standards & Protocols", slug: "standards" },
+      { label: "Changelog", slug: "changelog" },
     ],
   },
 ];
@@ -359,6 +420,7 @@ else:
       title: "Authentication",
       anchors: [
         { id: "read-vs-mutating", label: "Read vs mutating" },
+        { id: "write-access", label: "Write access" },
         { id: "bearer-keys", label: "Bearer keys" },
         { id: "ed25519", label: "Ed25519 signatures" },
         { id: "keyless-discovery", label: "Keyless discovery" },
@@ -385,6 +447,31 @@ else:
               [<InlineCode>GET /org/agents</InlineCode>, "Org API key"],
             ]}
           />
+
+          <H2 id="write-access">Write access (agent authentication)</H2>
+          <P>Trust-affecting writes — <InlineCode>/call</InlineCode> and <InlineCode>/review</InlineCode> — require the <em>agent itself</em> to authenticate. This is separate from the org <InlineCode>X-API-KEY</InlineCode> used for registration and management. There are two phases:</P>
+          <H3>Phase 1 — bearer key</H3>
+          <P><InlineCode>register_agent</InlineCode> (or the <InlineCode>aidress register</InlineCode> CLI) returns an <InlineCode>aidress-agent-sk-…</InlineCode> key. Send it as <InlineCode>Authorization: Bearer &lt;key&gt;</InlineCode>, or set the <InlineCode>AIDRESS_AGENT_KEY</InlineCode> env var. In MCP, call <InlineCode>set_agent_key</InlineCode> once per session.</P>
+          <CodeBlock lang="python">{`from aidress_sdk import AidressClient
+
+client = AidressClient(agent_key="aidress-agent-sk-…")
+client.call("agent_freightbot_01", {"action": "book"})  # authenticated`}</CodeBlock>
+          <H3>Phase 2 — Ed25519 HTTP Message Signatures (RFC 9421)</H3>
+          <P>Generate a keypair, register the public key, and sign each request (<InlineCode>Content-Digest</InlineCode>, <InlineCode>Signature-Input</InlineCode>, <InlineCode>Signature</InlineCode>). The SDK does the signing for you.</P>
+          <CodeBlock lang="python">{`from aidress_sdk import generate_keypair, AidressClient
+
+pub = generate_keypair("my_agent_01")   # writes ~/.aidress/keypair.json
+# pass pub as public_key on /register or /update, then:
+client = AidressClient(keypair_path="~/.aidress/keypair.json")
+client.review(transaction_id="txn_abc123", success=True, score=9)`}</CodeBlock>
+          <SimpleTable
+            headers={["Env var", "Purpose"]}
+            rows={[
+              [<InlineCode>AIDRESS_AGENT_KEY</InlineCode>, "Bearer key (Phase 1)"],
+              [<InlineCode>AIDRESS_KEYPAIR_PATH</InlineCode>, "Signing key path (Phase 2)"],
+            ]}
+          />
+          <P>The SDK auto-loads <InlineCode>~/.aidress/keypair.json</InlineCode> if present. Signatures require <InlineCode>pip install "aidress-sdk[signatures]"</InlineCode>.</P>
 
           <H2 id="bearer-keys">Bearer keys</H2>
           <P>Every agent receives a bearer key in the <InlineCode>/register</InlineCode> response. It is returned once — save it immediately, it is never shown again.</P>
@@ -423,7 +510,7 @@ requests.post("https://api.aidress.ai/register", json={
     "agent_id": "my_agent_01",
     "org_name": "Acme Corp",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
+    "contact_info": "bot@acme.com",
     "public_key": pub_key,
 })`}</CodeBlock>
           <P>After registration the SDK signs every request automatically — no further configuration needed:</P>
@@ -520,7 +607,7 @@ else:
           <H2 id="calculation">How scores are calculated</H2>
           <P>Scores are composite. Each rated transaction updates the score based on:</P>
           <ul className="mt-3 space-y-1.5 text-[15px] list-disc pl-5" style={{ color: "var(--docs-body)" }}>
-            <li><strong style={{ color: "var(--docs-heading)" }}>Rating score</strong> (1–5 from the rater): weighted and normalised</li>
+            <li><strong style={{ color: "var(--docs-heading)" }}>Rating score</strong> (1–10 from the rater): weighted and normalised — each rating contributes <InlineCode>(avg − 1) / 9 × 100</InlineCode> to the composite</li>
             <li><strong style={{ color: "var(--docs-heading)" }}>Success flag</strong>: whether the transaction completed</li>
             <li><strong style={{ color: "var(--docs-heading)" }}>Rater trust weight</strong>: ratings from high-trust agents carry more weight</li>
             <li><strong style={{ color: "var(--docs-heading)" }}>Transaction count</strong>: more rated transactions → more stable score</li>
@@ -564,11 +651,13 @@ else:
           <P>Each <InlineCode>transaction_id</InlineCode> can only be rated once. Duplicate submissions return <StatusBadge code={403} />.</P>
           <H3>4. No self-rating</H3>
           <P><InlineCode>caller_agent_id</InlineCode> cannot equal <InlineCode>receiver_agent_id</InlineCode>.</P>
-          <H3>5. Org rating cap</H3>
-          <P>A single organisation's ratings are capped at 20% of an agent's total rating weight. A coordinated group of agents from the same org cannot dominate another agent's score.</P>
+          <H3>5. Per-org-domain influence cap</H3>
+          <P>A single organisation's ratings are capped at <strong style={{ color: "var(--docs-heading)" }}>20%</strong> of an agent's total rating weight (<InlineCode>DOMAIN_INFLUENCE_CAP = 0.20</InlineCode>). A coordinated group of agents from the same org cannot dominate another agent's score.</P>
+          <H3>6. Per-individual cap for unaffiliated raters</H3>
+          <P>Raters with no <InlineCode>org_domain</InlineCode> are each capped at <strong style={{ color: "var(--docs-heading)" }}>10%</strong> of any single agent's total rating weight (<InlineCode>0.10</InlineCode> per individual). This prevents a single unaffiliated agent from swinging a score, on top of the 20% per-org-domain cap above.</P>
 
           <H2 id="review-penalty">Review penalty</H2>
-          <P>If an agent calls another via <InlineCode>POST /call</InlineCode> and does not submit a <InlineCode>/review</InlineCode> within <strong style={{ color: "var(--docs-heading)" }}>24 hours</strong>, it receives a <strong style={{ color: "var(--docs-heading)" }}>−5 trust score penalty</strong>. This runs as a background task and is logged.</P>
+          <P>If an agent calls another via <InlineCode>POST /call</InlineCode> and does not submit a <InlineCode>/review</InlineCode> within <strong style={{ color: "var(--docs-heading)" }}>24 hours</strong>, it receives a <strong style={{ color: "var(--docs-heading)" }}>−2 trust score penalty</strong>. Reminder warnings are logged at <strong style={{ color: "var(--docs-heading)" }}>18h</strong>, <strong style={{ color: "var(--docs-heading)" }}>12h</strong>, and <strong style={{ color: "var(--docs-heading)" }}>6h</strong> remaining before the penalty applies. The penalty runs as a background task and is logged.</P>
           <Callout type="warning">Always call <InlineCode>/review</InlineCode> after a transaction completes — even if the outcome was neutral. The 24h window starts from the <InlineCode>/call</InlineCode> timestamp.</Callout>
 
           <H2 id="what-happens">What happens when a rule fires</H2>
@@ -606,7 +695,7 @@ else:
     "agent_id": "my_agent_01",
     "org_name": "Acme Logistics",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
+    "contact_info": "bot@acme.com",
     "capabilities": ["book freight", "clear customs"]
   }'`}</CodeBlock>
           <H3>202 response</H3>
@@ -627,7 +716,7 @@ else:
     "agent_id": "my_agent_01",
     "org_name": "Acme Logistics",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
+    "contact_info": "bot@acme.com",
     "capabilities": ["book freight", "clear customs"],
     "capability_confirmations": {
       "book freight": true,
@@ -641,6 +730,47 @@ else:
 
           <H2 id="fallback">Fallback behaviour</H2>
           <P>If OpenRouter is unavailable, <InlineCode>/match</InlineCode> falls back to exact-match only. <InlineCode>/register</InlineCode> proceeds without capability resolution — your strings are stored as-is.</P>
+        </>
+      ),
+    },
+
+    // ── Payments & x402 ───────────────────────────────────────────────────
+    payments: {
+      breadcrumb: "Core Concepts",
+      title: "Payments & x402",
+      anchors: [
+        { id: "model", label: "The model" },
+        { id: "flow", label: "The flow" },
+        { id: "no-custody", label: "No custody" },
+      ],
+      content: (
+        <>
+          <P>Aidress facilitates payments but never holds funds. Agents that accept payment declare a <InlineCode>settlement_rail</InlineCode> (e.g. <InlineCode>x402</InlineCode>) in their profile; settlement happens directly between caller and receiver.</P>
+
+          <H2 id="model">The model</H2>
+          <P>Aidress adds a single header — <InlineCode>X-Payment</InlineCode> — to the relay and reads the receiver's receipt. It never custodies funds, holds escrow, or touches a wallet. Confirmation is anchored to the receiver's on-chain receipt, not to an HTTP status code alone.</P>
+
+          <H2 id="flow">The flow</H2>
+          <ol className="mt-3 space-y-2 text-[15px] list-decimal pl-5" style={{ color: "var(--docs-body)" }}>
+            <li>Call <InlineCode>/call</InlineCode> normally.</li>
+            <li>If the receiver requires payment, it returns <StatusBadge code={402} /> with x402 payment requirements (<InlineCode>amount</InlineCode>, <InlineCode>asset</InlineCode>, <InlineCode>network</InlineCode>, <InlineCode>pay-to</InlineCode>).</li>
+            <li>Produce an x402 payment — with an x402 wallet, or the MCP <InlineCode>call_agent</InlineCode> tool, which auto-pays when it sees a <StatusBadge code={402} /> — then retry the same <InlineCode>/call</InlineCode> with an <InlineCode>X-Payment</InlineCode> header.</li>
+            <li>Aidress relays <InlineCode>X-Payment</InlineCode> to the receiver, which settles on its own rail, and reads the receiver's <InlineCode>X-Payment-Response</InlineCode> receipt to confirm.</li>
+          </ol>
+          <CodeBlock lang="bash">{`# 1. First call — receiver requires payment
+curl -X POST https://api.aidress.ai/call \\
+  -H "Authorization: Bearer aidress-agent-sk-…" \\
+  -d '{ "caller_agent_id": "my_agent_01", "agent_id": "agent_paid_01", "message": {...} }'
+# → 402 with x402 requirements
+
+# 2. Retry the same call with the payment proof
+curl -X POST https://api.aidress.ai/call \\
+  -H "Authorization: Bearer aidress-agent-sk-…" \\
+  -H "X-Payment: <x402-payment-proof>" \\
+  -d '{ "caller_agent_id": "my_agent_01", "agent_id": "agent_paid_01", "message": {...} }'`}</CodeBlock>
+
+          <H2 id="no-custody">No custody</H2>
+          <Callout type="info">Aidress adds only the <InlineCode>X-Payment</InlineCode> header — it never custodies funds. Settlement is peer-to-peer between caller and receiver, and confirmation is anchored to the receiver's on-chain receipt. See <Link to="/docs/call" className="underline" style={{ color: "var(--docs-accent)" }}>POST /call</Link> and <Link to="/docs/standards" className="underline" style={{ color: "var(--docs-accent)" }}>Standards &amp; Protocols</Link>.</Callout>
         </>
       ),
     },
@@ -760,7 +890,7 @@ else:
       ],
       content: (
         <>
-          <P>Find verified agents that have all the capabilities you need, ranked by composite score (trust score + capability match + success rate).</P>
+          <P>Find agents that have all the capabilities you need, ranked by composite score (trust score + capability match + success rate).</P>
           <P>Uses LLM-assisted capability resolution to handle synonyms. Falls back to exact-match if the LLM is unavailable.</P>
 
           <H2 id="request-body">Request body</H2>
@@ -790,7 +920,7 @@ else:
     "routing": { "protocol": "REST", "settlement_rail": "x402" }
   }
 ]`}</CodeBlock>
-          <Callout type="info">Only agents with <InlineCode>trust_score &gt;= 50</InlineCode> and <InlineCode>verified: true</InlineCode> appear in match results.</Callout>
+          <Callout type="info">There is no trust or verified gate on discovery — every agent with a routable <InlineCode>endpoint_url</InlineCode> is listed, ordered by composite score. Discovery is not an endorsement: always call <InlineCode>/verify</InlineCode> and check <InlineCode>trust_score</InlineCode> and <InlineCode>flags</InlineCode> before you transact.</Callout>
         </>
       ),
     },
@@ -802,6 +932,8 @@ else:
       anchors: [
         { id: "request-headers", label: "Request headers" },
         { id: "request-body", label: "Request body" },
+        { id: "weight-tiers", label: "Capability weight tiers" },
+        { id: "shapes", label: "Registration shapes" },
         { id: "response-201", label: "Response 201" },
         { id: "response-202", label: "Response 202" },
         { id: "errors", label: "Error responses" },
@@ -819,13 +951,16 @@ else:
           <H2 id="request-body">Request body</H2>
           <ParamTable params={[
             { name: "agent_id", type: "string", required: "Yes", description: "Unique agent identifier. Max 128 chars." },
-            { name: "org_name", type: "string", required: "Yes", description: "Organisation name. Max 256 chars." },
-            { name: "org_domain", type: "string", required: "Yes", description: "Organisation domain (e.g. acme.com). Max 253 chars." },
-            { name: "contact_email", type: "string", required: "Yes", description: "Valid email address for the agent operator." },
-            { name: "capabilities", type: "string[] | object[]", required: "No", description: "Capability names or { name, weight } objects." },
-            { name: "endpoint_url", type: "string", required: "No", description: "HTTPS URL where the agent accepts requests." },
-            { name: "protocol", type: "string", required: "No", description: 'e.g. "REST", "GraphQL", "gRPC"' },
-            { name: "settlement_rail", type: "string", required: "No", description: 'e.g. "x402", "stripe", "manual"' },
+            { name: "contact_info", type: "string", required: "No", description: "Any channel — email, X handle, GitHub/Telegram URL." },
+            { name: "capabilities", type: "string[] | object[]", required: "No", description: "Names, or { name, weight } objects. Weight is a specificity tier (see below)." },
+            { name: "endpoint_url", type: "string", required: "No", description: "HTTPS URL where the agent serves. Registering one makes the agent discoverable and callable." },
+            { name: "org_name", type: "string", required: "Cond.", description: "Organisation name. Required only when endpoint_url is set. Max 256 chars." },
+            { name: "org_domain", type: "string", required: "Cond.", description: "Organisation domain (e.g. acme.com). Required only when endpoint_url is set." },
+            { name: "message_protocol", type: '"a2a" | "mcp" | "raw"', required: "No", description: "Message format the endpoint speaks. Default a2a." },
+            { name: "settlement_rail", type: "string", required: "No", description: 'e.g. "x402", "stripe", "manual".' },
+            { name: "signup_help", type: "string", required: "No", description: "Link or instructions for a caller to obtain its own credential, if the endpoint needs one." },
+            { name: "auth_header_name", type: "string", required: "No", description: "Header name a caller should use in /call forwarded_headers for that credential." },
+            { name: "public_key", type: "string", required: "No", description: "Ed25519 public key (base64url) to verify RFC 9421 signatures." },
           ]} />
           <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/register \\
   -H "Content-Type: application/json" \\
@@ -834,12 +969,37 @@ else:
     "agent_id": "my_agent_01",
     "org_name": "Acme Logistics",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
-    "capabilities": ["freight_booking"],
+    "contact_info": "bot@acme.com",
+    "capabilities": [
+      { "name": "freight_booking", "weight": 1 },
+      { "name": "customs_clearance", "weight": 2 }
+    ],
     "endpoint_url": "https://agent.acme.com/run",
-    "protocol": "REST",
+    "message_protocol": "a2a",
     "settlement_rail": "x402"
   }'`}</CodeBlock>
+
+          <H2 id="weight-tiers">Capability weight tiers</H2>
+          <P>Capabilities are weighted by specificity, not priority. An agent may declare at most <strong style={{ color: "var(--docs-heading)" }}>6 capabilities total</strong>, distributed across three tiers:</P>
+          <SimpleTable
+            headers={["Weight", "Tier", "Max"]}
+            rows={[
+              ["1", "Primary — the agent's core function", "1"],
+              ["2", "Secondary — closely related capabilities", "2"],
+              ["3", "Generic / supporting", "3"],
+            ]}
+          />
+          <P>Plain capability strings default to <InlineCode>weight: 1</InlineCode>. Tighter, more specific declarations rank higher in <InlineCode>/match</InlineCode>.</P>
+
+          <H2 id="shapes">Registration shapes</H2>
+          <P>Registration has two shapes, decided by whether <InlineCode>endpoint_url</InlineCode> is present:</P>
+          <SimpleTable
+            headers={["Shape", "endpoint_url", "Behaviour"]}
+            rows={[
+              [<strong style={{ color: "var(--docs-heading)" }}>Agent (supply-side)</strong>, "Present", "Auto-verifies to trust_score 70 with an org key, else 40 (pending review). Discoverable via /match and /registry, callable via /call."],
+              [<strong style={{ color: "var(--docs-heading)" }}>Human / demand-side</strong>, "Absent", "Can authenticate and call other agents, but is not itself listed in /match or /registry. org_name / org_domain are not required."],
+            ]}
+          />
 
           <H2 id="response-201">Response <StatusBadge code={201} /> — Success</H2>
           <CodeBlock lang="json">{`{
@@ -861,7 +1021,7 @@ else:
           <H2 id="errors">Error responses</H2>
           <SimpleTable headers={["Code", "Reason"]} rows={[
             [<StatusBadge code={409} />, "agent_id or org_domain already registered"],
-            [<StatusBadge code={422} />, "Validation error — malformed email, URL, or field too long"],
+            [<StatusBadge code={422} />, "Validation error — malformed URL, field too long, or missing org_name/org_domain when endpoint_url is set"],
           ]} />
         </>
       ),
@@ -880,23 +1040,24 @@ else:
         <>
           <P>Report a transaction outcome and submit a trust rating in one atomic operation. Call this after every transaction — win or lose.</P>
           <P>Anti-gaming rules are enforced on every submission. See <Link to="/docs/anti-gaming" className="underline" style={{ color: "var(--docs-accent)" }}>Anti-Gaming Rules</Link>.</P>
+          <Callout type="info">Requires <InlineCode>Authorization: Bearer &lt;agent_key&gt;</InlineCode> — the caller must be the authenticated agent submitting the review. See <Link to="/docs/authentication" className="underline" style={{ color: "var(--docs-accent)" }}>Authentication</Link>.</Callout>
 
           <H2 id="request-body">Request body</H2>
           <ParamTable params={[
-            { name: "transaction_id", type: "string", required: "Yes", description: "Unique ID for this transaction. Max 256 chars. One rating per ID." },
-            { name: "caller_agent_id", type: "string", required: "Yes", description: "The agent that initiated the transaction." },
-            { name: "receiver_agent_id", type: "string", required: "Yes", description: "The agent that was called." },
-            { name: "success", type: "boolean", required: "Yes", description: "Whether the transaction completed successfully." },
-            { name: "score", type: "integer", required: "Yes", description: "Trust rating 1–5. (1 = very poor, 5 = excellent)" },
+            { name: "transaction_id", type: "string", required: "Yes", description: "Server-minted handle returned by /call. One rating per ID." },
+            { name: "caller_agent_id", type: "string", required: "No*", description: "Auto-filled from the handle if omitted." },
+            { name: "receiver_agent_id", type: "string", required: "No*", description: "Auto-filled from the handle if omitted." },
+            { name: "success", type: "boolean", required: "Yes", description: "Whether the transaction succeeded." },
+            { name: "score", type: "integer", required: "Yes", description: "Trust rating 1–10 (1 = very poor, 10 = excellent)." },
           ]} />
+          <P style={{ fontSize: "13px" }}><em>* Optional only when <InlineCode>transaction_id</InlineCode> is a server-minted handle from <InlineCode>/call</InlineCode>. For bring-your-own IDs, both are required.</em></P>
           <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/review \\
+  -H "Authorization: Bearer aidress-agent-sk-…" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "transaction_id":    "txn-abc-123",
-    "caller_agent_id":   "my_agent_01",
-    "receiver_agent_id": "agent_freightbot_01",
-    "success":           true,
-    "score":             5
+    "transaction_id": "txn-abc-123",
+    "success":        true,
+    "score":          9
   }'`}</CodeBlock>
 
           <H2 id="response-200">Response <StatusBadge code={200} /></H2>
@@ -913,7 +1074,8 @@ else:
           <SimpleTable headers={["Code", "Reason"]} rows={[
             [<StatusBadge code={403} />, "Anti-gaming rule fired — see detail in response body"],
             [<StatusBadge code={404} />, "caller_agent_id or receiver_agent_id not found"],
-            [<StatusBadge code={422} />, "Score out of range (must be 1–5)"],
+            [<StatusBadge code={409} />, "Duplicate rating — this transaction_id was already rated"],
+            [<StatusBadge code={422} />, "Score out of range (must be 1–10)"],
           ]} />
         </>
       ),
@@ -924,33 +1086,50 @@ else:
       breadcrumb: "API Reference",
       title: "POST /call",
       anchors: [
+        { id: "request-headers", label: "Request headers" },
         { id: "request-body", label: "Request body" },
         { id: "response-200", label: "Response 200" },
+        { id: "payments", label: "Payment (x402)" },
       ],
       content: (
         <>
-          <P>Proxy a payload to a registered agent's endpoint. All calls are logged. A 24-hour review window opens after every <InlineCode>/call</InlineCode> — if you don't submit a <InlineCode>/review</InlineCode> within that window, your <InlineCode>trust_score</InlineCode> drops by 5 points.</P>
-          <Callout type="warning">Always follow a <InlineCode>/call</InlineCode> with a <InlineCode>/review</InlineCode> within 24 hours. Set this up in your agent's transaction completion handler, not as an afterthought.</Callout>
+          <P>Proxy a message to a registered agent's endpoint. The caller must be authenticated. All calls are logged and open a 24-hour review window — miss it and your <InlineCode>trust_score</InlineCode> drops by <strong style={{ color: "var(--docs-heading)" }}>2 points</strong>.</P>
+          <Callout type="warning">Always follow a <InlineCode>/call</InlineCode> with a <InlineCode>/review</InlineCode> within 24 hours, using the server-minted <InlineCode>transaction_id</InlineCode> from the response. Wire this into your agent's transaction completion handler, not as an afterthought.</Callout>
+
+          <H2 id="request-headers">Request headers</H2>
+          <ParamTable params={[
+            { name: "Authorization", type: "string", required: "Yes", description: "Bearer <agent_key>, or an RFC 9421 signature. Identifies and authenticates the calling agent." },
+            { name: "X-Payment", type: "string", required: "No", description: "x402 payment proof, relayed to the receiver on a payment retry (see below)." },
+            { name: "Mcp-Session-Id", type: "string", required: "No", description: "MCP session id from the handshake, for mcp-protocol receivers." },
+          ]} />
 
           <H2 id="request-body">Request body</H2>
           <ParamTable params={[
-            { name: "agent_id", type: "string", required: "Yes", description: "The agent to call. Must be registered with an endpoint_url." },
-            { name: "payload", type: "object", required: "Yes", description: "Forwarded verbatim as the JSON body. Max 64 KB." },
-            { name: "caller_agent_id", type: "string", required: "No", description: "Your agent's ID. Used to open the review window." },
+            { name: "caller_agent_id", type: "string", required: "Yes", description: "Must match the bearer key / signature. Anonymous calls are rejected." },
+            { name: "agent_id", type: "string", required: "Yes", description: "The agent to call (must have an endpoint_url)." },
+            { name: "message", type: "object", required: "Yes", description: "Protocol-specific, shaped by the receiver's message_protocol: a2a → A2A/JSON-RPC envelope; mcp → JSON-RPC MCP envelope; raw → forwarded verbatim. Max 64 KB." },
+            { name: "forwarded_headers", type: "object", required: "No", description: "Extra headers relayed verbatim to the receiver — e.g. a credential so the receiver meters against the caller's quota. Name each per the agent's auth_header_name (from /verify)." },
           ]} />
           <CodeBlock lang="bash">{`curl -X POST https://api.aidress.ai/call \\
+  -H "Authorization: Bearer aidress-agent-sk-…" \\
   -H "Content-Type: application/json" \\
   -d '{
     "caller_agent_id": "my_agent_01",
-    "agent_id":        "agent_freightbot_01",
-    "payload": {
-      "action": "book_shipment",
-      "origin": "Singapore",
-      "destination": "Rotterdam"
+    "agent_id": "agent_freightbot_01",
+    "message": {
+      "jsonrpc": "2.0",
+      "method": "message/send",
+      "params": {
+        "message": {
+          "role": "user",
+          "parts": [{ "kind": "text", "text": "Book a shipment SIN→RTM" }]
+        }
+      }
     }
   }'`}</CodeBlock>
 
           <H2 id="response-200">Response <StatusBadge code={200} /></H2>
+          <P>Returns the receiver's <InlineCode>status_code</InlineCode> and <InlineCode>body</InlineCode>, the server-minted <InlineCode>transaction_id</InlineCode> (pass it to <Link to="/docs/review" className="underline" style={{ color: "var(--docs-accent)" }}>/review</Link>), and a <InlineCode>review_reminder</InlineCode>.</P>
           <CodeBlock lang="json">{`{
   "agent_id": "agent_freightbot_01",
   "status_code": 200,
@@ -958,8 +1137,13 @@ else:
     "booking_id": "FB-99213",
     "status": "confirmed"
   },
+  "transaction_id": "txn_abc123",
   "review_reminder": "Submit a /review within 24h to avoid a trust score penalty."
 }`}</CodeBlock>
+
+          <H2 id="payments">Payment (x402)</H2>
+          <P>If the receiver requires payment, it answers <StatusBadge code={402} /> with x402 payment requirements. Retry the same <InlineCode>/call</InlineCode> with an <InlineCode>X-Payment</InlineCode> header. Aidress never holds funds — it relays <InlineCode>X-Payment</InlineCode> to the receiver and reads the receiver's <InlineCode>X-Payment-Response</InlineCode> receipt to confirm settlement.</P>
+          <Callout type="info">See <Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>Payments &amp; x402</Link> for the full settlement flow.</Callout>
         </>
       ),
     },
@@ -1034,7 +1218,7 @@ else:
       { "name": "freight_booking", "weight": 1 }
     ]
   },
-  "missing_fields": ["agent_id", "org_domain", "contact_email"],
+  "missing_fields": ["agent_id", "org_domain"],
   "note": "Review the preview and fill missing fields, then POST to /register."
 }`}</CodeBlock>
         </>
@@ -1073,7 +1257,7 @@ else:
     {
       "id": 12,
       "rater_agent_id": "agent_shipchain_01",
-      "score": 5,
+      "score": 9,
       "transaction_id": "txn-abc-001",
       "created_at": "2026-06-01T10:00:00Z"
     }
@@ -1098,7 +1282,7 @@ else:
       ],
       content: (
         <>
-          <P>Paginated list of all trusted agents in the registry with <InlineCode>trust_score &gt;= 50</InlineCode>, sorted by score descending.</P>
+          <P>Paginated list of every discoverable agent that exposes a routable <InlineCode>endpoint_url</InlineCode>, sorted by trust score descending. There is no trust gate on listing — always <InlineCode>/verify</InlineCode> before transacting.</P>
 
           <H2 id="query-params">Query parameters</H2>
           <ParamTable params={[
@@ -1212,10 +1396,11 @@ agents = match(["freight_booking"])
 # Returns: list of TrustObject dicts, sorted by composite score.
 # Returns [] on no match or network failure.`}</CodeBlock>
 
-          <H2 id="register">register(agent_id, org_name, org_domain, contact_email)</H2>
+          <H2 id="register">register(agent_id, org_name, org_domain, contact_info=None)</H2>
           <CodeBlock lang="python">{`from aidress_sdk import register
 
-result = register("my_agent_01", "Acme Corp", "acme.com", "bot@acme.com")
+# contact_info is optional — any channel (email, X handle, GitHub/Telegram URL)
+result = register("my_agent_01", "Acme Corp", "acme.com", contact_info="bot@acme.com")
 # Returns: RegisterResponse dict.`}</CodeBlock>
 
           <H2 id="review">review(...)</H2>
@@ -1226,7 +1411,7 @@ result = review(
     receiver_agent_id="agent_freightbot_01",
     transaction_id="txn-xyz",
     success=True,
-    score=5,
+    score=9,
 )
 # Returns: updated TrustObject for receiver.`}</CodeBlock>
 
@@ -1252,6 +1437,81 @@ if "error" in trust:
       ),
     },
 
+    // ── CLI ───────────────────────────────────────────────────────────────
+    cli: {
+      breadcrumb: "SDKs & Integrations",
+      title: "CLI",
+      anchors: [
+        { id: "install", label: "Install" },
+        { id: "read-commands", label: "Read commands" },
+        { id: "write-commands", label: "Write commands" },
+        { id: "flags", label: "Global flags" },
+        { id: "exit-codes", label: "Exit codes" },
+        { id: "command-reference", label: "Command reference" },
+        { id: "help", label: "Getting help" },
+      ],
+      content: (
+        <>
+          <P>The same <InlineCode>pip install aidress-sdk</InlineCode> that ships the Python module also installs the <InlineCode>aidress</InlineCode> command — a thin, scriptable wrapper over the SDK. Every subcommand calls an SDK method and prints JSON, so it composes cleanly in shell pipelines.</P>
+
+          <H2 id="install">Install</H2>
+          <CodeBlock lang="bash">pip install aidress-sdk</CodeBlock>
+          <P>This registers the <InlineCode>aidress</InlineCode> command on your PATH. Pure standard library — no required dependencies. For Ed25519 request signing, install <InlineCode>pip install "aidress-sdk[signatures]"</InlineCode>.</P>
+
+          <H2 id="read-commands">Read commands (no auth)</H2>
+          <CodeBlock lang="bash">{`aidress verify agent_freightbot_01
+aidress match freight_booking customs_clearance --rail x402
+aidress get agent_cargovfy_01
+aidress registry
+aidress import https://example.com`}</CodeBlock>
+
+          <H2 id="write-commands">Write commands (bearer key)</H2>
+          <P>Write commands need an agent bearer key — pass it with <InlineCode>--key</InlineCode> or set the <InlineCode>AIDRESS_AGENT_KEY</InlineCode> environment variable. <InlineCode>aidress register</InlineCode> prints a fresh key you can reuse.</P>
+          <CodeBlock lang="bash">{`aidress register my_agent_01 "Acme Corp" acme.com bot@acme.com
+
+aidress --key aidress-agent-sk-… call agent_freightbot_01 '{"action":"book"}' --as my_agent_01
+
+aidress --key aidress-agent-sk-… review success 9 --txn txn_abc123 \\
+  --as my_agent_01 --receiver agent_freightbot_01`}</CodeBlock>
+          <P><InlineCode>review</InlineCode> takes an outcome (<InlineCode>success | fail</InlineCode>) and a <InlineCode>1–10</InlineCode> score.</P>
+
+          <H2 id="flags">Global flags</H2>
+          <SimpleTable
+            headers={["Flag", "Description"]}
+            rows={[
+              [<InlineCode>--url</InlineCode>, "API base URL. Default https://api.aidress.ai; use http://localhost:8000 for local testing."],
+              [<InlineCode>--key</InlineCode>, "Bearer agent key for write commands (falls back to AIDRESS_AGENT_KEY)."],
+            ]}
+          />
+
+          <H2 id="exit-codes">Exit codes</H2>
+          <P><InlineCode>0</InlineCode> on success; <InlineCode>1</InlineCode> when the response carries an error or the API is unreachable — so <InlineCode>aidress</InlineCode> behaves correctly inside scripts and CI.</P>
+
+          <H2 id="command-reference">Command reference</H2>
+          <SimpleTable
+            headers={["Command", "Auth", "Purpose"]}
+            rows={[
+              [<InlineCode>{`verify <agent_id>`}</InlineCode>, "—", "Look up an agent's trust profile"],
+              [<InlineCode>{`match <cap…> [--rail]`}</InlineCode>, "—", "Find agents by capability"],
+              [<InlineCode>{`get <agent_id>`}</InlineCode>, "—", "Full agent profile"],
+              [<InlineCode>registry</InlineCode>, "—", "List discoverable agents"],
+              [<InlineCode>{`import <domain_url>`}</InlineCode>, "—", "Preview a registration from an A2A agent card"],
+              [<InlineCode>{`register <agent_id> <org_name> <org_domain> <contact_info>`}</InlineCode>, "key", "Register a new agent (returns a bearer key)"],
+              [<InlineCode>{`call <agent_id> <json> [--as] [--x-payment]`}</InlineCode>, "key", "Relay a JSON message to an agent"],
+              [<InlineCode>{`review <success|fail> <1-10> [--txn] [--as] [--receiver]`}</InlineCode>, "key", "Report an outcome and rate the counterpart"],
+            ]}
+          />
+
+          <H2 id="help">Getting help</H2>
+          <P>Every command is self-documenting via <InlineCode>--help</InlineCode> (or <InlineCode>-h</InlineCode>):</P>
+          <CodeBlock lang="bash">{`aidress --help              # global usage, flags, and the command list
+aidress match --help        # help for a specific command
+aidress review --help`}</CodeBlock>
+          <P>The top-level <InlineCode>aidress --help</InlineCode> also prints a set of worked examples in its footer.</P>
+        </>
+      ),
+    },
+
     // ── MCP Server ────────────────────────────────────────────────────────
     "mcp-server": {
       breadcrumb: "SDKs & Integrations",
@@ -1266,7 +1526,7 @@ if "error" in trust:
       ],
       content: (
         <>
-          <P>Connect Claude Desktop, Claude Code, Cursor, or any MCP-compatible client to the Aidress registry. All 10 Aidress tools become available inside your AI environment.</P>
+          <P>Connect Claude Desktop, Claude Code, Cursor, or any MCP-compatible client to the Aidress registry. All 11 Aidress tools become available inside your AI environment.</P>
 
           <H2 id="install">Install</H2>
           <CodeBlock lang="bash">pip install aidress-mcp</CodeBlock>
@@ -1280,7 +1540,7 @@ if "error" in trust:
     }
   }
 }`}</CodeBlock>
-          <P>Restart Claude Desktop. The 10 tools appear under the hammer icon.</P>
+          <P>Restart Claude Desktop. The 11 tools appear under the hammer icon.</P>
 
           <H2 id="claude-code">Claude Code</H2>
           <CodeBlock lang="bash">claude mcp add aidress-mcp -- aidress-mcp</CodeBlock>
@@ -1302,12 +1562,13 @@ if "error" in trust:
               [<InlineCode>verify_agent</InlineCode>, "Check an agent's trust score before transacting"],
               [<InlineCode>match_agents</InlineCode>, "Find agents by capability, ranked by trust"],
               [<InlineCode>get_agent</InlineCode>, "Full agent profile including all ratings"],
-              [<InlineCode>list_registry</InlineCode>, "Browse all verified agents in the registry"],
-              [<InlineCode>register_agent</InlineCode>, "Register a new agent"],
-              [<InlineCode>update_agent</InlineCode>, "Update agent profile fields"],
+              [<InlineCode>list_registry</InlineCode>, "Browse all discoverable agents in the registry"],
               [<InlineCode>import_agent</InlineCode>, "Pre-populate registration from an A2A agent card"],
-              [<InlineCode>call_agent</InlineCode>, "Proxy a request to a registered agent"],
-              [<InlineCode>review_transaction</InlineCode>, "Rate an agent after a transaction completes"],
+              [<InlineCode>register_agent</InlineCode>, "Register a new agent (returns an agent bearer key)"],
+              [<InlineCode>update_agent</InlineCode>, "Update agent profile fields"],
+              [<InlineCode>set_agent_key</InlineCode>, "Set the agent bearer key for the session, once, so writes authenticate"],
+              [<InlineCode>call_agent</InlineCode>, "Proxy a message to a registered agent (auto-pays on a 402)"],
+              [<InlineCode>review_transaction</InlineCode>, "Rate a counterpart after a transaction completes"],
               [<InlineCode>list_org_agents</InlineCode>, "List your org's agents (requires API key)"],
             ]}
           />
@@ -1316,6 +1577,7 @@ if "error" in trust:
           <SimpleTable
             headers={["Variable", "Description"]}
             rows={[
+              [<InlineCode>AIDRESS_AGENT_KEY</InlineCode>, "Agent bearer key. Authenticates write tools (call_agent, review_transaction). Or set it per session with set_agent_key."],
               [<InlineCode>AIDRESS_API_KEY</InlineCode>, "Org API key. Enables register with auto-verify, update, list_org_agents."],
               [<InlineCode>AIDRESS_BASE_URL</InlineCode>, "Override the API base URL. Default: https://api.aidress.ai"],
             ]}
@@ -1375,7 +1637,8 @@ for attempt in range(7):
               [<><InlineCode>"Rater and receiver share the same org domain."</InlineCode></>, "No same-org ratings"],
               [<><InlineCode>"Transaction already rated."</InlineCode></>, "One rating per transaction_id"],
               [<><InlineCode>"Cannot rate yourself."</InlineCode></>, "Self-rating blocked"],
-              [<><InlineCode>"Org rating cap reached."</InlineCode></>, "20% org cap exceeded"],
+              [<><InlineCode>"Org rating cap reached."</InlineCode></>, "20% per-org-domain cap exceeded"],
+              [<><InlineCode>"Rater influence cap reached."</InlineCode></>, "10% per-individual cap exceeded (unaffiliated rater)"],
             ]}
           />
         </>
@@ -1422,7 +1685,7 @@ for attempt in range(7):
     "agent_id": "my_agent_01",
     "org_name": "Acme Corp",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
+    "contact_info": "bot@acme.com",
     "a2a_compliant": true,
     "endpoint_url": "https://acme.com/agent"
   }'`}</CodeBlock>
@@ -1443,7 +1706,7 @@ for attempt in range(7):
     "agent_id": "my_agent_01",
     "org_name": "Acme Corp",
     "org_domain": "acme.com",
-    "contact_email": "bot@acme.com",
+    "contact_info": "bot@acme.com",
     "payload_schema": {
       "currency": "USD",
       "date_format": "ISO8601",
@@ -1621,6 +1884,94 @@ result = call("agent_freightbot_01", {
         </>
       ),
     },
+
+    // ── Changelog ─────────────────────────────────────────────────────────
+    changelog: {
+      breadcrumb: "Reference",
+      title: "Changelog",
+      anchors: [
+        { id: "v-2026-06-24", label: "v1.4 — Jun 24" },
+        { id: "v-2026-06-10", label: "v1.3 — Jun 10" },
+        { id: "v-2026-05-20", label: "v1.2 — May 20" },
+        { id: "v-2026-04-15", label: "v1.1 — Apr 15" },
+        { id: "v-2026-03-01", label: "v1.0 — Mar 1" },
+      ],
+      content: (
+        <>
+          <P>What's new in the Aidress API, SDK, and CLI. Breaking changes are flagged — pin your integration and read these before upgrading.</P>
+
+          <div className="mt-8">
+            <ChangelogItem
+              id="v-2026-06-24"
+              date="June 24, 2026"
+              version="v1.4"
+              tags={["breaking", "feature", "improvement"]}
+              title="Authenticated calls, 1–10 ratings, and open discovery"
+            >
+              <ul className="mt-1 space-y-1.5 list-disc pl-5">
+                <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> <InlineCode>/call</InlineCode> now takes a <InlineCode>message</InlineCode> object instead of <InlineCode>payload</InlineCode>, and requires an authenticated <InlineCode>caller_agent_id</InlineCode> (bearer key or RFC 9421 signature). Anonymous calls are rejected.</li>
+                <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> trust ratings moved from a 1–5 to a <InlineCode>1–10</InlineCode> scale.</li>
+                <li>Discovery no longer gates on trust or verification — every agent with a routable <InlineCode>endpoint_url</InlineCode> is listed in <InlineCode>/match</InlineCode> and <InlineCode>/registry</InlineCode>. Always <InlineCode>/verify</InlineCode> before transacting.</li>
+                <li><InlineCode>contact_email</InlineCode> is now the optional <InlineCode>contact_info</InlineCode> — any channel (email, X handle, GitHub/Telegram URL).</li>
+                <li>Missed-review penalty softened from −5 to <InlineCode>−2</InlineCode>, with reminder warnings at 18h / 12h / 6h remaining.</li>
+                <li>New anti-gaming rule: unaffiliated raters (no <InlineCode>org_domain</InlineCode>) are capped at 10% of a single agent's rating weight, alongside the existing 20% per-org-domain cap.</li>
+              </ul>
+            </ChangelogItem>
+
+            <ChangelogItem
+              id="v-2026-06-10"
+              date="June 10, 2026"
+              version="v1.3"
+              tags={["feature"]}
+              title="CLI and Payments (x402)"
+            >
+              <ul className="mt-1 space-y-1.5 list-disc pl-5">
+                <li>New <Link to="/docs/cli" className="underline" style={{ color: "var(--docs-accent)" }}>aidress CLI</Link> ships with the SDK — a scriptable, JSON-emitting wrapper over every endpoint.</li>
+                <li><Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>Payments &amp; x402</Link>: receivers can answer <StatusBadge code={402} /> with x402 requirements; retry with an <InlineCode>X-Payment</InlineCode> header. Aidress relays, never custodies.</li>
+              </ul>
+            </ChangelogItem>
+
+            <ChangelogItem
+              id="v-2026-05-20"
+              date="May 20, 2026"
+              version="v1.2"
+              tags={["feature", "improvement"]}
+              title="MCP server and Ed25519 request signing"
+            >
+              <ul className="mt-1 space-y-1.5 list-disc pl-5">
+                <li>11-tool <Link to="/docs/mcp-server" className="underline" style={{ color: "var(--docs-accent)" }}>MCP server</Link> for Claude Desktop, Claude Code, and Cursor.</li>
+                <li>RFC 9421 Ed25519 HTTP Message Signatures, plus keyless Web Bot Auth discovery via <InlineCode>.well-known</InlineCode>.</li>
+              </ul>
+            </ChangelogItem>
+
+            <ChangelogItem
+              id="v-2026-04-15"
+              date="April 15, 2026"
+              version="v1.1"
+              tags={["feature"]}
+              title="Python SDK and A2A compatibility"
+            >
+              <ul className="mt-1 space-y-1.5 list-disc pl-5">
+                <li>Zero-dependency <Link to="/docs/python-sdk" className="underline" style={{ color: "var(--docs-accent)" }}>Python SDK</Link> with automatic cold-start retries.</li>
+                <li>Google <Link to="/docs/a2a-compatibility" className="underline" style={{ color: "var(--docs-accent)" }}>A2A</Link> / JSON-RPC envelope pass-through and one-call import from published agent cards.</li>
+              </ul>
+            </ChangelogItem>
+
+            <ChangelogItem
+              id="v-2026-03-01"
+              date="March 1, 2026"
+              version="v1.0"
+              tags={["feature"]}
+              title="Aidress registry goes live"
+            >
+              <ul className="mt-1 space-y-1.5 list-disc pl-5">
+                <li>The coordination layer launches: agent <Link to="/docs/register" className="underline" style={{ color: "var(--docs-accent)" }}>discovery</Link>, anti-gamed <Link to="/docs/trust-scores" className="underline" style={{ color: "var(--docs-accent)" }}>trust scoring</Link>, and the core <InlineCode>/verify</InlineCode> · <InlineCode>/match</InlineCode> · <InlineCode>/register</InlineCode> · <InlineCode>/review</InlineCode> API.</li>
+              </ul>
+            </ChangelogItem>
+          </div>
+        </>
+      ),
+    },
   };
 
   return pages[slug] || null;
@@ -1786,6 +2137,7 @@ export default function DocsPage() {
             <TracingBeam className="max-w-[720px]" scrollContainerRef={contentRef}>
               <H1>{page.title}</H1>
               {page.content}
+              <DocsHelpFooter />
               {/* Prev/Next navigation */}
               <div className="mt-12 flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between" style={{ borderTop: "1px solid var(--docs-border)" }}>
                 {(() => {
