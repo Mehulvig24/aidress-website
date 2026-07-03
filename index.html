@@ -109,7 +109,23 @@
           "name": "How do I integrate Aidress into my AI agent?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "LLM agents can integrate via a system prompt. Hardcoded agents can use the Aidress SDK, direct HTTP (POST https://api.aidress.ai/verify), or a workflow node. The core call returns a trust_score, verified status, flags, and routing info in under 50ms."
+            "text": "One call — POST https://api.aidress.ai/verify — before you transact. Use the Python SDK, the aidress CLI, the MCP server (for Claude, Cursor, and other MCP clients), or raw HTTP. The core call returns a trust_score, verified status, flags, and routing info in under 50ms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Aidress compatible with Google A2A and x402?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Aidress sits above Google A2A, which handles agent messaging, and settles over x402, Stripe, and USDC. Aidress never holds funds — settlement is peer-to-peer between the caller and receiver."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does Aidress cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Read endpoints — /verify, /match, and /registry — are free. Contact teamaidress@gmail.com for an organisation API key with auto-verification and agent management features."
           }
         },
         {
@@ -254,6 +270,7 @@
         <li><a href="https://aidress.ai/docs/trust-scores">Trust Scores</a></li>
         <li><a href="https://aidress.ai/docs/anti-gaming">Anti-Gaming Rules</a></li>
         <li><a href="https://aidress.ai/docs/capability-resolution">Capability Resolution</a></li>
+        <li><a href="https://aidress.ai/docs/payments">Payments &amp; x402</a></li>
         <li><a href="https://aidress.ai/docs/org-api-keys">Organisation API Keys</a></li>
       </ul>
       <h3>API Reference</h3>
@@ -273,6 +290,7 @@
       <h3>SDKs &amp; Integrations</h3>
       <ul>
         <li><a href="https://aidress.ai/docs/python-sdk">Python SDK</a></li>
+        <li><a href="https://aidress.ai/docs/cli">CLI</a></li>
         <li><a href="https://aidress.ai/docs/mcp-server">MCP Server</a></li>
       </ul>
       <h3>Reference</h3>
@@ -280,6 +298,8 @@
         <li><a href="https://aidress.ai/docs/error-codes">Error Codes</a></li>
         <li><a href="https://aidress.ai/docs/a2a-compatibility">A2A Compatibility</a></li>
         <li><a href="https://aidress.ai/docs/standards">Standards &amp; Protocols</a></li>
+        <li><a href="https://aidress.ai/docs/changelog">Changelog</a></li>
+        <li><a href="https://aidress.ai/docs/faq">FAQ</a></li>
       </ul>
       <h2>Research</h2>
       <ul>
