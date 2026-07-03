@@ -318,7 +318,7 @@ const engineLayersMeta = [
     name: "Identity",
     icon: Shield,
     description: "A standardized identity layer defining roles, permissions, endpoints, and capabilities.",
-    status: "soon" as const,
+    status: "live" as const,
   },
   {
     name: "Trust",
@@ -330,7 +330,7 @@ const engineLayersMeta = [
     name: "Terms",
     icon: Handshake,
     description: "A framework for agents to interpret, agree on, and execute structured terms.",
-    status: "soon" as const,
+    status: "live" as const,
   },
   {
     name: "Routing & Settlement",

@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Copy, Check, ChevronRight, Menu, X, Sun, Moon, MessageCircle, FileText, Sparkles } from "lucide-react";
 import { SearchModal, SearchTrigger } from "@/components/SearchModal";
 import { TracingBeam } from "@/components/ui/tracing-beam";
+import { Timeline } from "@/components/ui/timeline";
 
 // ─── Theme toggle (same as main site) ───────────────────────────────────────
 
@@ -171,34 +172,30 @@ function P({ children, style }: { children: React.ReactNode; style?: React.CSSPr
 
 type ChangeKind = "feature" | "improvement" | "fix" | "breaking";
 
-function ChangeTag({ kind }: { kind: ChangeKind }) {
-  const map: Record<ChangeKind, { label: string; color: string; bg: string }> = {
-    feature: { label: "New", color: "#4ade80", bg: "rgba(34,197,94,0.12)" },
-    improvement: { label: "Improved", color: "#38bdf8", bg: "rgba(56,189,248,0.12)" },
-    fix: { label: "Fix", color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
-    breaking: { label: "Breaking", color: "#f87171", bg: "rgba(239,68,68,0.12)" },
-  };
-  const t = map[kind];
-  return (
-    <span className="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: t.color, backgroundColor: t.bg }}>
-      {t.label}
-    </span>
-  );
-}
+const CHANGE_TAG: Record<ChangeKind, { label: string; color: string }> = {
+  feature: { label: "New", color: "#4ade80" },
+  improvement: { label: "Improved", color: "#38bdf8" },
+  fix: { label: "Fix", color: "#f59e0b" },
+  breaking: { label: "Breaking", color: "#f87171" },
+};
 
-function ChangelogItem({ id, date, version, tags, title, children }: { id: string; date: string; version?: string; tags: ChangeKind[]; title: string; children: React.ReactNode }) {
+// A changelog entry rendered into a Timeline row's content column.
+// No boxes, no borders — the Timeline rail is the only structure.
+function ChangeEntry({ version, tags, title, children }: { version?: string; tags: ChangeKind[]; title: string; children: React.ReactNode }) {
   return (
-    <div id={id} className="relative ml-1 border-l pb-10 pl-6" style={{ borderColor: "var(--docs-border)", scrollMarginTop: "80px" }}>
-      <div className="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "var(--docs-accent)" }} />
-      <div className="flex flex-wrap items-center gap-2">
-        <time className="text-[12px] font-medium uppercase tracking-wider" style={{ color: "var(--docs-faint)" }}>{date}</time>
+    <div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         {version && (
-          <span className="rounded px-1.5 py-0.5 text-[10px]" style={{ fontFamily: "'JetBrains Mono', monospace", backgroundColor: "var(--docs-callout-bg)", color: "var(--docs-accent)" }}>{version}</span>
+          <span className="text-[12px]" style={{ fontFamily: "'JetBrains Mono', monospace", color: "var(--docs-accent)" }}>{version}</span>
         )}
-        {tags.map((t) => <ChangeTag key={t} kind={t} />)}
+        {tags.map((t) => (
+          <span key={t} className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: CHANGE_TAG[t].color }}>
+            {CHANGE_TAG[t].label}
+          </span>
+        ))}
       </div>
-      <h3 className="mt-2.5 text-[16px] font-semibold md:text-[18px]" style={{ color: "var(--docs-heading)" }}>{title}</h3>
-      <div className="mt-1.5 text-[14px] leading-relaxed" style={{ color: "var(--docs-body)" }}>{children}</div>
+      <h3 className="mt-2 text-[17px] font-semibold md:text-[19px]" style={{ color: "var(--docs-heading)" }}>{title}</h3>
+      <div className="mt-2 text-[14px] leading-relaxed" style={{ color: "var(--docs-body)" }}>{children}</div>
     </div>
   );
 }
@@ -322,9 +319,9 @@ function getPageData(slug: string): PageData | null {
             headers={["Layer", "Status", "Description"]}
             rows={[
               ["Discovery", <Badge label="Live" color="green" />, "Find agents by capability, ranked by trust and match quality"],
-              ["Identity", <Badge label="Coming soon" color="muted" />, "Cryptographically verify an agent's declared organisation and domain"],
+              ["Identity", <Badge label="Live" color="green" />, "Cryptographically verify an agent's declared organisation and domain"],
               ["Trust", <Badge label="Live" color="green" />, "A scored, anti-gamed reputation layer built from real transaction outcomes"],
-              ["Terms", <Badge label="Coming soon" color="muted" />, "Machine-readable contract exchange before value moves"],
+              ["Terms", <Badge label="Live" color="green" />, "Machine-readable contract exchange before value moves"],
               ["Routing & Settlement", <Badge label="Live" color="green" />, "Protocol and payment rail metadata so agents can route correctly"],
             ]}
           />
@@ -1890,86 +1887,74 @@ result = call("agent_freightbot_01", {
     changelog: {
       breadcrumb: "Reference",
       title: "Changelog",
-      anchors: [
-        { id: "v-2026-06-24", label: "v1.4 — Jun 24" },
-        { id: "v-2026-06-10", label: "v1.3 — Jun 10" },
-        { id: "v-2026-05-20", label: "v1.2 — May 20" },
-        { id: "v-2026-04-15", label: "v1.1 — Apr 15" },
-        { id: "v-2026-03-01", label: "v1.0 — Mar 1" },
-      ],
+      anchors: [],
       content: (
         <>
           <P>What's new in the Aidress API, SDK, and CLI. Breaking changes are flagged — pin your integration and read these before upgrading.</P>
 
-          <div className="mt-8">
-            <ChangelogItem
-              id="v-2026-06-24"
-              date="June 24, 2026"
-              version="v1.4"
-              tags={["breaking", "feature", "improvement"]}
-              title="Authenticated calls, 1–10 ratings, and open discovery"
-            >
-              <ul className="mt-1 space-y-1.5 list-disc pl-5">
-                <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> <InlineCode>/call</InlineCode> now takes a <InlineCode>message</InlineCode> object instead of <InlineCode>payload</InlineCode>, and requires an authenticated <InlineCode>caller_agent_id</InlineCode> (bearer key or RFC 9421 signature). Anonymous calls are rejected.</li>
-                <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> trust ratings moved from a 1–5 to a <InlineCode>1–10</InlineCode> scale.</li>
-                <li>Discovery no longer gates on trust or verification — every agent with a routable <InlineCode>endpoint_url</InlineCode> is listed in <InlineCode>/match</InlineCode> and <InlineCode>/registry</InlineCode>. Always <InlineCode>/verify</InlineCode> before transacting.</li>
-                <li><InlineCode>contact_email</InlineCode> is now the optional <InlineCode>contact_info</InlineCode> — any channel (email, X handle, GitHub/Telegram URL).</li>
-                <li>Missed-review penalty softened from −5 to <InlineCode>−2</InlineCode>, with reminder warnings at 18h / 12h / 6h remaining.</li>
-                <li>New anti-gaming rule: unaffiliated raters (no <InlineCode>org_domain</InlineCode>) are capped at 10% of a single agent's rating weight, alongside the existing 20% per-org-domain cap.</li>
-              </ul>
-            </ChangelogItem>
-
-            <ChangelogItem
-              id="v-2026-06-10"
-              date="June 10, 2026"
-              version="v1.3"
-              tags={["feature"]}
-              title="CLI and Payments (x402)"
-            >
-              <ul className="mt-1 space-y-1.5 list-disc pl-5">
-                <li>New <Link to="/docs/cli" className="underline" style={{ color: "var(--docs-accent)" }}>aidress CLI</Link> ships with the SDK — a scriptable, JSON-emitting wrapper over every endpoint.</li>
-                <li><Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>Payments &amp; x402</Link>: receivers can answer <StatusBadge code={402} /> with x402 requirements; retry with an <InlineCode>X-Payment</InlineCode> header. Aidress relays, never custodies.</li>
-              </ul>
-            </ChangelogItem>
-
-            <ChangelogItem
-              id="v-2026-05-20"
-              date="May 20, 2026"
-              version="v1.2"
-              tags={["feature", "improvement"]}
-              title="MCP server and Ed25519 request signing"
-            >
-              <ul className="mt-1 space-y-1.5 list-disc pl-5">
-                <li>11-tool <Link to="/docs/mcp-server" className="underline" style={{ color: "var(--docs-accent)" }}>MCP server</Link> for Claude Desktop, Claude Code, and Cursor.</li>
-                <li>RFC 9421 Ed25519 HTTP Message Signatures, plus keyless Web Bot Auth discovery via <InlineCode>.well-known</InlineCode>.</li>
-              </ul>
-            </ChangelogItem>
-
-            <ChangelogItem
-              id="v-2026-04-15"
-              date="April 15, 2026"
-              version="v1.1"
-              tags={["feature"]}
-              title="Python SDK and A2A compatibility"
-            >
-              <ul className="mt-1 space-y-1.5 list-disc pl-5">
-                <li>Zero-dependency <Link to="/docs/python-sdk" className="underline" style={{ color: "var(--docs-accent)" }}>Python SDK</Link> with automatic cold-start retries.</li>
-                <li>Google <Link to="/docs/a2a-compatibility" className="underline" style={{ color: "var(--docs-accent)" }}>A2A</Link> / JSON-RPC envelope pass-through and one-call import from published agent cards.</li>
-              </ul>
-            </ChangelogItem>
-
-            <ChangelogItem
-              id="v-2026-03-01"
-              date="March 1, 2026"
-              version="v1.0"
-              tags={["feature"]}
-              title="Aidress registry goes live"
-            >
-              <ul className="mt-1 space-y-1.5 list-disc pl-5">
-                <li>The coordination layer launches: agent <Link to="/docs/register" className="underline" style={{ color: "var(--docs-accent)" }}>discovery</Link>, anti-gamed <Link to="/docs/trust-scores" className="underline" style={{ color: "var(--docs-accent)" }}>trust scoring</Link>, and the core <InlineCode>/verify</InlineCode> · <InlineCode>/match</InlineCode> · <InlineCode>/register</InlineCode> · <InlineCode>/review</InlineCode> API.</li>
-              </ul>
-            </ChangelogItem>
-          </div>
+          <Timeline
+            data={[
+              {
+                title: "Jun 24, 2026",
+                content: (
+                  <ChangeEntry version="v1.4" tags={["breaking", "feature", "improvement"]} title="Authenticated calls, 1–10 ratings, and open discovery">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> <InlineCode>/call</InlineCode> now takes a <InlineCode>message</InlineCode> object instead of <InlineCode>payload</InlineCode>, and requires an authenticated <InlineCode>caller_agent_id</InlineCode> (bearer key or RFC 9421 signature). Anonymous calls are rejected.</li>
+                      <li><strong style={{ color: "var(--docs-heading)" }}>Breaking:</strong> trust ratings moved from a 1–5 to a <InlineCode>1–10</InlineCode> scale.</li>
+                      <li>Discovery no longer gates on trust or verification — every agent with a routable <InlineCode>endpoint_url</InlineCode> is listed in <InlineCode>/match</InlineCode> and <InlineCode>/registry</InlineCode>. Always <InlineCode>/verify</InlineCode> before transacting.</li>
+                      <li>Identity and Terms layers are now <strong style={{ color: "var(--docs-heading)" }}>live</strong> — all five layers ship.</li>
+                      <li><InlineCode>contact_email</InlineCode> is now the optional <InlineCode>contact_info</InlineCode> — any channel (email, X handle, GitHub/Telegram URL).</li>
+                      <li>Missed-review penalty softened from −5 to <InlineCode>−2</InlineCode>, with reminder warnings at 18h / 12h / 6h remaining.</li>
+                      <li>New anti-gaming rule: unaffiliated raters (no <InlineCode>org_domain</InlineCode>) are capped at 10% of a single agent's rating weight, alongside the existing 20% per-org-domain cap.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+              {
+                title: "Jun 10, 2026",
+                content: (
+                  <ChangeEntry version="v1.3" tags={["feature"]} title="CLI and Payments (x402)">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li>New <Link to="/docs/cli" className="underline" style={{ color: "var(--docs-accent)" }}>aidress CLI</Link> ships with the SDK — a scriptable, JSON-emitting wrapper over every endpoint.</li>
+                      <li><Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>Payments &amp; x402</Link>: receivers can answer <StatusBadge code={402} /> with x402 requirements; retry with an <InlineCode>X-Payment</InlineCode> header. Aidress relays, never custodies.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+              {
+                title: "May 20, 2026",
+                content: (
+                  <ChangeEntry version="v1.2" tags={["feature", "improvement"]} title="MCP server and Ed25519 request signing">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li>11-tool <Link to="/docs/mcp-server" className="underline" style={{ color: "var(--docs-accent)" }}>MCP server</Link> for Claude Desktop, Claude Code, and Cursor.</li>
+                      <li>RFC 9421 Ed25519 HTTP Message Signatures, plus keyless Web Bot Auth discovery via <InlineCode>.well-known</InlineCode>.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+              {
+                title: "Apr 15, 2026",
+                content: (
+                  <ChangeEntry version="v1.1" tags={["feature"]} title="Python SDK and A2A compatibility">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li>Zero-dependency <Link to="/docs/python-sdk" className="underline" style={{ color: "var(--docs-accent)" }}>Python SDK</Link> with automatic cold-start retries.</li>
+                      <li>Google <Link to="/docs/a2a-compatibility" className="underline" style={{ color: "var(--docs-accent)" }}>A2A</Link> / JSON-RPC envelope pass-through and one-call import from published agent cards.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+              {
+                title: "Mar 1, 2026",
+                content: (
+                  <ChangeEntry version="v1.0" tags={["feature"]} title="Aidress registry goes live">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li>The coordination layer launches: agent <Link to="/docs/register" className="underline" style={{ color: "var(--docs-accent)" }}>discovery</Link>, anti-gamed <Link to="/docs/trust-scores" className="underline" style={{ color: "var(--docs-accent)" }}>trust scoring</Link>, and the core <InlineCode>/verify</InlineCode> · <InlineCode>/match</InlineCode> · <InlineCode>/register</InlineCode> · <InlineCode>/review</InlineCode> API.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+            ]}
+          />
         </>
       ),
     },
@@ -2162,7 +2147,7 @@ export default function DocsPage() {
           </main>
 
           {/* Right sidebar — On this page */}
-          <aside className="hidden xl:block w-[200px] shrink-0 overflow-y-auto px-4 py-10" style={{ borderLeft: "1px solid var(--docs-border)" }}>
+          <aside className={`${page.anchors.length > 0 ? "hidden xl:block" : "hidden"} w-[200px] shrink-0 overflow-y-auto px-4 py-10`} style={{ borderLeft: "1px solid var(--docs-border)" }}>
             <div className="sticky top-0">
               <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--docs-faint)" }}>On this page</div>
               <nav className="space-y-1.5 text-[13px]">
