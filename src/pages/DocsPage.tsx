@@ -163,8 +163,8 @@ function H3({ id, children }: { id?: string; children: React.ReactNode }) {
   return <h3 id={id} className="mt-5 text-[15px] font-semibold md:mt-6 md:text-[16px]" style={{ color: "var(--docs-heading)" }}>{children}</h3>;
 }
 
-function P({ children }: { children: React.ReactNode }) {
-  return <p className="mt-3 text-[14px] leading-relaxed md:text-[15px]" style={{ color: "var(--docs-body)" }}>{children}</p>;
+function P({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return <p className="mt-3 text-[14px] leading-relaxed md:text-[15px]" style={{ color: "var(--docs-body)", ...style }}>{children}</p>;
 }
 
 // ─── Changelog primitives ───────────────────────────────────────────────────
