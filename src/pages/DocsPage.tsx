@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Copy, Check, ChevronRight, Menu, X, Sun, Moon } from "lucide-react";
+import { Copy, Check, ChevronRight, Menu, X, Sun, Moon, MessageCircle, FileText, Sparkles } from "lucide-react";
 import { SearchModal, SearchTrigger } from "@/components/SearchModal";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 
@@ -206,21 +206,22 @@ function ChangelogItem({ id, date, version, tags, title, children }: { id: strin
 // ─── Per-page help footer ───────────────────────────────────────────────────
 
 function DocsHelpFooter() {
-  const cardStyle = { border: "1px solid var(--docs-border)", backgroundColor: "var(--docs-code-bg)" } as const;
+  const linkClass = "font-semibold underline-offset-2 hover:underline";
+  const linkStyle = { color: "var(--docs-accent)" } as const;
   return (
-    <div className="mt-12 grid gap-3 sm:grid-cols-3">
-      <a href="https://discord.gg/DG2VjeB7T" target="_blank" rel="noopener noreferrer" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
-        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Chat with our devs</div>
-        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>Discord — support &amp; errors →</div>
-      </a>
-      <Link to="/docs/changelog" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
-        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Changelog</div>
-        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>See what's new →</div>
-      </Link>
-      <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="group rounded-lg px-4 py-3 transition-colors hover:border-[var(--docs-accent)]" style={cardStyle}>
-        <div className="text-[13px] font-semibold" style={{ color: "var(--docs-heading)" }}>Building with an LLM?</div>
-        <div className="mt-0.5 text-[12px]" style={{ color: "var(--docs-faint)" }}>Read llms.txt →</div>
-      </a>
+    <div className="mt-12 space-y-3.5 text-[14px]" style={{ color: "var(--docs-body)" }}>
+      <div className="flex items-center gap-3">
+        <MessageCircle size={17} strokeWidth={1.75} style={{ color: "var(--docs-faint)" }} className="shrink-0" />
+        <span>Chat with our devs on <a href="https://discord.gg/DG2VjeB7T" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>Discord</a> for support and errors.</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <FileText size={17} strokeWidth={1.75} style={{ color: "var(--docs-faint)" }} className="shrink-0" />
+        <span>Check out our <Link to="/docs/changelog" className={linkClass} style={linkStyle}>changelog</Link>.</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <Sparkles size={17} strokeWidth={1.75} style={{ color: "var(--docs-faint)" }} className="shrink-0" />
+        <span>LLM? Read <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>llms.txt</a>.</span>
+      </div>
     </div>
   );
 }
