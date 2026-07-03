@@ -11,8 +11,8 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X, Volume2, VolumeX } from "lucide-react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { SearchModal, searchDocs } from "./components/SearchModal";
-import { GooeyInput } from "./components/ui/gooey-input";
+import { SearchModal } from "./components/SearchModal";
+import { SearchBox } from "./components/SearchBox";
 import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import {
@@ -827,7 +827,6 @@ function AsciiHeading() {
 
 function Nav() {
   const { theme, toggle } = useTheme();
-  const navigate = useNavigate();
   const [solid, setSolid] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -894,21 +893,7 @@ function Nav() {
           <a href="/docs" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Docs</a>
           <a href="/docs/register" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>API Reference</a>
 
-          <GooeyInput
-            className="hidden lg:flex"
-            placeholder="Search docs…"
-            collapsedWidth={150}
-            expandedWidth={230}
-            onSubmit={(q) => {
-              const r = searchDocs(q);
-              navigate(r[0] ? `/docs/${r[0].slug}` : "/docs/introduction");
-            }}
-            classNames={{
-              trigger: "!bg-[var(--card)] !text-[var(--text-faint)] !ring-1 !ring-[var(--border)] !justify-start",
-              input: "!text-[var(--text)] placeholder:!text-[var(--text-faint)]",
-              bubbleSurface: "!bg-[var(--card)] !text-[var(--text)] !ring-1 !ring-[var(--border)]",
-            }}
-          />
+          <SearchBox variant="site" className="hidden lg:flex" />
 
           <button
             type="button"

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Copy, Check, ChevronRight, Menu, X, Sun, Moon, MessageCircle, FileText, Sparkles } from "lucide-react";
-import { SearchModal, searchDocs } from "@/components/SearchModal";
-import { GooeyInput } from "@/components/ui/gooey-input";
+import { SearchModal } from "@/components/SearchModal";
+import { SearchBox } from "@/components/SearchBox";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { Timeline } from "@/components/ui/timeline";
 
@@ -2074,7 +2074,8 @@ export default function DocsPage() {
         <Link to="/" className="mb-8 flex items-center gap-2.5">
           <img src="/Aidress_logoonly.png" alt="Aidress" className="h-6 w-6" />
           <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--docs-heading)" }}>AIDRESS</span>
-          <span className="ml-1 rounded px-1.5 py-0.5 text-[10px] font-medium" style={{ backgroundColor: "var(--docs-accent-bg)", color: "var(--docs-accent)" }}>DOCS</span>
+          <span className="text-base font-light" style={{ color: "var(--docs-border)" }}>|</span>
+          <span className="text-sm" style={{ color: "var(--docs-faint)" }}>Docs</span>
         </Link>
         {sidebar}
       </aside>
@@ -2090,7 +2091,9 @@ export default function DocsPage() {
             <div className="mb-6 flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2">
                 <img src="/Aidress_logoonly.png" alt="Aidress" className="h-5 w-5" />
-                <span className="text-sm font-semibold" style={{ color: "var(--docs-heading)" }}>AIDRESS DOCS</span>
+                <span className="text-sm font-semibold" style={{ color: "var(--docs-heading)" }}>AIDRESS</span>
+                <span className="text-base font-light" style={{ color: "var(--docs-border)" }}>|</span>
+                <span className="text-sm" style={{ color: "var(--docs-faint)" }}>Docs</span>
               </Link>
               <button type="button" onClick={() => setMobileMenuOpen(false)} style={{ color: "var(--docs-body)" }}><X size={18} /></button>
             </div>
@@ -2120,21 +2123,7 @@ export default function DocsPage() {
             <span className="truncate text-[14px] font-medium md:hidden" style={{ color: "var(--docs-body)" }}>{page.title}</span>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <GooeyInput
-              className="hidden md:flex"
-              placeholder="Search docs…"
-              collapsedWidth={150}
-              expandedWidth={240}
-              onSubmit={(q) => {
-                const r = searchDocs(q);
-                if (r[0]) navigate(`/docs/${r[0].slug}`);
-              }}
-              classNames={{
-                trigger: "!bg-[var(--docs-callout-bg)] !text-[var(--docs-faint)] !ring-1 !ring-[var(--docs-border)] !justify-start",
-                input: "!text-[var(--docs-heading)] placeholder:!text-[var(--docs-faint)]",
-                bubbleSurface: "!bg-[var(--docs-callout-bg)] !text-[var(--docs-heading)] !ring-1 !ring-[var(--docs-border)]",
-              }}
-            />
+            <SearchBox variant="docs" className="hidden md:flex" />
             <Link to="/" className="hidden text-[13px] transition-colors hover:underline sm:block" style={{ color: "var(--docs-faint)" }}>← Back</Link>
             <Link to="/" className="flex h-8 w-8 items-center justify-center sm:hidden" style={{ color: "var(--docs-faint)" }}>←</Link>
             <button type="button" onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-md transition-colors" style={{ color: "var(--docs-body)" }}>
