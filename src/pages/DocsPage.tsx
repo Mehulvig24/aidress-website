@@ -256,7 +256,6 @@ const sidebarNav: NavGroup[] = [
       { label: "Introduction", slug: "introduction" },
       { label: "Quickstart", slug: "quickstart" },
       { label: "Authentication", slug: "authentication" },
-      { label: "FAQ", slug: "faq" },
     ],
   },
   {
@@ -300,6 +299,12 @@ const sidebarNav: NavGroup[] = [
       { label: "A2A Compatibility", slug: "a2a-compatibility" },
       { label: "Standards & Protocols", slug: "standards" },
       { label: "Changelog", slug: "changelog" },
+    ],
+  },
+  {
+    title: "Help",
+    items: [
+      { label: "FAQ", slug: "faq" },
     ],
   },
 ];
@@ -1994,7 +1999,7 @@ result = call("agent_freightbot_01", {
 
     // ── FAQ ───────────────────────────────────────────────────────────────
     faq: {
-      breadcrumb: "Getting Started",
+      breadcrumb: "Help",
       title: "FAQ",
       anchors: [
         { id: "what", label: "What is Aidress?" },
