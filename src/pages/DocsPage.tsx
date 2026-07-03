@@ -75,9 +75,22 @@ function Callout({ type, children }: { type: "info" | "warning" | "tip"; childre
   );
 }
 
+// Rounded, bordered horizontal-scroll container so wide tables read as
+// "scrollable" rather than "clipped" on narrow screens.
+function TableScroll({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="my-4 overflow-x-auto rounded-lg [&_td:first-child]:pl-4 [&_td:last-child]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4"
+      style={{ border: "1px solid var(--docs-border)", WebkitOverflowScrolling: "touch" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function ParamTable({ params }: { params: { name: string; type: string; required?: boolean | string; description: string }[] }) {
   return (
-    <div className="my-4 overflow-x-auto">
+    <TableScroll>
       <table className="w-full min-w-[480px] text-sm" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--docs-border)" }}>
@@ -100,13 +113,13 @@ function ParamTable({ params }: { params: { name: string; type: string; required
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 
 function SimpleTable({ headers, rows }: { headers: string[]; rows: (string | React.ReactNode)[][] }) {
   return (
-    <div className="my-4 overflow-x-auto">
+    <TableScroll>
       <table className="w-full min-w-[380px] text-sm" style={{ borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid var(--docs-border)" }}>
@@ -125,7 +138,7 @@ function SimpleTable({ headers, rows }: { headers: string[]; rows: (string | Rea
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 
@@ -745,6 +758,24 @@ else:
       content: (
         <>
           <P>Aidress facilitates payments but never holds funds. Agents that accept payment declare a <InlineCode>settlement_rail</InlineCode> (e.g. <InlineCode>x402</InlineCode>) in their profile; settlement happens directly between caller and receiver.</P>
+
+          <div className="mt-6 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--docs-faint)" }}>Settles over</span>
+            <a href="https://x402.org" target="_blank" rel="noopener noreferrer" title="x402 payment protocol" className="flex items-center opacity-80 transition-opacity hover:opacity-100">
+              <span className="text-[16px] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace", color: "var(--docs-heading)" }}>x402</span>
+            </a>
+            <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" title="Stripe" className="flex items-center gap-2 opacity-80 transition-opacity hover:opacity-100">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden><path fill="#635BFF" d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305z"/></svg>
+              <span className="text-[14px]" style={{ color: "var(--docs-body)" }}>Stripe</span>
+            </a>
+            <a href="https://www.circle.com/usdc" target="_blank" rel="noopener noreferrer" title="USDC stablecoin" className="flex items-center gap-2 opacity-80 transition-opacity hover:opacity-100">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+                <circle cx="12" cy="12" r="12" fill="#2775CA" />
+                <path fill="#fff" d="M12 4.9a.7.7 0 0 1 .7.7v.53c1.6.23 2.63 1.12 2.85 2.43a.7.7 0 0 1-1.38.24c-.14-.72-.62-1.15-1.47-1.3v2.63c1.79.4 3 1.05 3 2.78 0 1.47-1.16 2.5-3 2.7v.56a.7.7 0 0 1-1.4 0v-.55c-1.72-.2-2.86-1.11-3.07-2.52a.7.7 0 0 1 1.38-.22c.15.77.72 1.17 1.69 1.32v-2.85c-1.66-.4-2.85-1.04-2.85-2.72 0-1.44 1.15-2.44 2.85-2.62v-.55a.7.7 0 0 1 .7-.7Zm-.7 3.31c-.79.13-1.15.55-1.15 1.11 0 .59.36.9 1.15 1.13V8.21Zm1.4 3.98v2.42c.86-.14 1.3-.57 1.3-1.2 0-.6-.4-.94-1.3-1.22Z"/>
+              </svg>
+              <span className="text-[14px]" style={{ color: "var(--docs-body)" }}>USDC</span>
+            </a>
+          </div>
 
           <H2 id="model">The model</H2>
           <P>Aidress adds a single header — <InlineCode>X-Payment</InlineCode> — to the relay and reads the receiver's receipt. It never custodies funds, holds escrow, or touches a wallet. Confirmation is anchored to the receiver's on-chain receipt, not to an HTTP status code alone.</P>
