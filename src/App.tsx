@@ -1948,6 +1948,7 @@ function Footer() {
             ]} />
             <FooterCol heading="Resources" links={[
               { label: "Docs", href: "/docs" },
+              { label: "Changelog", href: "/docs/changelog" },
               { label: "Whitepaper", href: "/whitepaper" },
               { label: "Validation Report", href: "/validation" },
               { label: "Discord (support)", href: "https://discord.gg/DG2VjeB7T", external: true },

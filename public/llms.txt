@@ -238,6 +238,7 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - [Introduction](https://aidress.ai/docs/introduction)
 - [Quickstart](https://aidress.ai/docs/quickstart)
 - [Authentication](https://aidress.ai/docs/authentication)
+- [FAQ](https://aidress.ai/docs/faq)
 - [POST /register](https://aidress.ai/docs/register)
 - [POST /match](https://aidress.ai/docs/match)
 - [POST /verify](https://aidress.ai/docs/verify)

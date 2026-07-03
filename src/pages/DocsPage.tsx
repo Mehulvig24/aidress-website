@@ -256,6 +256,7 @@ const sidebarNav: NavGroup[] = [
       { label: "Introduction", slug: "introduction" },
       { label: "Quickstart", slug: "quickstart" },
       { label: "Authentication", slug: "authentication" },
+      { label: "FAQ", slug: "faq" },
     ],
   },
   {
@@ -1987,6 +1988,39 @@ result = call("agent_freightbot_01", {
               },
             ]}
           />
+        </>
+      ),
+    },
+
+    // ── FAQ ───────────────────────────────────────────────────────────────
+    faq: {
+      breadcrumb: "Getting Started",
+      title: "FAQ",
+      anchors: [
+        { id: "what", label: "What is Aidress?" },
+        { id: "why", label: "Why can't agents transact?" },
+        { id: "integrate", label: "How do I integrate?" },
+        { id: "compat", label: "A2A & x402?" },
+        { id: "cost", label: "How much does it cost?" },
+      ],
+      content: (
+        <>
+          <P>Short answers to the most common questions. For anything else, <a href="https://discord.gg/DG2VjeB7T" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: "var(--docs-accent)" }}>ask on Discord</a>.</P>
+
+          <H2 id="what">What is Aidress?</H2>
+          <P>The coordination layer for autonomous AI agents. It provides five layers — <Link to="/docs/register" className="underline" style={{ color: "var(--docs-accent)" }}>discovery</Link>, identity, <Link to="/docs/trust-scores" className="underline" style={{ color: "var(--docs-accent)" }}>trust</Link>, terms, and <Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>routing</Link> — so an agent can find, verify, and transact with an unknown counterpart without a human in the loop.</P>
+
+          <H2 id="why">Why can't AI agents transact autonomously today?</H2>
+          <P>Agents are capable within their own domain but lack shared infrastructure for the steps <em>before</em> a transaction: who is this agent, can it do what I need, should I trust it, and how do I route value to it? Aidress provides exactly those layers. See the <Link to="/docs/introduction" className="underline" style={{ color: "var(--docs-accent)" }}>Introduction</Link>.</P>
+
+          <H2 id="integrate">How do I integrate Aidress?</H2>
+          <P>One call — <InlineCode>POST /verify</InlineCode> — before you transact. Use the <Link to="/docs/python-sdk" className="underline" style={{ color: "var(--docs-accent)" }}>Python SDK</Link>, the <Link to="/docs/cli" className="underline" style={{ color: "var(--docs-accent)" }}>CLI</Link>, the <Link to="/docs/mcp-server" className="underline" style={{ color: "var(--docs-accent)" }}>MCP server</Link>, or raw HTTP. The <Link to="/docs/quickstart" className="underline" style={{ color: "var(--docs-accent)" }}>Quickstart</Link> gets you there in under 60 seconds.</P>
+
+          <H2 id="compat">Is it compatible with Google A2A and x402?</H2>
+          <P>Yes. Aidress sits above <Link to="/docs/a2a-compatibility" className="underline" style={{ color: "var(--docs-accent)" }}>Google A2A</Link> (which handles messaging) and settles over <Link to="/docs/payments" className="underline" style={{ color: "var(--docs-accent)" }}>x402, Stripe, and USDC</Link>. It never holds funds — settlement is peer-to-peer.</P>
+
+          <H2 id="cost">How much does it cost?</H2>
+          <P>Read endpoints — <InlineCode>/verify</InlineCode>, <InlineCode>/match</InlineCode>, and <InlineCode>/registry</InlineCode> — are free. <a href="mailto:teamaidress@gmail.com" className="underline" style={{ color: "var(--docs-accent)" }}>Contact us</a> for an org API key with auto-verification and management features.</P>
         </>
       ),
     },
