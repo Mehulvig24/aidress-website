@@ -1013,6 +1013,8 @@ function HeroSection() {
         }}
       />
 
+      <PyramidWatermark className="right-0 top-0 z-[1] h-[200px] w-[440px] opacity-[0.07] md:h-[260px] md:w-[560px]" />
+
       <div className="relative z-10 mx-auto w-full max-w-4xl">
         {/* Headline */}
         <FadeIn>
@@ -1767,7 +1769,7 @@ function LetsTalkSection() {
 
   return (
     <section className="relative overflow-hidden py-20 md:py-28">
-      <div className="relative mx-auto max-w-7xl px-5 md:px-10">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-10">
         <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
           {/* Left: heading + subtitle */}
           <div className="max-w-lg">
@@ -1912,19 +1914,67 @@ function FooterCol({ heading, links }: { heading: string; links: { label: string
   );
 }
 
+// Pre-baked fine-grain noise texture (not a live CSS `filter:`, which some
+// browsers composite ignoring ancestor opacity). Tiled via background-image +
+// background-blend-mode, which reliably respects the parent's low opacity.
+const GRAIN_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='32' height='32' filter='url(#n)'/></svg>`;
+const GRAIN_DATA_URL = `url("data:image/svg+xml,${encodeURIComponent(GRAIN_SVG)}")`;
+
+// Faint, grainy echo of the pyramid logo — sits directly on the surrounding
+// background (no panel, no black box) so it reads as texture, not a graphic
+// bolted on top. `className` controls position/size/opacity per placement.
+function PyramidWatermark({ className }: { className: string }) {
+  const bars = [
+    { w: 90, h: 20 },
+    { w: 210, h: 22 },
+    { w: 160, h: 22 },
+    { w: 340, h: 24 },
+    { w: 450, h: 26 },
+  ];
+
+  return (
+    <div
+      aria-hidden
+      className={`pointer-events-none absolute ${className}`}
+      style={{
+        maskImage: "radial-gradient(closest-side, black 55%, transparent 100%)",
+        WebkitMaskImage: "radial-gradient(closest-side, black 55%, transparent 100%)",
+      }}
+    >
+      <div className="flex h-full flex-col items-end justify-center gap-3">
+        {bars.map((b, i) => (
+          <div
+            key={i}
+            className="rounded-[3px]"
+            style={{
+              width: b.w,
+              height: b.h,
+              backgroundImage: `${GRAIN_DATA_URL}, linear-gradient(135deg, var(--text) 0%, var(--text-faint) 100%)`,
+              backgroundBlendMode: "soft-light, normal",
+              backgroundSize: "32px 32px, 100% 100%",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Footer() {
   return (
     <footer className="px-5 pb-6 pt-2 md:px-10">
       <div
-        className="mx-auto max-w-7xl rounded-2xl p-6 md:p-8"
+        className="relative mx-auto max-w-7xl overflow-hidden rounded-2xl p-6 md:p-8"
         style={{
           backgroundColor: "var(--surface)",
           border: "1px solid var(--border)",
           boxShadow: "0 0 80px 0 rgba(0,0,0,0.25)",
         }}
       >
+        <PyramidWatermark className="-right-16 -top-10 h-[220px] w-[520px] opacity-[0.14] md:-right-10 md:-top-14 md:h-[260px] md:w-[600px]" />
+
         {/* Top grid: logo + columns */}
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-[auto_1fr] md:gap-10">
+        <div className="relative z-10 grid grid-cols-2 gap-8 md:grid-cols-[auto_1fr] md:gap-10">
           {/* Logo */}
           <div className="col-span-2 md:col-span-1">
             <AidressLogo logoHeight={22} className="opacity-80" />
@@ -1964,7 +2014,7 @@ function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 flex flex-col gap-4 border-t pt-6 md:flex-row md:items-center md:justify-between" style={{ borderColor: "var(--border)" }}>
+        <div className="relative z-10 mt-8 flex flex-col gap-4 border-t pt-6 md:flex-row md:items-center md:justify-between" style={{ borderColor: "var(--border)" }}>
           {/* Copyright + legal */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.72rem]" style={{ color: "var(--text-faint)" }}>
             <span>&copy; {new Date().getFullYear()} Aidress</span>
