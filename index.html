@@ -22,6 +22,11 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <!-- No static canonical here — every route sets its own via react-helmet-async (see App.tsx / DocsPage.tsx) -->
 
+    <!-- Agent discovery — HTML-level Link relations (RFC 8288 / RFC 9727) -->
+    <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
+    <link rel="service-doc" href="/docs" />
+    <link rel="alternate" href="/llms.txt" type="text/plain" title="LLM-readable summary" />
+
     <!-- Open Graph (LinkedIn, Facebook, WhatsApp previews) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://aidress.ai" />

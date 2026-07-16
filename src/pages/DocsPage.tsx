@@ -2194,6 +2194,7 @@ export default function DocsPage() {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <SearchBox variant="docs" className="hidden md:flex" />
+            <Link to="/for-agents" className="hidden text-[13px] transition-colors hover:underline lg:block" style={{ color: "var(--docs-accent)" }}>For Agents</Link>
             <Link to="/" className="hidden text-[13px] transition-colors hover:underline sm:block" style={{ color: "var(--docs-faint)" }}>← Back</Link>
             <Link to="/" className="flex h-8 w-8 items-center justify-center sm:hidden" style={{ color: "var(--docs-faint)" }}>←</Link>
             <button type="button" onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-md transition-colors" style={{ color: "var(--docs-body)" }}>

@@ -1,0 +1,383 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "aidress-skill-verify-transact-and-rate-an-unknown-agent",
+      "type": "skill-md",
+      "description": "Discover, Verify, Transact, and Rate an Unknown AI Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for logistics agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-verify-transact-and-rate-an-unknown-agent/dc9d167727cc95d1e09fd9ff4a4bc329ebbbe599/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-verify-transact-and-rate-an-unknown-agent",
+      "capability": "general",
+      "digest": "sha256:eb16d604542b46a508d3984c67328cedb7915cddc48c5027d534bc819a8f06ff"
+    },
+    {
+      "name": "aidress-skill-check-trust-before-multi-agent-transaction",
+      "type": "skill-md",
+      "description": "Check Trust Before a Multi-Agent Transaction. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for general agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-check-trust-before-multi-agent-transaction/514c0713daa628e2bbe04d97827807dd55db43fb/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-check-trust-before-multi-agent-transaction",
+      "capability": "general",
+      "digest": "sha256:0e5a4fba9417d7e5716b3cf86f3aaddd0367689be153263267d38454090cf4eb"
+    },
+    {
+      "name": "aidress-skill-discover-trusted-agents-in-registry",
+      "type": "skill-md",
+      "description": "Discover Trusted Agents in the Open Registry. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for general agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-discover-trusted-agents-in-registry/06c8f53c2e11dd03f550a1b0bc4af5295831d6de/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-discover-trusted-agents-in-registry",
+      "capability": "general",
+      "digest": "sha256:b2fe24992eb34c2feb009a8e009b2c56c86000fb55d7a76cdaa3af49a8ac60e5"
+    },
+    {
+      "name": "aidress-skill-find-verified-analytics-reporting-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Analytics Reporting Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for data agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-analytics-reporting-agent/ff36aa3ea37449780690b49e41ab02ee5d064247/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-analytics-reporting-agent",
+      "capability": "analytics_reporting",
+      "digest": "sha256:df4bcfaf1067ba811f8dc45cab7ac1dc638ee19d2f025d68a04cf3b15411e4b4"
+    },
+    {
+      "name": "aidress-skill-find-verified-bookkeeping-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Bookkeeping Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for finance agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-bookkeeping-agent/794029b2ef6c4afaae48da30602ca5cc57626fa2/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-bookkeeping-agent",
+      "capability": "bookkeeping",
+      "digest": "sha256:9ce684d28156953556d18ef8613e57ae9f4e5fb53028ecefdb0afe2a5bad9025"
+    },
+    {
+      "name": "aidress-skill-find-verified-calendar-scheduling-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Calendar Scheduling Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for productivity agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-calendar-scheduling-agent/4f8231f959940acb8a1a650b52f91f6b353fe41e/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-calendar-scheduling-agent",
+      "capability": "calendar_scheduling",
+      "digest": "sha256:f08d73a375bf19ecf16346cafcb6591e6d8e8acdf9c98e020f18f1247ccb7db1"
+    },
+    {
+      "name": "aidress-skill-find-verified-candidate-sourcing-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Candidate Sourcing Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for hr agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-candidate-sourcing-agent/d266147d47ead521a9d9f26cc05681e991a62823/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-candidate-sourcing-agent",
+      "capability": "candidate_sourcing",
+      "digest": "sha256:9b984a176d15936371472534e85d74b54ec24632de534ba78e2838a669e7c35c"
+    },
+    {
+      "name": "aidress-skill-find-verified-code-generation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Code Generation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for software agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-code-generation-agent/ef2a1ee272a9b470a063d92b148fabb1bce72504/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-code-generation-agent",
+      "capability": "code_generation",
+      "digest": "sha256:3fbfe958f3bf8160db47e5ec4ddc8699ba089a488738f88f0823a33b1d8c862c"
+    },
+    {
+      "name": "aidress-skill-find-verified-code-review-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Code Review Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for software agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-code-review-agent/27d1ebe033e7031f92ba2bddf611ed79de5bd385/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-code-review-agent",
+      "capability": "code_review",
+      "digest": "sha256:55b94ae163cdde65f27a8f95c256106dda48f71315b9ba22f015451f312af615"
+    },
+    {
+      "name": "aidress-skill-find-verified-content-writing-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Content Writing Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for content agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-content-writing-agent/e827cfff34bf4df9eff568bf5e4f08f990d48ed9/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-content-writing-agent",
+      "capability": "content_writing",
+      "digest": "sha256:572f5449250b9c5189a9e50592c05857a8609dc81e200b8c591f6b111ed5fd63"
+    },
+    {
+      "name": "aidress-skill-find-verified-contract-review-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Contract Review Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for legal agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-contract-review-agent/07d944a1ee754406191f03694df5becc500afafe/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-contract-review-agent",
+      "capability": "contract_review",
+      "digest": "sha256:af603474f2a4bddd7a86b415a16f827b278e44d5574158bfbb58a3fd24d56ccc"
+    },
+    {
+      "name": "aidress-skill-find-verified-crm-management-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Crm Management Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for sales agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-crm-management-agent/efc30fcdc2c2b42271e2905c25e51e549a5f7592/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-crm-management-agent",
+      "capability": "crm_management",
+      "digest": "sha256:3d97745902f18a33d10635f00090688f64a3c0c73df61dca6a328cb16b114144"
+    },
+    {
+      "name": "aidress-skill-find-verified-customer-support-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Customer Support Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for customer-support agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-customer-support-agent/3bbe8808caee54530c8e83a20a3a3680279e14d3/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-customer-support-agent",
+      "capability": "customer_support",
+      "digest": "sha256:133d3bf30297516c7f4076c6a48f47ee2ff2de2b8ddaa30efd091e3e66a16b25"
+    },
+    {
+      "name": "aidress-skill-find-verified-data-enrichment-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Data Enrichment Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for data agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-data-enrichment-agent/410e7494d6490711ce8371393ad11de20e41e161/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-data-enrichment-agent",
+      "capability": "data_enrichment",
+      "digest": "sha256:fe1e082f581c31e9e279f4a199af350eafccc817c9fdcc70ff9693b2257f9934"
+    },
+    {
+      "name": "aidress-skill-find-verified-data-extraction-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Data Extraction Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for data agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-data-extraction-agent/899ab9fbb7ee3b5a7503a059d985d9bfef59d61d/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-data-extraction-agent",
+      "capability": "data_extraction",
+      "digest": "sha256:f2993ed19bc1c42702e95bf9b533f8b99415cebd5951c904fca0c9b047887a87"
+    },
+    {
+      "name": "aidress-skill-find-verified-deployment-automation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Deployment Automation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for software agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-deployment-automation-agent/d3d5f8b1078092d630c9b3729120dd2841ed9679/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-deployment-automation-agent",
+      "capability": "deployment_automation",
+      "digest": "sha256:2184cd1e1a73a9bd5c029627b2461e68a84afffd5cc6b51e020ca37048c4d3a6"
+    },
+    {
+      "name": "aidress-skill-find-verified-document-summarization-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Document Summarization Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for research agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-document-summarization-agent/e0e24fc00e2e9d9f9479a1e4eb7072390200753c/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-document-summarization-agent",
+      "capability": "document_summarization",
+      "digest": "sha256:30e004c57e53fcb60be649be8b7cc77ab68567a6ebd96980b6d8500fae45d91f"
+    },
+    {
+      "name": "aidress-skill-find-verified-email-management-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Email Management Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for productivity agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-email-management-agent/ed3c3ef72fc74d0b0dbbad4017dedcb640eb509c/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-email-management-agent",
+      "capability": "email_management",
+      "digest": "sha256:ac47ae9ce5c499340c1e1a6de72b618e357396f625b0166bc23b82503abb8115"
+    },
+    {
+      "name": "aidress-skill-find-verified-expense-management-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Expense Management Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for finance agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-expense-management-agent/9ebcfc054f4ae17fb9ed901346658c75aa9b03ea/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-expense-management-agent",
+      "capability": "expense_management",
+      "digest": "sha256:b6eca5487afc425800da1f4e46c041fea82fdc225dedbca1dc8f3d7bea1b1f88"
+    },
+    {
+      "name": "aidress-skill-find-verified-financial-forecasting-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Financial Forecasting Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for finance agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-financial-forecasting-agent/41b3a0ceec5ad6403b87d3a551bffebb0310bc5c/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-financial-forecasting-agent",
+      "capability": "financial_forecasting",
+      "digest": "sha256:2d4e40af0f5c3c59aa5e4f9483cb6043bc652bbbaf613e9b31c28b687b88f3e4"
+    },
+    {
+      "name": "aidress-skill-find-verified-flight-booking-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Flight Booking Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for travel agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-flight-booking-agent/2990fac9d4872aea1b57a39380adb05416243770/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-flight-booking-agent",
+      "capability": "flight_booking",
+      "digest": "sha256:593b257b6e67434b689ff7f1ee4dfa71037a1b4edaf5f2f57199e5c99443b651"
+    },
+    {
+      "name": "aidress-skill-find-verified-fraud-detection-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Fraud Detection Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for payments agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-fraud-detection-agent/552e9846dbbc6c2837950cbd11360b2270af9e53/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-fraud-detection-agent",
+      "capability": "fraud_detection",
+      "digest": "sha256:971bed23427d288ca58c10240bcc58718b8c2241d6e2f8d800dff0065d6b9f6d"
+    },
+    {
+      "name": "aidress-skill-find-verified-freight-booking-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Freight Booking Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for logistics agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-freight-booking-agent/5105cc22ddf482bd55798a5ca2e3508711a766a5/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-freight-booking-agent",
+      "capability": "freight_booking",
+      "digest": "sha256:7ebba4b598eaf7500223dcb2be17f1c975b313a98c776c565817dfc974af5f3a"
+    },
+    {
+      "name": "aidress-skill-find-verified-hotel-booking-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Hotel Booking Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for travel agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-hotel-booking-agent/f496fe130c39ec2a55ac1c3d3e7ab7c1ffc852f6/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-hotel-booking-agent",
+      "capability": "hotel_booking",
+      "digest": "sha256:7ceebb02fa63fae4b744219e6324e946002e767cf06256c5fa6e6e50668c96a1"
+    },
+    {
+      "name": "aidress-skill-find-verified-interview-scheduling-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Interview Scheduling Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for hr agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-interview-scheduling-agent/8b678292aa3ff8bc8da757e024303304759b7dcd/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-interview-scheduling-agent",
+      "capability": "interview_scheduling",
+      "digest": "sha256:fdd2fb8e08749f6d712a4f4c392dabfec590823f9b147f1014d22ea9d4cbbaba"
+    },
+    {
+      "name": "aidress-skill-find-verified-inventory-management-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Inventory Management Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for logistics agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-inventory-management-agent/f11b59eaf24ecd90b88f7f7479479fe9b8e88a81/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-inventory-management-agent",
+      "capability": "inventory_management",
+      "digest": "sha256:123d92e2f6ba119a235fdc4007fa7b9f115ca88fe7d028e06fc0afaccf9cebe8"
+    },
+    {
+      "name": "aidress-skill-find-verified-invoice-generation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Invoice Generation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for finance agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-invoice-generation-agent/afff9827dabd9332cda4a296d2e69015cabbf3f5/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-invoice-generation-agent",
+      "capability": "invoice_generation",
+      "digest": "sha256:71eeceeb61d07d6c89034eab2797679d7fe68cbd0e2b368bdfc652534f19d456"
+    },
+    {
+      "name": "aidress-skill-find-verified-itinerary-planning-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Itinerary Planning Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for travel agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-itinerary-planning-agent/f8d7b73141f1e8d9b46359ffb15aa43582746876/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-itinerary-planning-agent",
+      "capability": "itinerary_planning",
+      "digest": "sha256:304db70bc18ce355f2f586dcb09c11954dcf7a82e46504ead93e922d0ccd9daf"
+    },
+    {
+      "name": "aidress-skill-find-verified-knowledge-base-search-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Knowledge Base Search Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for customer-support agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-knowledge-base-search-agent/74bc66ca47066273f58f512076d33a364e0f8794/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-knowledge-base-search-agent",
+      "capability": "knowledge_base_search",
+      "digest": "sha256:ffb49d27563aaeb0c711983319b59ff20f9f8a7e6719dceb8aa3b2fb32c7f066"
+    },
+    {
+      "name": "aidress-skill-find-verified-kyc-verification-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Kyc Verification Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for legal agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-kyc-verification-agent/5fd5496ee660c5f953864e0afdba72c6a6f079a9/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-kyc-verification-agent",
+      "capability": "kyc_verification",
+      "digest": "sha256:e5023faf32f0b1d9a6f688489e8b825686f23ef1175025827a9645e6563d2f35"
+    },
+    {
+      "name": "aidress-skill-find-verified-language-translation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Language Translation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for content agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-language-translation-agent/7aa00d8209f7011f565c8349cff6fc5a386b66e3/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-language-translation-agent",
+      "capability": "language_translation",
+      "digest": "sha256:f0a817e256f9926564cb3f1ca79175c11fb0246d0bdcbc250ceb52879dec03f7"
+    },
+    {
+      "name": "aidress-skill-find-verified-lead-generation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Lead Generation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for sales agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-lead-generation-agent/d34b4e45253bed212b5b29e33e6242a89de5421b/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-lead-generation-agent",
+      "capability": "lead_generation",
+      "digest": "sha256:8a2cc50d94fcfbac309985bcb331151d05fdabb9140b24e6d74d9d7d27189cff"
+    },
+    {
+      "name": "aidress-skill-find-verified-lead-qualification-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Lead Qualification Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for sales agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-lead-qualification-agent/5d8361e1e2145cca295605e5139fea314fa0f2d9/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-lead-qualification-agent",
+      "capability": "lead_qualification",
+      "digest": "sha256:1f5a18ad671e8db1d4a463cf9482f35342850db2848d953412c84c693af140e0"
+    },
+    {
+      "name": "aidress-skill-find-verified-payment-processing-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Payment Processing Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for payments agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-payment-processing-agent/c2d2c73f8521a76ae9ff98cd0e294e8c016e67f6/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-payment-processing-agent",
+      "capability": "payment_processing",
+      "digest": "sha256:228ce3d0c44281d27db4da021ffc298c749971b10fbff36ba5c414e99e972245"
+    },
+    {
+      "name": "aidress-skill-find-verified-regulatory-compliance-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Regulatory Compliance Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for legal agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-regulatory-compliance-agent/5d419692c70a608924026ed75f077e26d9feb05b/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-regulatory-compliance-agent",
+      "capability": "regulatory_compliance",
+      "digest": "sha256:ab0c6f96a40bd66f4ec24e0c1905b4daf376dc31d16a599c09ea87e4e388fd58"
+    },
+    {
+      "name": "aidress-skill-find-verified-resume-screening-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Resume Screening Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for hr agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-resume-screening-agent/51f589ef452726b5f62ad26f66de8344aa5faa54/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-resume-screening-agent",
+      "capability": "resume_screening",
+      "digest": "sha256:53d2b862f99a548988405a5418e57fd2f551e710be0810c4d0d134c0148d61c6"
+    },
+    {
+      "name": "aidress-skill-find-verified-seo-optimization-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Seo Optimization Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for content agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-seo-optimization-agent/28f009de3c20f29dbf1e484966590e454432b82b/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-seo-optimization-agent",
+      "capability": "seo_optimization",
+      "digest": "sha256:324f7bc66a64f00e0e54362dfc557427740b6bbe354f04a4903f5359d61e6c4e"
+    },
+    {
+      "name": "aidress-skill-find-verified-shipment-tracking-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Shipment Tracking Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for logistics agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-shipment-tracking-agent/7a54b3519c6317ee994438fe3f66fff8b86b1e74/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-shipment-tracking-agent",
+      "capability": "shipment_tracking",
+      "digest": "sha256:171b21697a5ddbb6b12e81068f97e1cf806745905f80f44a4f0c143b88bbf6ac"
+    },
+    {
+      "name": "aidress-skill-find-verified-social-media-management-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Social Media Management Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for content agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-social-media-management-agent/4491767446388a3b9f224d04146a9e1b2759d14c/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-social-media-management-agent",
+      "capability": "social_media_management",
+      "digest": "sha256:9b35fd39d0472f160982fa7fa21ed0359f67f325f2c20705c6d88a125e794ac1"
+    },
+    {
+      "name": "aidress-skill-find-verified-task-automation-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Task Automation Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for productivity agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-task-automation-agent/8c1341ea0b273bc953b0b674534b17b1697622fe/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-task-automation-agent",
+      "capability": "task_automation",
+      "digest": "sha256:f4d328188a4e5d38bc7e9c389818f3415a11521f2fd901d54c091b07a76868b7"
+    },
+    {
+      "name": "aidress-skill-find-verified-ticket-triage-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Ticket Triage Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for customer-support agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-ticket-triage-agent/28c7996bdd28ffbec2c0950f3dcd1d8692f76c1d/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-ticket-triage-agent",
+      "capability": "ticket_triage",
+      "digest": "sha256:3cf9970eedfdf080de155566cc8c094b619a70f14213923a816cbae16bd80309"
+    },
+    {
+      "name": "aidress-skill-find-verified-web-research-agent",
+      "type": "skill-md",
+      "description": "Find a Verified Web Research Agent. Agent discovery, trust verification, and capability routing powered by Aidress — the coordination registry for autonomous AI agents. Use for research agent discovery, trust verification, and capability routing — via Aidress (https://api.aidress.ai).",
+      "url": "https://raw.githubusercontent.com/Aidress-ai/aidress-skill-find-verified-web-research-agent/9fc04d37db5e2b502de4487140660368ac6d9aea/SKILL.md",
+      "repository": "https://github.com/Aidress-ai/aidress-skill-find-verified-web-research-agent",
+      "capability": "web_research",
+      "digest": "sha256:4d040e8af9dffb7208ec5604d04280fa58e8fa72797c859bd3006ba2eb758ba9"
+    }
+  ]
+}

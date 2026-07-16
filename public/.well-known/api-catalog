@@ -1,0 +1,13 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.aidress.ai",
+      "service-doc": [
+        { "href": "https://aidress.ai/docs", "type": "text/html" }
+      ],
+      "status": [
+        { "href": "https://api.aidress.ai/health", "type": "application/json" }
+      ]
+    }
+  ]
+}

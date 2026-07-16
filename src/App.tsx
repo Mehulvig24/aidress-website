@@ -9,12 +9,13 @@ import React, {
 import { motion, AnimatePresence } from "framer-motion";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Sun, Moon, Search, Shield, CheckCircle, Handshake, Zap, Menu, X, Volume2, VolumeX, Bot } from "lucide-react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { SearchModal } from "./components/SearchModal";
 import { SearchBox } from "./components/SearchBox";
 import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import ForAgentsPage from "./pages/ForAgentsPage";
 import {
   WhitePaperPage,
   ValidationReportPage,
@@ -25,6 +26,7 @@ import { AuroraText } from "@/components/ui/aurora-text";
 import { Terminal, AnimatedSpan, TypingAnimation } from "@/components/ui/terminal";
 import WorldMap from "@/components/ui/world-map";
 import "./index.css";
+import { registerWebMcpTools } from "@/lib/webmcp";
 
 // ─── Theme ──────────────────────────────────────────────────────────────────────
 
@@ -895,6 +897,20 @@ function Nav() {
 
           <SearchBox variant="site" className="hidden lg:flex" />
 
+          <a
+            href="/for-agents"
+            className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium transition-all hover:scale-[1.03] lg:flex"
+            style={{
+              color: "var(--accent)",
+              border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)",
+              backgroundColor: "color-mix(in srgb, var(--accent) 8%, transparent)",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            <Bot size={13} />
+            For Agents
+          </a>
+
           <button
             type="button"
             onClick={toggle}
@@ -957,6 +973,15 @@ function Nav() {
                 style={{ color: "var(--text)" }}
               >
                 API Reference
+              </a>
+              <a
+                href="/for-agents"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2.5 text-[14px] font-medium transition"
+                style={{ color: "var(--accent)" }}
+              >
+                <Bot size={15} />
+                For Agents
               </a>
               <div className="my-2" style={{ borderTop: "1px solid var(--border)" }} />
               <button
@@ -2088,6 +2113,10 @@ function PaperRoute({ Component }: { Component: React.ComponentType<{ onBack: ()
 // ─── App ────────────────────────────────────────────────────────────────────────
 
 export default function App() {
+  useEffect(() => {
+    registerWebMcpTools();
+  }, []);
+
   return (
     <HelmetProvider>
       <ThemeProvider>
@@ -2101,6 +2130,7 @@ export default function App() {
             <Route path="/protocol" element={<PaperRoute Component={ProtocolArticlePage} />} />
             <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
             <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
+            <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

@@ -283,7 +283,15 @@ A 2-minute 17-second video demo of Aidress is available at https://aidress.ai/de
 
 ## For Agents
 
-Well-known agent descriptor: https://api.aidress.ai/.well-known/agent.json
+Human-readable hub for AI agents: https://aidress.ai/for-agents
+
+Machine-readable resources on this domain:
+- API catalog (RFC 9727): https://aidress.ai/.well-known/api-catalog
+- Agent skills index (42 skills, one per capability, real GitHub repos with pinned commits and SHA-256 digests): https://aidress.ai/.well-known/agent-skills/index.json
+- Flagship skill (full discover → verify → transact → rate lifecycle): https://github.com/Aidress-ai/aidress-skill-verify-transact-and-rate-an-unknown-agent
+- MCP server card: https://aidress.ai/.well-known/mcp/server-card.json
+- Auth model (bearer key + RFC 9421 Ed25519 signatures, not OAuth): https://aidress.ai/auth.md
+- A2A agent descriptor (on the API domain): https://api.aidress.ai/.well-known/agent.json
 
 ## Contact
 
