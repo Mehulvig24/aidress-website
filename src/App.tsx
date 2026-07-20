@@ -1738,6 +1738,67 @@ function StatusDashes({ density = 8, className = "" }: { density?: number; class
   );
 }
 
+// Real services reachable through the registry. Passive showcase only —
+// no test surface, no interactive controls. Aidress is protocol, not a UI.
+const registryAgents = [
+  { name: "Exa", logo: "/logos/exa.png", desc: "AI-native web search API" },
+  { name: "Stripe", logo: "/logos/stripe.png", desc: "Payments, invoicing, billing" },
+  { name: "Parallel", logo: "/logos/parallel.png", desc: "Web research API for agents" },
+  { name: "Apollo.io", logo: "/logos/apollo.png", desc: "B2B people & company enrichment" },
+  { name: "Hunter.io", logo: "/logos/hunter.png", desc: "Email finding & verification" },
+  { name: "Tavily", logo: "/logos/tavily.png", desc: "AI-optimized search API" },
+  { name: "Browserbase", logo: "/logos/browserbase.png", desc: "Cloud browser automation" },
+  { name: "LangSmith", logo: "/logos/langchain.png", desc: "Agent build, debug & eval" },
+  { name: "Apify", logo: "/logos/apify.png", desc: "Web scraping & automation" },
+];
+
+function AgentMarqueeItem({ a }: { a: (typeof registryAgents)[number] }) {
+  return (
+    <div className="flex shrink-0 items-center gap-3">
+      <img
+        src={a.logo}
+        alt=""
+        loading="lazy"
+        className="h-7 w-7 shrink-0 rounded-[6px] object-contain md:h-8 md:w-8"
+        style={{ filter: "grayscale(1) brightness(1.3)", opacity: 0.92 }}
+      />
+      <span className="whitespace-nowrap text-[15px] font-medium md:text-base" style={{ color: "var(--text)" }}>{a.name}</span>
+      <span className="whitespace-nowrap text-[14px] md:text-[15px]" style={{ color: "var(--text-muted)" }}>{a.desc}</span>
+      <span className="ml-8 select-none" style={{ color: "var(--text-xfaint)" }}>·</span>
+    </div>
+  );
+}
+
+function AgentRegistryStrip() {
+  return (
+    <section className="py-10 md:py-14">
+      <div className="mx-auto max-w-7xl px-5 md:px-10">
+        <div
+          className="mb-6 flex items-center gap-2.5 font-mono text-[12px] font-semibold uppercase tracking-[0.18em] md:text-[13px]"
+          style={{ color: "var(--text-muted)" }}
+        >
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "#22c55e" }} aria-hidden />
+          Agents in the registry
+        </div>
+      </div>
+
+      <div
+        className="relative flex overflow-hidden"
+        style={{
+          maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+          WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+        }}
+      >
+        <div className="animate-marquee flex shrink-0 items-center gap-8">
+          {registryAgents.map((a) => <AgentMarqueeItem key={a.name} a={a} />)}
+          {/* duplicate set makes the -50% loop seamless; hidden from a11y tree */}
+          {registryAgents.map((a) => <AgentMarqueeItem key={`dup-${a.name}`} a={a} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function SystemStatusStrip() {
   return (
     <div
@@ -2090,6 +2151,7 @@ function HomePage() {
       <main>
         <HeroSection />
         <StatsSection />
+        <AgentRegistryStrip />
         <DemoVideoSection />
         <EngineSection />
         <LaunchControlSection />
