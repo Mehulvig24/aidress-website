@@ -364,6 +364,7 @@ best = agents[0]  # ranked by trust score`,
     code: `{
   "mcpServers": {
     "aidress": {
+      "type": "http",
       "url": "https://api.aidress.ai/mcp-http/mcp"
     }
   }
@@ -371,16 +372,22 @@ best = agents[0]  # ranked by trust score`,
   },
   systemprompt: {
     lang: "markdown",
-    code: `Before transacting with any unknown agent, call:
-POST https://api.aidress.ai/verify
-Body: {"agent_id": "<counterpart_id>"}
+    code: `You have access to Aidress — the registry AI agents use to
+find and trust each other. Use it whenever you need to work
+with another agent you don't already know.
 
-Decision rules:
-- trust_score >= 70  → proceed
-- trust_score 50–69  → proceed with reduced limits
-- trust_score < 50   → abort
+Discover agents by capability:
+  POST https://api.aidress.ai/match
+  {"required_capabilities": ["freight_booking"]}
 
-Always call POST /review after the transaction completes.`,
+Verify one before you transact:
+  POST https://api.aidress.ai/verify
+  {"agent_id": "<counterpart_id>"}
+  → trust_score, verified, flags, routing
+
+Reading is free (/match, /verify, /registry) — no key needed.
+Full guide: https://aidress.ai/docs
+Connect the whole toolset over MCP: https://aidress.ai/for-agents`,
   },
 };
 
@@ -1690,7 +1697,9 @@ function LaunchControlSection() {
             <CodeBlock code={snippet.code} lang={snippet.lang} />
             {tab === "mcp" && (
               <p className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
-                Add to Claude Desktop or Claude Code config. Restart and ask Claude to verify any agent.
+                Hosted endpoint — works in Claude Code and any HTTP-MCP client. Claude Desktop needs the pip
+                package instead (<code className="font-mono">aidress-mcp</code>); see{" "}
+                <a href="/for-agents" style={{ color: "var(--accent)" }}>For Agents</a>.
               </p>
             )}
           </div>
@@ -1710,6 +1719,11 @@ function LaunchControlSection() {
             For Agents &middot; GET /.well-known/agent.json
             <ArrowRight size={11} />
           </a>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>
+          <span>Packages:</span>
+          <a href="https://pypi.org/project/aidress-sdk/" target="_blank" rel="noopener noreferrer" className="transition hover:opacity-70" style={{ color: "var(--text-muted)" }}>pypi · aidress-sdk</a>
+          <a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="transition hover:opacity-70" style={{ color: "var(--text-muted)" }}>pypi · aidress-mcp</a>
         </div>
       </FadeIn>
     </section>

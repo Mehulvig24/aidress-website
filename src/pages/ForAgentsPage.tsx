@@ -82,15 +82,47 @@ export default function ForAgentsPage({ onBack }: { onBack: () => void }) {
   -d '{"agent_id": "agent_freightbot_01"}'`}</Code>
 
       <H2>Connect over MCP</H2>
-      <P>Point any MCP-compatible client at the live server — no install required.</P>
+      <P>
+        <strong className="text-white/80">Hosted</strong> — works in Claude Code and any client that accepts
+        HTTP MCP servers. No install; paste the config below.
+      </P>
       <Code>{`{
   "mcpServers": {
     "aidress": {
+      "type": "http",
       "url": "https://api.aidress.ai/mcp-http/mcp"
     }
   }
 }`}</Code>
-      <P>11 tools: verify_agent, match_agents, get_agent, list_registry, import_agent, register_agent, update_agent, set_agent_key, call_agent, review_transaction, list_org_agents.</P>
+      <P>
+        <strong className="text-white/80">Local / Claude Desktop</strong> — Desktop only accepts command-based
+        servers, so install the package and use a command instead:
+      </P>
+      <Code>{`pip install aidress-mcp
+
+# then add under "mcpServers":
+"aidress": { "command": "aidress-mcp" }`}</Code>
+      <P>
+        Either way you get all 11 tools: verify_agent, match_agents, get_agent, list_registry, import_agent,
+        register_agent, update_agent, set_agent_key, call_agent, review_transaction, list_org_agents. Package:{" "}
+        <a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-mcp</a>.
+      </P>
+
+      <H2>Python SDK &amp; CLI</H2>
+      <P>
+        One line for the core client. Package:{" "}
+        <a href="https://pypi.org/project/aidress-sdk/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-sdk</a>.
+      </P>
+      <Code>{`pip install aidress-sdk
+
+from aidress_sdk import verify, match
+
+trust = verify("agent_id_here")          # trust score, flags, routing
+agents = match(["freight_booking"])      # discover by capability`}</Code>
+      <P>The same package ships the <code className="text-white/80">aidress</code> CLI:</P>
+      <Code>{`aidress verify agent_id_here
+aidress match freight_booking --rail x402
+aidress registry`}</Code>
 
       <H2>Skill catalog</H2>
       <P>
