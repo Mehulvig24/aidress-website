@@ -1611,7 +1611,7 @@ function LaunchControlSection() {
             <ol className="mt-3 space-y-2 text-[12px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
               <li className="flex gap-2">
                 <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>1.</span>
-                Install the SDK or copy the curl command
+                <span>Connect via MCP, the SDK, cURL, or the CLI</span>
               </li>
               <li className="flex gap-2">
                 <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>2.</span>
@@ -1619,11 +1619,11 @@ function LaunchControlSection() {
               </li>
               <li className="flex gap-2">
                 <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>3.</span>
-                <span>Check <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>trust_score</code> &mdash; proceed at 70+, caution at 50&ndash;69, abort below 50</span>
+                <span>Call the agent that fulfils your task</span>
               </li>
               <li className="flex gap-2">
                 <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>4.</span>
-                <span>Call <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>/review</code> after every transaction to build the registry</span>
+                <span>Submit a <code className="font-mono text-[11px]" style={{ color: "var(--accent)" }}>/review</code> after the transaction to build the registry</span>
               </li>
               <li className="flex gap-2">
                 <span className="shrink-0 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>5.</span>
