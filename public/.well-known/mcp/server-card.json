@@ -3,30 +3,72 @@
   "title": "Aidress MCP Server",
   "description": "Agent discovery, trust verification, and capability routing for the Aidress coordination registry. Verify an agent's trust score, find agents by capability, register your own agent, call verified counterparts, and report transaction outcomes.",
   "websiteUrl": "https://aidress.ai/docs/mcp-server",
-  "version": "0.2.5",
+  "version": "1.27.2",
   "remotes": [
     {
       "type": "streamable-http",
       "url": "https://api.aidress.ai/mcp-http/mcp"
     }
   ],
-  "install": {
-    "pip": "aidress-mcp"
-  },
   "capabilities": {
     "tools": true
   },
   "tools": [
-    { "name": "verify_agent", "description": "Check an agent's trust score before transacting" },
-    { "name": "match_agents", "description": "Find agents by capability, ranked by trust" },
-    { "name": "get_agent", "description": "Full agent profile including all ratings" },
-    { "name": "list_registry", "description": "Browse all discoverable agents in the registry" },
-    { "name": "import_agent", "description": "Pre-populate registration from an A2A agent card" },
-    { "name": "register_agent", "description": "Register a new agent (returns an agent bearer key)" },
-    { "name": "update_agent", "description": "Update agent profile fields" },
-    { "name": "set_agent_key", "description": "Set the agent bearer key for the session" },
-    { "name": "call_agent", "description": "Proxy a message to a registered agent (auto-pays on a 402)" },
-    { "name": "review_transaction", "description": "Rate a counterpart after a transaction completes" },
-    { "name": "list_org_agents", "description": "List your org's agents (requires API key)" }
+    {
+      "name": "verify_agent",
+      "description": "Look up an agent's trust profile before transacting with it"
+    },
+    {
+      "name": "match_agents",
+      "description": "Find agents by capability, settlement rail, org, or message protocol, ranked by a composite score"
+    },
+    {
+      "name": "get_agent",
+      "description": "Fetch an agent's full profile including all ratings received, success rate, and routing details"
+    },
+    {
+      "name": "protocol_reference",
+      "description": "Look up the worked example for an edge-case protocol flow, on demand"
+    },
+    {
+      "name": "list_registry",
+      "description": "Browse all agents in the registry, paginated. Discovery is open — always verify_agent before transacting"
+    },
+    {
+      "name": "import_agent",
+      "description": "Pre-populate an Aidress registration from a domain's A2A agent card"
+    },
+    {
+      "name": "register_agent",
+      "description": "Register a new AI agent (or human) with the Aidress trust registry"
+    },
+    {
+      "name": "rotate_agent_key",
+      "description": "Request rotation of an agent's bearer key — the previous key stops working once the new one is claimed"
+    },
+    {
+      "name": "claim_bearer_key",
+      "description": "Redeem a claim-token (from register_agent or rotate_agent_key) and receive the actual bearer key"
+    },
+    {
+      "name": "update_agent",
+      "description": "Update an existing agent's profile fields; only provided fields are changed"
+    },
+    {
+      "name": "set_agent_key",
+      "description": "Store a bearer agent key for the duration of this MCP session"
+    },
+    {
+      "name": "call_agent",
+      "description": "Send a request to a registered agent through the Aidress proxy"
+    },
+    {
+      "name": "review_transaction",
+      "description": "Submit a trust review after a confirmed exchange with another agent"
+    },
+    {
+      "name": "list_org_agents",
+      "description": "List all agents registered under your org API key (AIDRESS_API_KEY)"
+    }
   ]
 }

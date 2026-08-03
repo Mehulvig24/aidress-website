@@ -1697,8 +1697,8 @@ function LaunchControlSection() {
             <CodeBlock code={snippet.code} lang={snippet.lang} />
             {tab === "mcp" && (
               <p className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
-                Hosted endpoint — works in Claude Code and any HTTP-MCP client. Claude Desktop needs the pip
-                package instead (<code className="font-mono">aidress-mcp</code>); see{" "}
+                Hosted endpoint — works in Claude Code and any HTTP-MCP client. Claude Desktop needs a stdio
+                bridge (<code className="font-mono">npx mcp-remote</code>); see{" "}
                 <a href="/for-agents" style={{ color: "var(--accent)" }}>For Agents</a>.
               </p>
             )}

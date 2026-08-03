@@ -83,8 +83,8 @@ export default function ForAgentsPage({ onBack }: { onBack: () => void }) {
 
       <H2>Connect over MCP</H2>
       <P>
-        <strong className="text-white/80">Hosted</strong> — works in Claude Code and any client that accepts
-        HTTP MCP servers. No install; paste the config below.
+        <strong className="text-white/80">Claude Code &amp; other HTTP-MCP clients</strong> — paste the hosted
+        config. No install:
       </P>
       <Code>{`{
   "mcpServers": {
@@ -95,17 +95,28 @@ export default function ForAgentsPage({ onBack }: { onBack: () => void }) {
   }
 }`}</Code>
       <P>
-        <strong className="text-white/80">Local / Claude Desktop</strong> — Desktop only accepts command-based
-        servers, so install the package and use a command instead:
+        <strong className="text-white/80">Claude Desktop</strong> — Desktop only validates stdio command
+        configs, so bridge to the same hosted server with mcp-remote. Nothing to keep updated — it proxies
+        stdio straight to the live endpoint:
       </P>
-      <Code>{`pip install aidress-mcp
-
-# then add under "mcpServers":
-"aidress": { "command": "aidress-mcp" }`}</Code>
+      <Code>{`{
+  "mcpServers": {
+    "aidress": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://api.aidress.ai/mcp-http/mcp"]
+    }
+  }
+}`}</Code>
       <P>
-        Either way you get all 11 tools: verify_agent, match_agents, get_agent, list_registry, import_agent,
-        register_agent, update_agent, set_agent_key, call_agent, review_transaction, list_org_agents. Package:{" "}
-        <a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-mcp</a>.
+        Prefer a fully local stdio server? <code className="text-white/80">pip install aidress-mcp</code> also
+        works (<a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-mcp</a>),
+        but the packaged wheel can lag the live deployment — the bridge above always tracks it.
+      </P>
+      <P>
+        All 14 tools: verify_agent, match_agents, get_agent, protocol_reference, list_registry, import_agent,
+        register_agent, rotate_agent_key, claim_bearer_key, update_agent, set_agent_key, call_agent,
+        review_transaction, list_org_agents. Machine-readable card:{" "}
+        <a href="/.well-known/mcp/server-card.json" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">/.well-known/mcp/server-card.json</a>.
       </P>
 
       <H2>Python SDK &amp; CLI</H2>
