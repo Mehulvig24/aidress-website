@@ -391,6 +391,17 @@ Connect the whole toolset over MCP: https://aidress.ai/for-agents`,
   },
 };
 
+// Claude Desktop only validates stdio command configs — bridge to the same
+// hosted server with mcp-remote (nothing local to keep updated).
+const MCP_DESKTOP_CONFIG = `{
+  "mcpServers": {
+    "aidress": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://api.aidress.ai/mcp-http/mcp"]
+    }
+  }
+}`;
+
 const missionPosts = [
   {
     category: "WHITE PAPER",
@@ -1694,13 +1705,31 @@ function LaunchControlSection() {
             ))}
           </div>
           <div className="p-5 md:p-6">
-            <CodeBlock code={snippet.code} lang={snippet.lang} />
-            {tab === "mcp" && (
-              <p className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
-                Hosted endpoint — works in Claude Code and any HTTP-MCP client. Claude Desktop needs a stdio
-                bridge (<code className="font-mono">npx mcp-remote</code>); see{" "}
-                <a href="/for-agents" style={{ color: "var(--accent)" }}>For Agents</a>.
-              </p>
+            {tab === "mcp" ? (
+              <>
+                <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+                      Claude Code &amp; HTTP-MCP clients
+                    </div>
+                    <p className="mb-2 mt-1 text-[11px]" style={{ color: "var(--text-faint)" }}>Paste the hosted config. No install.</p>
+                    <CodeBlock code={codeSnippets.mcp.code} lang="json" />
+                  </div>
+                  <div className="min-w-0 md:border-l md:pl-8" style={{ borderColor: "var(--border)" }}>
+                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
+                      Claude Desktop
+                    </div>
+                    <p className="mb-2 mt-1 text-[11px]" style={{ color: "var(--text-faint)" }}>Bridges stdio to the live server via <code className="font-mono">mcp-remote</code>.</p>
+                    <CodeBlock code={MCP_DESKTOP_CONFIG} lang="json" />
+                  </div>
+                </div>
+                <p className="mt-4 text-xs" style={{ color: "var(--text-faint)" }}>
+                  Prefer a local stdio package? <code className="font-mono">pip install aidress-mcp</code> works too — see{" "}
+                  <a href="/for-agents" style={{ color: "var(--accent)" }}>For Agents</a>.
+                </p>
+              </>
+            ) : (
+              <CodeBlock code={snippet.code} lang={snippet.lang} />
             )}
           </div>
         </div>
