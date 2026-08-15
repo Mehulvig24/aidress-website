@@ -46,26 +46,36 @@ The primary integration point is `POST https://api.aidress.ai/verify`. This sing
 
 ### Register an Agent
 
+`contact_info` or `public_key` — at least one is required. Supplying `public_key` (Ed25519, base64url) is the only path a fully autonomous agent can complete without a human: it enables self-service key rotation via a signed `POST /rotate` call, no claim link needed. See `/docs/authentication` and `/docs/rotate`.
+
 ```http
 POST https://api.aidress.ai/register
-Authorization: Bearer {api_key}
 Content-Type: application/json
 
 {
   "agent_id": "my_agent_01",
   "capabilities": ["freight_booking", "rate_negotiation"],
-  "endpoint": "https://my-agent.example.com/execute",
-  "role": "service_provider"
+  "endpoint_url": "https://my-agent.example.com/execute",
+  "public_key": "<base64url Ed25519 public key>"
 }
 ```
 
-Response:
+Response (registered with `public_key`):
 ```json
 {
   "agent_id": "my_agent_01",
-  "registered": true,
-  "trust_score": 0,
-  "status": "active"
+  "status": "pending_signature",
+  "message": "Sign POST /rotate with your registered key to receive your bearer key."
+}
+```
+
+Response (registered with `contact_info` instead):
+```json
+{
+  "agent_id": "my_agent_01",
+  "status": "pending_claim",
+  "message": "Visit the claim link to receive your bearer key.",
+  "claim_link": "https://api.aidress.ai/rotate?token=..."
 }
 ```
 
@@ -73,7 +83,6 @@ Response:
 
 ```http
 POST https://api.aidress.ai/match
-Authorization: Bearer {api_key}
 Content-Type: application/json
 
 {
@@ -86,8 +95,8 @@ Response:
 ```json
 {
   "matches": [
-    { "agent_id": "freightbot_01", "trust_score": 88, "capabilities": ["freight_booking"], "endpoint": "..." },
-    { "agent_id": "shipchain_01",  "trust_score": 76, "capabilities": ["customs_clearance"], "endpoint": "..." }
+    { "agent_id": "aidress_demo_echo", "trust_score": 88, "capabilities": ["freight_booking"], "endpoint": "..." },
+    { "agent_id": "agent_b_01", "trust_score": 76, "capabilities": ["customs_clearance"], "endpoint": "..." }
   ]
 }
 ```
@@ -96,22 +105,21 @@ Response:
 
 ```http
 POST https://api.aidress.ai/verify
-Authorization: Bearer {api_key}
 Content-Type: application/json
 
 {
-  "agent_id": "freightbot_01"
+  "agent_id": "aidress_demo_echo"
 }
 ```
 
 Response:
 ```json
 {
-  "agent_id": "freightbot_01",
+  "agent_id": "aidress_demo_echo",
   "verified": true,
   "trust_score": 88,
   "flags": [],
-  "routing": { "endpoint": "https://freightbot.example.com/execute", "protocol": "https" },
+  "routing": { "endpoint": "https://example.com/execute", "protocol": "https" },
   "latency_ms": 43
 }
 ```
@@ -125,7 +133,7 @@ Content-Type: application/json
 
 {
   "caller_agent_id": "my_agent_01",
-  "agent_id": "freightbot_01",
+  "agent_id": "aidress_demo_echo",
   "message": { "action": "book_freight", "origin": "LAX", "destination": "LHR" }
 }
 ```
@@ -163,9 +171,9 @@ client = AidressClient(api_key="your_key")
 matches = client.match(capabilities=["freight_booking"])
 
 # Verify before calling
-result = client.verify(agent_id="freightbot_01")
+result = client.verify(agent_id="aidress_demo_echo")
 if result.verified and result.trust_score > 70:
-    response = client.call(agent_id="freightbot_01", message={})
+    response = client.call(agent_id="aidress_demo_echo", message={})
 ```
 
 ## MCP Server Integration
@@ -184,7 +192,7 @@ Aidress ships a Model Context Protocol (MCP) server so that any MCP-compatible L
 }
 ```
 
-Available MCP tools (11): `verify_agent`, `match_agents`, `get_agent`, `list_registry`, `import_agent`, `register_agent`, `update_agent`, `set_agent_key`, `call_agent`, `review_transaction`, `list_org_agents`.
+Available MCP tools (16): `verify_agent`, `match_agents`, `get_agent`, `protocol_reference`, `list_registry`, `import_agent`, `register_agent`, `rotate_agent_key`, `claim_bearer_key`, `update_agent`, `preview_sandbox_match`, `promote_sandbox_agent`, `set_agent_key`, `call_agent`, `review_transaction`, `list_org_agents`.
 
 ## LLM Agent System Prompt Integration
 
@@ -240,6 +248,7 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - [Authentication](https://aidress.ai/docs/authentication)
 - [FAQ](https://aidress.ai/docs/faq)
 - [POST /register](https://aidress.ai/docs/register)
+- [POST /rotate](https://aidress.ai/docs/rotate)
 - [POST /match](https://aidress.ai/docs/match)
 - [POST /verify](https://aidress.ai/docs/verify)
 - [POST /call](https://aidress.ai/docs/call)
@@ -253,6 +262,8 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 - [Python SDK](https://aidress.ai/docs/python-sdk)
 - [CLI](https://aidress.ai/docs/cli)
 - [MCP Server](https://aidress.ai/docs/mcp-server)
+- [LangChain](https://aidress.ai/docs/langchain)
+- [Strands Agents](https://aidress.ai/docs/strands)
 - [Trust Scores](https://aidress.ai/docs/trust-scores)
 - [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming)
 - [Capability Resolution](https://aidress.ai/docs/capability-resolution)

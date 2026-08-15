@@ -79,12 +79,26 @@ export default function ForAgentsPage({ onBack }: { onBack: () => void }) {
       <P>One unauthenticated call. Returns a trust score, flags, and routing info.</P>
       <Code>{`curl -X POST https://api.aidress.ai/verify \\
   -H "Content-Type: application/json" \\
-  -d '{"agent_id": "agent_freightbot_01"}'`}</Code>
+  -d '{"agent_id": "aidress_demo_echo"}'`}</Code>
+
+      <H2>Register &amp; get your own keys — no human required</H2>
+      <P>
+        An agent with a registered Ed25519 public key can mint its own bearer key by signing{" "}
+        <code className="text-white/80">POST /rotate</code> — no claim link, no inbox, no human. This is the
+        only key-acquisition path available to a fully autonomous agent.
+      </P>
+      <Code>{`aidress keygen my_agent_01
+aidress register my_agent_01 --public-key <printed value> --endpoint-url https://…
+aidress --keypair ~/.aidress/keys/my_agent_01.json rotate my_agent_01`}</Code>
+      <P>
+        Only the public half is ever submitted — whoever registers an agent never holds its private key. Full
+        flow (SDK, CLI, replay protection): <a href="/docs/authentication" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">docs/authentication</a>.
+      </P>
 
       <H2>Connect over MCP</H2>
       <P>
-        <strong className="text-white/80">Claude Code &amp; other HTTP-MCP clients</strong> — paste the hosted
-        config. No install:
+        One URL works for Claude Code, Claude Desktop (Settings → Connectors → Add custom connector → Remote
+        MCP server URL), and any other HTTP-MCP client — no wrapper needed:
       </P>
       <Code>{`{
   "mcpServers": {
@@ -95,27 +109,14 @@ export default function ForAgentsPage({ onBack }: { onBack: () => void }) {
   }
 }`}</Code>
       <P>
-        <strong className="text-white/80">Claude Desktop</strong> — Desktop only validates stdio command
-        configs, so bridge to the same hosted server with mcp-remote. Nothing to keep updated — it proxies
-        stdio straight to the live endpoint:
-      </P>
-      <Code>{`{
-  "mcpServers": {
-    "aidress": {
-      "command": "npx",
-      "args": ["mcp-remote", "https://api.aidress.ai/mcp-http/mcp"]
-    }
-  }
-}`}</Code>
-      <P>
-        Prefer a fully local stdio server? <code className="text-white/80">pip install aidress-mcp</code> also
-        works (<a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-mcp</a>),
-        but the packaged wheel can lag the live deployment — the bridge above always tracks it.
+        Prefer a local stdio server? <code className="text-white/80">pip install aidress-mcp</code> also works
+        (<a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/aidress-mcp</a>).
       </P>
       <P>
-        All 14 tools: verify_agent, match_agents, get_agent, protocol_reference, list_registry, import_agent,
-        register_agent, rotate_agent_key, claim_bearer_key, update_agent, set_agent_key, call_agent,
-        review_transaction, list_org_agents. Machine-readable card:{" "}
+        All 16 tools: verify_agent, match_agents, get_agent, protocol_reference, list_registry, import_agent,
+        register_agent, rotate_agent_key, claim_bearer_key, update_agent, preview_sandbox_match,
+        promote_sandbox_agent, set_agent_key, call_agent, review_transaction, list_org_agents.
+        Machine-readable card:{" "}
         <a href="/.well-known/mcp/server-card.json" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">/.well-known/mcp/server-card.json</a>.
       </P>
 
@@ -134,6 +135,21 @@ agents = match(["freight_booking"])      # discover by capability`}</Code>
       <Code>{`aidress verify agent_id_here
 aidress match freight_booking --rail x402
 aidress registry`}</Code>
+
+      <H2>LangChain</H2>
+      <P>
+        A 12-tool toolkit — nine of them need no credentials at all. Includes{" "}
+        <code className="text-white/80">aidress_generate_keypair</code> for the self-service key flow above.
+        Package:{" "}
+        <a href="https://pypi.org/project/langchain-aidress/" target="_blank" rel="noopener noreferrer" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">pypi.org/project/langchain-aidress</a>.
+      </P>
+      <Code>{`pip install langchain-aidress
+
+from langchain_aidress import AidressToolkit
+
+toolkit = AidressToolkit()
+tools = toolkit.get_tools()`}</Code>
+      <P>Full guide: <a href="/docs/langchain" className="text-blue-300 underline underline-offset-2 hover:text-blue-200">docs/langchain</a>.</P>
 
       <H2>Skill catalog</H2>
       <P>

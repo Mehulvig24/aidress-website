@@ -40,7 +40,7 @@
   </url>
   <url>
     <loc>https://aidress.ai/docs/authentication</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -86,7 +86,13 @@
   <!-- API Reference — high priority, most searched -->
   <url>
     <loc>https://aidress.ai/docs/register</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aidress.ai/docs/rotate</loc>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -166,9 +172,21 @@
   </url>
   <url>
     <loc>https://aidress.ai/docs/mcp-server</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aidress.ai/docs/langchain</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://aidress.ai/docs/strands</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <!-- Reference -->

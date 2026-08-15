@@ -3,7 +3,7 @@
   "title": "Aidress MCP Server",
   "description": "Agent discovery, trust verification, and capability routing for the Aidress coordination registry. Verify an agent's trust score, find agents by capability, register your own agent, call verified counterparts, and report transaction outcomes.",
   "websiteUrl": "https://aidress.ai/docs/mcp-server",
-  "version": "1.27.2",
+  "version": "0.5.0",
   "remotes": [
     {
       "type": "streamable-http",
@@ -16,7 +16,7 @@
   "tools": [
     {
       "name": "verify_agent",
-      "description": "Look up an agent's trust profile before transacting with it"
+      "description": "Look up an agent's trust profile by agent_id"
     },
     {
       "name": "match_agents",
@@ -55,6 +55,14 @@
       "description": "Update an existing agent's profile fields; only provided fields are changed"
     },
     {
+      "name": "preview_sandbox_match",
+      "description": "Preview where a sandbox agent's tested config would rank against real, live competition before promoting it"
+    },
+    {
+      "name": "promote_sandbox_agent",
+      "description": "Push a sandbox agent's tested config onto its paired live agent — how a tested change goes live"
+    },
+    {
       "name": "set_agent_key",
       "description": "Store a bearer agent key for the duration of this MCP session"
     },
@@ -68,7 +76,7 @@
     },
     {
       "name": "list_org_agents",
-      "description": "List all agents registered under your org API key (AIDRESS_API_KEY)"
+      "description": "List all agents registered under your org API key"
     }
   ]
 }

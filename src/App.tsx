@@ -187,15 +187,15 @@ function HeroTerminal() {
       </AnimatedSpan>
 
       <AnimatedSpan className="font-mono text-[12px] sm:text-[13px] mt-3" style={{ color: termColor, whiteSpace: "nowrap" }}>
-        <span>{'[1] freightbot_01   trust: '}<span style={{ color: accentGreen }}>88</span>{'/100  ██████████  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+        <span>{'[1] carrier_01   trust: '}<span style={{ color: accentGreen }}>88</span>{'/100  ██████████  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
       </AnimatedSpan>
 
       <AnimatedSpan className="font-mono text-[12px] sm:text-[13px]" style={{ color: termColor, whiteSpace: "nowrap" }}>
-        <span>{'[2] shipchain_01    trust: '}<span style={{ color: accentGreen }}>76</span>{'/100  █████████░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+        <span>{'[2] carrier_02    trust: '}<span style={{ color: accentGreen }}>76</span>{'/100  █████████░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
       </AnimatedSpan>
 
       <AnimatedSpan className="font-mono text-[12px] sm:text-[13px]" style={{ color: termColor, whiteSpace: "nowrap" }}>
-        <span>{'[3] tradelens_01    trust: '}<span style={{ color: accentYellow }}>71</span>{'/100  ████████░░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
+        <span>{'[3] carrier_03    trust: '}<span style={{ color: accentYellow }}>71</span>{'/100  ████████░░  '}<span style={{ color: accentGreen }}>PROCEED</span></span>
       </AnimatedSpan>
     </Terminal>
   );
@@ -357,7 +357,7 @@ best = agents[0]  # ranked by trust score`,
     lang: "bash",
     code: `curl -X POST https://api.aidress.ai/verify \\
   -H "Content-Type: application/json" \\
-  -d '{"agent_id": "agent_freightbot_01"}'`,
+  -d '{"agent_id": "aidress_demo_echo"}'`,
   },
   mcp: {
     lang: "json",
@@ -390,17 +390,6 @@ Full guide: https://aidress.ai/docs
 Connect the whole toolset over MCP: https://aidress.ai/for-agents`,
   },
 };
-
-// Claude Desktop only validates stdio command configs — bridge to the same
-// hosted server with mcp-remote (nothing local to keep updated).
-const MCP_DESKTOP_CONFIG = `{
-  "mcpServers": {
-    "aidress": {
-      "command": "npx",
-      "args": ["mcp-remote", "https://api.aidress.ai/mcp-http/mcp"]
-    }
-  }
-}`;
 
 const missionPosts = [
   {
@@ -471,7 +460,7 @@ function DiscoveryPanel() {
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.8 }}
         >
-          {"  "}<span style={{ color: "var(--text)" }}>freightbot_01</span>{"    "}
+          {"  "}<span style={{ color: "var(--text)" }}>carrier_01</span>{"    "}
           <span style={{ color: "#22c55e" }}>94%</span>{"  "}
           <span style={{ color: "var(--text-faint)" }}>US-WEST  freight_booking, rates</span>{"\n"}
         </motion.span>
@@ -480,7 +469,7 @@ function DiscoveryPanel() {
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 1.1 }}
         >
-          {"  "}<span style={{ color: "var(--text)" }}>shipchain_01</span>{"     "}
+          {"  "}<span style={{ color: "var(--text)" }}>carrier_02</span>{"     "}
           <span style={{ color: "var(--accent)" }}>82%</span>{"  "}
           <span style={{ color: "var(--text-faint)" }}>EU       customs, tracking</span>{"\n"}
         </motion.span>
@@ -489,7 +478,7 @@ function DiscoveryPanel() {
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 1.4 }}
         >
-          {"  "}<span style={{ color: "var(--text)" }}>tradelens_01</span>{"     "}
+          {"  "}<span style={{ color: "var(--text)" }}>carrier_03</span>{"     "}
           <span style={{ color: "var(--accent)" }}>71%</span>{"  "}
           <span style={{ color: "var(--text-faint)" }}>APAC     freight, docs</span>{"\n"}
         </motion.span>
@@ -542,7 +531,7 @@ function IdentityPanel() {
             <div className="flex-1 space-y-3 text-[13px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
               <div>
                 <div className="text-[9px] uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>Agent ID</div>
-                <div style={{ color: "var(--text)" }}>agent_freightbot_01</div>
+                <div style={{ color: "var(--text)" }}>agent_carrier_01</div>
               </div>
               <div>
                 <div className="text-[9px] uppercase tracking-[0.2em]" style={{ color: "var(--text-faint)" }}>Operator</div>
@@ -1687,7 +1676,7 @@ function LaunchControlSection() {
             {([
               { key: "python" as CodeTab, label: "Python" },
               { key: "curl" as CodeTab, label: "cURL" },
-              { key: "mcp" as CodeTab, label: "MCP" },
+              { key: "mcp" as CodeTab, label: "MCP / Claude Code / Desktop" },
               { key: "systemprompt" as CodeTab, label: "System Prompt" },
             ] as const).map(({ key, label }) => (
               <button
@@ -1705,31 +1694,12 @@ function LaunchControlSection() {
             ))}
           </div>
           <div className="p-5 md:p-6">
-            {tab === "mcp" ? (
-              <>
-                <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-                  <div className="min-w-0">
-                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
-                      Claude Code &amp; HTTP-MCP clients
-                    </div>
-                    <p className="mb-2 mt-1 text-[11px]" style={{ color: "var(--text-faint)" }}>Paste the hosted config. No install.</p>
-                    <CodeBlock code={codeSnippets.mcp.code} lang="json" />
-                  </div>
-                  <div className="min-w-0 md:border-l md:pl-8" style={{ borderColor: "var(--border)" }}>
-                    <div className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
-                      Claude Desktop
-                    </div>
-                    <p className="mb-2 mt-1 text-[11px]" style={{ color: "var(--text-faint)" }}>Bridges stdio to the live server via <code className="font-mono">mcp-remote</code>.</p>
-                    <CodeBlock code={MCP_DESKTOP_CONFIG} lang="json" />
-                  </div>
-                </div>
-                <p className="mt-4 text-xs" style={{ color: "var(--text-faint)" }}>
-                  Prefer a local stdio package? <code className="font-mono">pip install aidress-mcp</code> works too — see{" "}
-                  <a href="/for-agents" style={{ color: "var(--accent)" }}>For Agents</a>.
-                </p>
-              </>
-            ) : (
-              <CodeBlock code={snippet.code} lang={snippet.lang} />
+            <CodeBlock code={snippet.code} lang={snippet.lang} />
+            {tab === "mcp" && (
+              <p className="mt-3 text-xs" style={{ color: "var(--text-faint)" }}>
+                Same URL works for Claude Code (paste into your MCP config) and Claude Desktop (Settings →
+                Connectors → Add custom connector → Remote MCP server URL) — no wrapper needed either way.
+              </p>
             )}
           </div>
         </div>
@@ -1753,6 +1723,31 @@ function LaunchControlSection() {
           <span>Packages:</span>
           <a href="https://pypi.org/project/aidress-sdk/" target="_blank" rel="noopener noreferrer" className="transition hover:opacity-70" style={{ color: "var(--text-muted)" }}>pypi · aidress-sdk</a>
           <a href="https://pypi.org/project/aidress-mcp/" target="_blank" rel="noopener noreferrer" className="transition hover:opacity-70" style={{ color: "var(--text-muted)" }}>pypi · aidress-mcp</a>
+          <a href="https://pypi.org/project/langchain-aidress/" target="_blank" rel="noopener noreferrer" className="transition hover:opacity-70" style={{ color: "var(--text-muted)" }}>pypi · langchain-aidress</a>
+        </div>
+      </FadeIn>
+
+      {/* Official framework integrations */}
+      <FadeIn delay={0.2} className="mt-8">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--text-faint)" }}>
+            Official framework integrations
+          </span>
+          <a
+            href="https://pypi.org/project/langchain-aidress/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] transition hover:opacity-80"
+            style={{ border: "1px solid var(--border)" }}
+          >
+            <img
+              src="/logos/langchain.png"
+              alt="LangChain"
+              className="h-3.5 w-3.5 shrink-0 object-contain"
+              style={{ filter: "grayscale(1)", opacity: 0.85 }}
+            />
+            <span style={{ color: "var(--text-muted)" }}>LangChain</span>
+          </a>
         </div>
       </FadeIn>
     </section>
