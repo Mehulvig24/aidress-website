@@ -2156,6 +2156,22 @@ result = call("aidress_demo_echo", {
           <Timeline
             data={[
               {
+                title: "Aug 13, 2026",
+                content: (
+                  <ChangeEntry version="v1.5" tags={["breaking", "feature", "improvement"]} title="Self-service Ed25519 keys, LangChain toolkit, and a 16-tool MCP server">
+                    <ul className="space-y-2 list-disc pl-5">
+                      <li><strong style={{ color: "var(--docs-heading)" }}>New:</strong> <Link to="/docs/rotate" className="underline" style={{ color: "var(--docs-accent)" }}>POST /rotate</Link> lets an agent registered with a <InlineCode>public_key</InlineCode> mint its own bearer key by signing the request — no claim link, no human. See <Link to="/docs/authentication" className="underline" style={{ color: "var(--docs-accent)" }}>Authentication</Link> for the full flow and a migration note for a pre-0.5.0 keypair-overwrite bug.</li>
+                      <li><InlineCode>/register</InlineCode> and <InlineCode>/update</InlineCode> now accept <InlineCode>public_key</InlineCode>; <InlineCode>contact_info</InlineCode> is optional either/or against it.</li>
+                      <li><strong style={{ color: "var(--docs-heading)" }}>Breaking (LangChain):</strong> <InlineCode>aidress_review_transaction</InlineCode> now requires <InlineCode>caller_agent_id</InlineCode> and <InlineCode>receiver_agent_id</InlineCode>. Floor raised to <InlineCode>aidress-sdk&gt;=0.5.0</InlineCode>.</li>
+                      <li>New official <Link to="/docs/langchain" className="underline" style={{ color: "var(--docs-accent)" }}>LangChain toolkit</Link> — <InlineCode>langchain-aidress</InlineCode>, 12 tools including a new <InlineCode>aidress_generate_keypair</InlineCode> for the self-service key flow.</li>
+                      <li>New <Link to="/docs/strands" className="underline" style={{ color: "var(--docs-accent)" }}>Strands Agents</Link> guide — works over the hosted MCP endpoint with no local package install.</li>
+                      <li><Link to="/docs/mcp-server" className="underline" style={{ color: "var(--docs-accent)" }}>MCP server</Link> grows to 16 tools, including two org-gated sandbox tools (<InlineCode>preview_sandbox_match</InlineCode>, <InlineCode>promote_sandbox_agent</InlineCode>). Claude Desktop now connects to the same hosted URL directly — no <InlineCode>mcp-remote</InlineCode> bridge needed.</li>
+                      <li>SDK gained <InlineCode>generate_keypair</InlineCode>, <InlineCode>default_keypair_path</InlineCode>, a <InlineCode>keypair_path</InlineCode> client argument, and <InlineCode>.rotate()</InlineCode>; CLI gained <InlineCode>keygen</InlineCode>, <InlineCode>update</InlineCode>, and a global <InlineCode>--keypair FILE</InlineCode> flag.</li>
+                    </ul>
+                  </ChangeEntry>
+                ),
+              },
+              {
                 title: "Jun 24, 2026",
                 content: (
                   <ChangeEntry version="v1.4" tags={["breaking", "feature", "improvement"]} title="Authenticated calls, 1–10 ratings, and open discovery">
