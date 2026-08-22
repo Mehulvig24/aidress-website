@@ -68,6 +68,15 @@ function Shell({ children, onBack }: { children: React.ReactNode; onBack: () => 
   );
 }
 
+// Breaks out of the narrow content column to a wider width, for the photo grid.
+function Wide({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}>
+      <div className="mx-auto max-w-5xl px-6 md:px-10">{children}</div>
+    </div>
+  );
+}
+
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3">
@@ -91,17 +100,32 @@ function P({ children }: { children: React.ReactNode }) {
 }
 
 const LAYERS = [
-  { name: "Discovery", note: "Find a trusted service, not a fragmented system." },
-  { name: "Identity", note: "Know who's acting, and on whose behalf." },
-  { name: "Trust", note: "Credentials and history, not blind faith." },
-  { name: "Permissions & Terms", note: "Consent and limits, stated explicitly." },
-  { name: "Routing & Audit", note: "Every interaction, verifiable." },
+  { name: "Discovery", commercial: "Find the right agent or service.", social: "Reach trusted services, not a fragmented system." },
+  { name: "Identity", commercial: "Verify the agent and its operator.", social: "Establish who's acting, and who's accountable." },
+  { name: "Trust", commercial: "Use credentials, attestations, history.", social: "Reduce fraud, impersonation, unsafe delegation." },
+  { name: "Permissions & Terms", commercial: "Define authority, limits, conditions.", social: "Preserve consent, spending limits, human control." },
+  { name: "Routing & Audit", commercial: "Execute, and keep a record.", social: "Improve transparency across institutions." },
 ];
 
 const USE_CASES = [
-  { title: "Financial inclusion", note: "Simpler access to banks and credit — consent and limits built in, not bolted on." },
-  { title: "Smallholder agriculture", note: "Better access to markets, credit, and insurance, while the farmer's agent keeps final say." },
-  { title: "Disaster response", note: "Faster relief coordination, less duplication, a clear record of who did what." },
+  {
+    img: "/images/impact/agriculture.jpg",
+    tag: "Agriculture",
+    title: "Smallholder agriculture",
+    impact: "Better access to markets, credit, and insurance — while the farmer's agent keeps final say.",
+  },
+  {
+    img: "/images/impact/finance.jpg",
+    tag: "Finance",
+    title: "Financial inclusion",
+    impact: "Simpler access to banks and credit, with consent and limits built into the workflow.",
+  },
+  {
+    img: "/images/impact/disaster.jpg",
+    tag: "Response",
+    title: "Disaster response",
+    impact: "Faster relief coordination, less duplication, a clear record of who did what.",
+  },
 ];
 
 export default function ImpactPage({ onBack }: { onBack: () => void }) {
@@ -134,6 +158,15 @@ export default function ImpactPage({ onBack }: { onBack: () => void }) {
           it's a freight carrier. There's no separate "social impact" product — it's the same rails,
           applied to a wider set of counterparties.
         </P>
+        <P>
+          <strong className="font-medium text-white/80">Inclusion</strong> — services that don't require time,
+          expertise, or institutional access to reach.{" "}
+          <strong className="font-medium text-white/80">Trust</strong> — knowing who's acting, and on whose behalf.{" "}
+          <strong className="font-medium text-white/80">Interoperability</strong> — one shared way for governments,
+          banks, and NGOs to coordinate.{" "}
+          <strong className="font-medium text-white/80">Accountability</strong> — human oversight, and a record
+          that can be checked.
+        </P>
       </FadeIn>
 
       {/* Five layers */}
@@ -141,36 +174,56 @@ export default function ImpactPage({ onBack }: { onBack: () => void }) {
         <SectionHeading eyebrow="The backbone">The five layers, applied wider</SectionHeading>
       </FadeIn>
       <div>
-        {LAYERS.map(({ name, note }, i) => (
+        {LAYERS.map(({ name, commercial, social }, i) => (
           <FadeIn key={name} delay={0.04 * i}>
             <div
-              className="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:gap-8"
+              className="py-4"
               style={{ borderTop: i === 0 ? "none" : "1px solid rgba(255,255,255,0.06)" }}
             >
-              <div className="w-44 shrink-0 text-sm font-medium text-white/90">{name}</div>
-              <div className="text-[14.5px] leading-relaxed text-white/50">{note}</div>
+              <div className="mb-1.5 text-sm font-medium text-white/90">{name}</div>
+              <div className="flex flex-col gap-1 sm:flex-row sm:gap-8">
+                <div className="text-[13.5px] leading-relaxed text-white/45">
+                  <span className="text-white/30">Commercial —</span> {commercial}
+                </div>
+                <div className="text-[13.5px] leading-relaxed text-white/45">
+                  <span className="text-blue-300/60">Social —</span> {social}
+                </div>
+              </div>
             </div>
           </FadeIn>
         ))}
       </div>
 
-      {/* Use cases */}
+      {/* Use cases — photo grid */}
       <FadeIn>
         <SectionHeading eyebrow="Illustrative">Where it applies</SectionHeading>
       </FadeIn>
-      <div>
-        {USE_CASES.map((u, i) => (
-          <FadeIn key={u.title} delay={0.05 * i}>
-            <div
-              className="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:gap-8"
-              style={{ borderTop: i === 0 ? "none" : "1px solid rgba(255,255,255,0.06)" }}
-            >
-              <div className="w-44 shrink-0 text-sm font-medium text-white/90">{u.title}</div>
-              <div className="max-w-md text-[14.5px] leading-relaxed text-white/50">{u.note}</div>
-            </div>
-          </FadeIn>
-        ))}
-      </div>
+      <Wide>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {USE_CASES.map((u, i) => (
+            <FadeIn key={u.title} delay={0.06 * i}>
+              <div className="group relative aspect-[3/4] overflow-hidden rounded-lg">
+                <img
+                  src={u.img}
+                  alt={u.title}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.15) 55%, transparent 75%)" }}
+                />
+                <div className="absolute left-3.5 top-3.5 font-mono text-[11px] text-white/60">0{i + 1}</div>
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-blue-300/90">{u.tag}</div>
+                  <div className="text-[15px] font-medium text-white">{u.title}</div>
+                  <div className="mt-1 text-[12.5px] leading-relaxed text-white/60">{u.impact}</div>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </Wide>
 
       {/* Human agency */}
       <FadeIn>
