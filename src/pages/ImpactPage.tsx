@@ -153,19 +153,10 @@ export default function ImpactPage({ onBack }: { onBack: () => void }) {
 
       <FadeIn delay={0.08}>
         <P>
-          Aidress is trust infrastructure for autonomous agents: identity, permissions, and an audit trail
-          for every interaction. That's just as useful when the counterparty is a bank or an NGO as when
-          it's a freight carrier. There's no separate "social impact" product — it's the same rails,
-          applied to a wider set of counterparties.
-        </P>
-        <P>
-          <strong className="font-medium text-white/80">Inclusion</strong> — services that don't require time,
-          expertise, or institutional access to reach.{" "}
-          <strong className="font-medium text-white/80">Trust</strong> — knowing who's acting, and on whose behalf.{" "}
-          <strong className="font-medium text-white/80">Interoperability</strong> — one shared way for governments,
-          banks, and NGOs to coordinate.{" "}
-          <strong className="font-medium text-white/80">Accountability</strong> — human oversight, and a record
-          that can be checked.
+          Aidress is trust infrastructure for autonomous agents — identity, permissions, and an audit trail
+          for every interaction, whether the counterparty is a freight carrier or a government service. There's
+          no separate "social impact" product: the same rails just mean broader inclusion, clearer accountability,
+          and one shared way for institutions to coordinate.
         </P>
       </FadeIn>
 
