@@ -16,6 +16,7 @@ import { SearchBox } from "./components/SearchBox";
 import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import ForAgentsPage from "./pages/ForAgentsPage";
+import ImpactPage from "./pages/ImpactPage";
 import {
   WhitePaperPage,
   ValidationReportPage,
@@ -901,6 +902,7 @@ function Nav() {
         <nav className="flex items-center gap-4 lg:gap-5">
           <a href="/docs" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Docs</a>
           <a href="/docs/register" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>API Reference</a>
+          <a href="/impact" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Impact</a>
 
           <SearchBox variant="site" className="hidden lg:flex" />
 
@@ -980,6 +982,14 @@ function Nav() {
                 style={{ color: "var(--text)" }}
               >
                 API Reference
+              </a>
+              <a
+                href="/impact"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-md px-3 py-2.5 text-[14px] font-medium transition"
+                style={{ color: "var(--text)" }}
+              >
+                Impact
               </a>
               <a
                 href="/for-agents"
@@ -1737,16 +1747,31 @@ function LaunchControlSection() {
             href="https://pypi.org/project/langchain-aidress/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] transition hover:opacity-80"
+            className="flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] transition hover:opacity-80"
             style={{ border: "1px solid var(--border)" }}
           >
             <img
               src="/logos/langchain.png"
               alt="LangChain"
-              className="h-3.5 w-3.5 shrink-0 object-contain"
+              className="h-5 w-5 shrink-0 object-contain"
               style={{ filter: "grayscale(1)", opacity: 0.85 }}
             />
             <span style={{ color: "var(--text-muted)" }}>LangChain</span>
+          </a>
+          <a
+            href="https://strandsagents.com/integrations/?q=aidress"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] transition hover:opacity-80"
+            style={{ border: "1px solid var(--border)" }}
+          >
+            <img
+              src="/logos/strands.svg"
+              alt="Strands Agents"
+              className="h-5 w-5 shrink-0 object-contain"
+              style={{ filter: "grayscale(1)", opacity: 0.85 }}
+            />
+            <span style={{ color: "var(--text-muted)" }}>Strands Agents</span>
           </a>
         </div>
       </FadeIn>
@@ -2131,6 +2156,7 @@ function Footer() {
             <FooterCol heading="Company" links={[
               { label: "Mission", href: "#logs" },
               { label: "Team", href: "#crew" },
+              { label: "Aidress for Good", href: "/impact" },
               { label: "GitHub", href: "https://github.com/Aidress-ai/Aidress", external: true },
               { label: "Privacy", href: "/privacy" },
             ]} />
@@ -2231,6 +2257,7 @@ export default function App() {
             <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
             <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
             <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
+            <Route path="/impact" element={<PaperRoute Component={ImpactPage} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
