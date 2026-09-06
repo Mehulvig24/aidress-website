@@ -17,6 +17,8 @@ import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import ForAgentsPage from "./pages/ForAgentsPage";
 import ImpactPage from "./pages/ImpactPage";
+import AboutPage from "./pages/AboutPage";
+import { crewMembers } from "./data/team";
 import {
   WhitePaperPage,
   ValidationReportPage,
@@ -96,6 +98,9 @@ function FadeIn({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, ease: "easeOut", delay }}
       className={className}
+      // Prerendered HTML ships these at opacity:0; index.html has a <noscript> rule
+      // that forces them visible when JS never arrives to run the animation.
+      data-reveal=""
     >
       {children}
     </motion.div>
@@ -903,6 +908,7 @@ function Nav() {
           <a href="/docs" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Docs</a>
           <a href="/docs/register" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>API Reference</a>
           <a href="/impact" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Impact</a>
+          <a href="/about" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>About</a>
 
           <SearchBox variant="site" className="hidden lg:flex" />
 
@@ -990,6 +996,14 @@ function Nav() {
                 style={{ color: "var(--text)" }}
               >
                 Impact
+              </a>
+              <a
+                href="/about"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-md px-3 py-2.5 text-[14px] font-medium transition"
+                style={{ color: "var(--text)" }}
+              >
+                About
               </a>
               <a
                 href="/for-agents"
@@ -1978,36 +1992,18 @@ function LetsTalkSection() {
 
 // ─── Section 8: Crew ────────────────────────────────────────────────────────────
 
-const crewMembers = [
-  {
-    name: "Mehul Vig",
-    role: "Co-Founder",
-    photo: "/mehul.jpg",
-    linkedin: "https://www.linkedin.com/in/mehul-vig-462345282/",
-    description: "Experience in GTM & product through a stablecoin cross-border payments startup across Southeast Asia. Co-founding Aidress.",
-  },
-  {
-    name: "Kabir Sadani",
-    role: "Co-Founder",
-    photo: "/kabir.jpg",
-    linkedin: "https://www.linkedin.com/in/kabir-sadani-a5a057378/",
-    description: "Experience in product design and data-driven systems at Sportz Interactive. Co-founding Aidress.",
-  },
-  {
-    name: "Prashanth Ranganathan",
-    role: "Advisor",
-    photo: "/prashanth.jpg",
-    linkedin: "https://www.linkedin.com/in/prashanthr/",
-    description: "Serial founder behind multiple acquisitions by Google, PayPal, and PayU.",
-  },
-  {
-    name: "Milind Sanghavi",
-    role: "Advisor",
-    photo: "/milind.jpg",
-    linkedin: "https://www.linkedin.com/in/milindsanghavi/",
-    description: "Founder at Xweave, building the future of global cross border payments rails.",
-  },
-];
+// Fallback tile for a crew member whose photo we don't have yet.
+function CrewInitials({ name }: { name: string }) {
+  const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("");
+  return (
+    <div
+      className="flex h-full w-full items-center justify-center text-lg font-medium"
+      style={{ backgroundColor: "var(--surface)", color: "var(--text-faint)" }}
+    >
+      {initials}
+    </div>
+  );
+}
 
 function CrewSection() {
   return (
@@ -2017,23 +2013,38 @@ function CrewSection() {
           The Crew
         </h2>
       </FadeIn>
-      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-8">
-        {crewMembers.map((m, i) => (
-          <FadeIn key={m.name} delay={i * 0.06}>
-            <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="group block">
+      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 sm:gap-8 lg:grid-cols-5">
+        {crewMembers.map((m, i) => {
+          const card = (
+            <>
               <div
                 className="mb-3 aspect-square w-full max-w-[120px] overflow-hidden rounded-[10px] sm:max-w-[140px]"
                 style={{ border: "1px solid var(--border)" }}
               >
-                <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top" style={{ filter: "grayscale(100%)" }} />
+                {m.photo ? (
+                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top" style={{ filter: "grayscale(100%)" }} />
+                ) : (
+                  <CrewInitials name={m.name} />
+                )}
               </div>
               <div className="text-sm font-medium" style={{ color: "var(--text)" }}>{m.name}</div>
               <div className="text-xs" style={{ color: "var(--text-faint)" }}>{m.role}</div>
-              <div className="mt-0.5 text-xs transition group-hover:underline" style={{ color: "var(--accent)" }}>LinkedIn &#x2197;</div>
+              {m.linkedin && (
+                <div className="mt-0.5 text-xs transition group-hover:underline" style={{ color: "var(--accent)" }}>LinkedIn &#x2197;</div>
+              )}
               <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--text-faint)" }}>{m.description}</p>
-            </a>
-          </FadeIn>
-        ))}
+            </>
+          );
+          return (
+            <FadeIn key={m.name} delay={i * 0.06}>
+              {m.linkedin ? (
+                <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="group block">{card}</a>
+              ) : (
+                <div className="block">{card}</div>
+              )}
+            </FadeIn>
+          );
+        })}
       </div>
     </section>
   );
@@ -2154,6 +2165,7 @@ function Footer() {
               { label: "Contact", href: "mailto:teamaidress@gmail.com" },
             ]} />
             <FooterCol heading="Company" links={[
+              { label: "About", href: "/about" },
               { label: "Mission", href: "#logs" },
               { label: "Team", href: "#crew" },
               { label: "Aidress for Good", href: "/impact" },
@@ -2238,29 +2250,39 @@ function PaperRoute({ Component }: { Component: React.ComponentType<{ onBack: ()
 
 // ─── App ────────────────────────────────────────────────────────────────────────
 
-export default function App() {
+// Theme + routes, with no Router and no HelmetProvider of its own. The browser entry
+// wraps this in BrowserRouter; the build-time prerenderer wraps it in StaticRouter and
+// its own HelmetProvider so it can read the head tags back out. Keep them in sync.
+export function AppRoutes() {
   useEffect(() => {
     registerWebMcpTools();
   }, []);
 
   return (
+    <ThemeProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/docs/:slug" element={<DocsPage />} />
+        <Route path="/whitepaper" element={<PaperRoute Component={WhitePaperPage} />} />
+        <Route path="/validation" element={<PaperRoute Component={ValidationReportPage} />} />
+        <Route path="/protocol" element={<PaperRoute Component={ProtocolArticlePage} />} />
+        <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
+        <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
+        <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
+        <Route path="/impact" element={<PaperRoute Component={ImpactPage} />} />
+        <Route path="/about" element={<PaperRoute Component={AboutPage} />} />
+      </Routes>
+    </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
     <HelmetProvider>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/docs" element={<DocsPage />} />
-            <Route path="/docs/:slug" element={<DocsPage />} />
-            <Route path="/whitepaper" element={<PaperRoute Component={WhitePaperPage} />} />
-            <Route path="/validation" element={<PaperRoute Component={ValidationReportPage} />} />
-            <Route path="/protocol" element={<PaperRoute Component={ProtocolArticlePage} />} />
-            <Route path="/systems" element={<PaperRoute Component={SystemsArticlePage} />} />
-            <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
-            <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
-            <Route path="/impact" element={<PaperRoute Component={ImpactPage} />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </HelmetProvider>
   );
 }

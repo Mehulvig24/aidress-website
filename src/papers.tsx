@@ -1,11 +1,18 @@
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 function PaperShell({
   children,
   onBack,
+  title,
+  description,
+  path,
 }: {
   children: React.ReactNode;
   onBack: () => void;
+  title?: string;
+  description?: string;
+  path?: string;
 }) {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -13,14 +20,22 @@ function PaperShell({
 
   return (
     <div className="min-h-screen bg-[#06070a] text-white">
+      {title && (
+        <Helmet>
+          <title>{title}</title>
+          {description && <meta name="description" content={description} />}
+          {path && <link rel="canonical" href={`https://aidress.ai${path}`} />}
+        </Helmet>
+      )}
       <div className="mx-auto max-w-3xl px-6 py-12 md:px-10 md:py-20">
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-12 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/80"
+        {/* Real href so this works without JS; onClick keeps SPA navigation when JS is on. */}
+        <a
+          href="/"
+          onClick={(e) => { e.preventDefault(); onBack(); }}
+          className="mb-12 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/80"
         >
           ← Back
-        </button>
+        </a>
         {children}
       </div>
     </div>
@@ -122,7 +137,7 @@ function TableRow({
 
 export function WhitePaperPage({ onBack }: { onBack: () => void }) {
   return (
-    <PaperShell onBack={onBack}>
+    <PaperShell onBack={onBack} title="Agents Without Infrastructure — Aidress Whitepaper" description="Foundational white paper on why the agentic economy requires a coordination layer for discovery, identity, trust, terms, and routing." path="/whitepaper">
       {/* Header */}
       <div className="mb-12">
         <Tag>White Paper · V 1.0</Tag>
@@ -287,7 +302,7 @@ export function WhitePaperPage({ onBack }: { onBack: () => void }) {
 
 export function ValidationReportPage({ onBack }: { onBack: () => void }) {
   return (
-    <PaperShell onBack={onBack}>
+    <PaperShell onBack={onBack} title="The Coordination Gap in Autonomous Agent Transactions — Aidress" description="Validation report: 23 structured test runs across 8 platforms, zero autonomous completions, 79% protocol and trust failures." path="/validation">
       {/* Header */}
       <div className="mb-12">
         <Tag>Validation Report</Tag>
@@ -597,7 +612,7 @@ export function ValidationReportPage({ onBack }: { onBack: () => void }) {
 
 export function ProtocolArticlePage({ onBack }: { onBack: () => void }) {
   return (
-    <PaperShell onBack={onBack}>
+    <PaperShell onBack={onBack} title="The Five Layers of Agentic Communication — Aidress" description="How discovery, identity, trust, terms, and routing form the minimum stack for machine-native economic interaction." path="/protocol">
       <div className="mb-12">
         <Tag>Protocol</Tag>
         <h1 className="mt-5 text-4xl font-light leading-[1.1] tracking-tight text-white md:text-5xl">
@@ -709,7 +724,7 @@ export function ProtocolArticlePage({ onBack }: { onBack: () => void }) {
 
 export function SystemsArticlePage({ onBack }: { onBack: () => void }) {
   return (
-    <PaperShell onBack={onBack}>
+    <PaperShell onBack={onBack} title="From Isolated Agents to Independent Economic Actors — Aidress" description="What changes when AI agents can search, validate, negotiate, and execute autonomously." path="/systems">
       <div className="mb-12">
         <Tag>Systems</Tag>
         <h1 className="mt-5 text-4xl font-light leading-[1.1] tracking-tight text-white md:text-5xl">

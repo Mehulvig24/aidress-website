@@ -1,0 +1,9 @@
+# Aidress — security contact
+# If you believe you have found a security vulnerability affecting
+# aidress.ai or api.aidress.ai, please report it to the address below.
+
+Contact: mailto:security@aidress.ai
+Expires: 2027-09-06T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://aidress.ai/.well-known/security.txt
+Policy: https://aidress.ai/about

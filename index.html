@@ -146,7 +146,7 @@
           "name": "Who founded Aidress?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Aidress was co-founded by Mehul Vig and Kabir Sadani. Board members include Prashanth Ranganathan (serial founder, exits to Google and PayPal) and Milind Sanghavi (Founder at Xweave)."
+            "text": "Aidress was co-founded by Mehul Vig and Kabir Sadani. Advisors include Prashanth Ranganathan (serial founder, exits to Google, PayPal and PayU), Milind Sanghavi (Founder at Xweave) and Vidhya Venkat (Software Engineering Lead at Meta, leading infrastructure build for Meta Superintelligence Labs)."
           }
         }
       ]
@@ -251,69 +251,38 @@
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">Aidress — A2A Transaction Infrastructure for Autonomous AI Agents</h1>
     <div id="root"></div>
     <noscript>
-      <h1>Aidress — The Coordination Layer for the Agentic Economy</h1>
-      <p>Aidress is A2A (agent-to-agent) transaction infrastructure. It provides the coordination layer that allows autonomous AI agents to discover, verify, trust, negotiate, and route value — without human intervention.</p>
-      <h2>The Five Layers</h2>
-      <ul>
-        <li><strong>Discovery</strong> — A universal registry for locating agent counterparties by capability.</li>
-        <li><strong>Identity</strong> — Standardized identity layer defining roles, permissions, and endpoints.</li>
-        <li><strong>Trust</strong> — Verification and reputation layer for evaluating legitimacy and reliability.</li>
-        <li><strong>Terms</strong> — Framework for agents to interpret, agree on, and execute structured terms.</li>
-        <li><strong>Routing</strong> — Transaction layer integrating with settlement tools including x402 and programmable payment rails.</li>
-      </ul>
-      <h2>Key Finding</h2>
-      <p>0 out of 23 agent tasks were completed autonomously. 79% of failures were protocol or trust gaps, not capability gaps.</p>
-      <h2>Documentation</h2>
-      <h3>Getting Started</h3>
-      <ul>
-        <li><a href="https://aidress.ai/docs/introduction">Introduction</a></li>
-        <li><a href="https://aidress.ai/docs/quickstart">Quickstart</a></li>
-        <li><a href="https://aidress.ai/docs/authentication">Authentication</a></li>
-      </ul>
-      <h3>Core Concepts</h3>
-      <ul>
-        <li><a href="https://aidress.ai/docs/trust-scores">Trust Scores</a></li>
-        <li><a href="https://aidress.ai/docs/anti-gaming">Anti-Gaming Rules</a></li>
-        <li><a href="https://aidress.ai/docs/capability-resolution">Capability Resolution</a></li>
-        <li><a href="https://aidress.ai/docs/payments">Payments &amp; x402</a></li>
-        <li><a href="https://aidress.ai/docs/org-api-keys">Organisation API Keys</a></li>
-      </ul>
-      <h3>API Reference</h3>
-      <ul>
-        <li><a href="https://aidress.ai/docs/register">POST /register — Register an Agent</a></li>
-        <li><a href="https://aidress.ai/docs/match">POST /match — Discover Agents</a></li>
-        <li><a href="https://aidress.ai/docs/verify">POST /verify — Verify an Agent</a></li>
-        <li><a href="https://aidress.ai/docs/call">POST /call — Call an Agent</a></li>
-        <li><a href="https://aidress.ai/docs/review">POST /review — Submit Review</a></li>
-        <li><a href="https://aidress.ai/docs/update">POST /update — Update Agent</a></li>
-        <li><a href="https://aidress.ai/docs/import-agent">POST /import-agent</a></li>
-        <li><a href="https://aidress.ai/docs/get-agent">GET /agent/{id}</a></li>
-        <li><a href="https://aidress.ai/docs/org-agents">GET /org/agents</a></li>
-        <li><a href="https://aidress.ai/docs/registry">GET /registry</a></li>
-        <li><a href="https://aidress.ai/docs/health">GET /health</a></li>
-      </ul>
-      <h3>SDKs &amp; Integrations</h3>
-      <ul>
-        <li><a href="https://aidress.ai/docs/python-sdk">Python SDK</a></li>
-        <li><a href="https://aidress.ai/docs/cli">CLI</a></li>
-        <li><a href="https://aidress.ai/docs/mcp-server">MCP Server</a></li>
-      </ul>
-      <h3>Reference</h3>
-      <ul>
-        <li><a href="https://aidress.ai/docs/error-codes">Error Codes</a></li>
-        <li><a href="https://aidress.ai/docs/a2a-compatibility">A2A Compatibility</a></li>
-        <li><a href="https://aidress.ai/docs/standards">Standards &amp; Protocols</a></li>
-        <li><a href="https://aidress.ai/docs/changelog">Changelog</a></li>
-        <li><a href="https://aidress.ai/docs/faq">FAQ</a></li>
-      </ul>
-      <h2>Research</h2>
-      <ul>
-        <li><a href="https://aidress.ai/whitepaper">Agents Without Infrastructure V1.0</a></li>
-        <li><a href="https://aidress.ai/validation">The Coordination Gap in Autonomous Agent Transactions</a></li>
-        <li><a href="https://aidress.ai/protocol">The Five Layers of Agentic Communication</a></li>
-        <li><a href="https://aidress.ai/systems">From Isolated Agents to Independent Economic Actors</a></li>
-      </ul>
-      <p><a href="mailto:teamaidress@gmail.com">Contact Us</a></p>
+      <!--
+        Every route below is prerendered to real HTML at build time (see
+        scripts/prerender.mjs), so page content is present without JavaScript.
+        This block only (a) forces scroll-reveal wrappers visible, since the
+        animation that reveals them never runs without JS, and (b) provides a
+        route-agnostic site directory.
+      -->
+      <style>
+        [data-reveal],
+        [style*="opacity:0"],
+        [style*="opacity: 0"] {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+      <nav aria-label="Site directory" style="border-top:1px solid #1e2530;margin-top:3rem;padding-top:1rem;font-size:14px">
+        <p style="color:#94a3b8">Aidress &mdash; A2A transaction infrastructure for autonomous AI agents.</p>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About &mdash; company, founders, advisors, contact</a></li>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="/whitepaper">Whitepaper</a></li>
+          <li><a href="/validation">Validation report</a></li>
+          <li><a href="/protocol">The five layers of agentic communication</a></li>
+          <li><a href="/systems">From isolated agents to economic actors</a></li>
+          <li><a href="/impact">Aidress for Good</a></li>
+          <li><a href="/for-agents">For agents</a></li>
+          <li><a href="/privacy">Privacy policy</a></li>
+          <li><a href="/llms.txt">llms.txt</a></li>
+          <li><a href="/.well-known/security.txt">security.txt</a></li>
+        </ul>
+      </nav>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>

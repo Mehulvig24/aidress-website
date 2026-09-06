@@ -283,10 +283,20 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 
 ## Who Built Aidress?
 
-- Mehul Vig (Co-Founder): Experience in GTM and product through a stablecoin cross-border payments startup across Southeast Asia.
-- Kabir Sadani (Co-Founder): Experience in product design and data-driven systems at Sportz Interactive.
+Full company details, founders, advisors, and contact information: https://aidress.ai/about
+
+Aidress is registered in Singapore. A Delaware C-corp is in progress.
+
+- Mehul Vig (Co-Founder): Experience in GTM and product through a stablecoin cross-border payments startup across Southeast Asia. mehul@aidress.ai
+- Kabir Sadani (Co-Founder): Experience in product design and data-driven systems at Sportz Interactive. kabir@aidress.ai
 - Prashanth Ranganathan (Advisor): Serial founder behind multiple acquisitions by Google, PayPal, and PayU.
 - Milind Sanghavi (Advisor): Founder at Xweave, building the future of global cross border payments rails.
+- Vidhya Venkat (Advisor): Software Engineering Lead at Meta, currently leading infrastructure build for Meta Superintelligence Labs.
+
+## Security
+
+Report suspected vulnerabilities to security@aidress.ai.
+Machine-readable contact (RFC 9116): https://aidress.ai/.well-known/security.txt
 
 ## Product Demo
 
@@ -302,6 +312,7 @@ Machine-readable resources on this domain:
 - Flagship skill (full discover → verify → transact → rate lifecycle): https://github.com/Aidress-ai/aidress-skill-verify-transact-and-rate-an-unknown-agent
 - MCP server card: https://aidress.ai/.well-known/mcp/server-card.json
 - Auth model (bearer key + RFC 9421 Ed25519 signatures, not OAuth): https://aidress.ai/auth.md
+- Security contact (RFC 9116): https://aidress.ai/.well-known/security.txt
 - A2A agent descriptor (on the API domain): https://api.aidress.ai/.well-known/agent.json
 
 ## Contact

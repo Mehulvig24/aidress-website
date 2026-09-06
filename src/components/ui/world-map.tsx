@@ -1,6 +1,11 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { motion } from "motion/react";
 import DottedMap from "dotted-map";
+
+// Never-changing store: reports false while rendering on the server, true in the browser.
+const neverChanges = () => () => {};
+const onClient = () => true;
+const onServer = () => false;
 
 interface MapProps {
   dots?: Array<{
@@ -15,9 +20,12 @@ export default function WorldMap({
   lineColor = "#0ea5e9",
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const map = new DottedMap({ height: 100, grid: "diagonal" });
 
+  // The dotted map serialises to a ~950KB inline data URI and is purely decorative, so
+  // it's skipped while prerendering — otherwise the homepage HTML balloons to ~1MB.
+  const isClient = useSyncExternalStore(neverChanges, onClient, onServer);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+
   useEffect(() => {
     const check = () =>
       setTheme(document.documentElement.classList.contains("light") ? "light" : "dark");
@@ -27,12 +35,15 @@ export default function WorldMap({
     return () => observer.disconnect();
   }, []);
 
-  const svgMap = map.getSVG({
-    radius: 0.22,
-    color: theme === "dark" ? "#FFFFFF30" : "#00000030",
-    shape: "circle",
-    backgroundColor: theme === "dark" ? "#06070a" : "#fafbfc",
-  });
+  const svgMap = useMemo(() => {
+    if (!isClient) return null;
+    return new DottedMap({ height: 100, grid: "diagonal" }).getSVG({
+      radius: 0.22,
+      color: theme === "dark" ? "#FFFFFF30" : "#00000030",
+      shape: "circle",
+      backgroundColor: theme === "dark" ? "#06070a" : "#fafbfc",
+    });
+  }, [isClient, theme]);
 
   const projectPoint = (lat: number, lng: number) => {
     const x = (lng + 180) * (800 / 360);
@@ -51,14 +62,16 @@ export default function WorldMap({
 
   return (
     <div className="w-full aspect-[2/1] rounded-lg relative font-sans" style={{ backgroundColor: "var(--bg)" }}>
-      <img
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
-        className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
-        alt="world map"
-        height="495"
-        width="1056"
-        draggable={false}
-      />
+      {svgMap && (
+        <img
+          src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
+          className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
+          alt="world map"
+          height="495"
+          width="1056"
+          draggable={false}
+        />
+      )}
       <svg
         ref={svgRef}
         viewBox="0 0 800 400"
