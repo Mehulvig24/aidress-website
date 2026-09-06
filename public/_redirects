@@ -1,1 +1,24 @@
-/* /index.html 200
+# Rules are matched top-down, first match wins.
+#
+# These explicit rules exist because the `/*` SPA fallback at the bottom was
+# shadowing the prerendered per-route HTML in dist/<route>/index.html — every URL
+# returned the homepage instead. Each prerendered route needs to name its file.
+
+/                 /index.html                200
+
+# /about briefly existed as its own page and was in the sitemap; the team info now
+# lives in the homepage Crew section.
+/about            /                          301
+
+/whitepaper       /whitepaper/index.html     200
+/validation       /validation/index.html     200
+/protocol         /protocol/index.html       200
+/systems          /systems/index.html        200
+/impact           /impact/index.html         200
+/for-agents       /for-agents/index.html     200
+/privacy          /privacy/index.html        200
+
+# Everything else (/docs/*, unknown paths) is client-rendered. This points at a
+# neutral shell rather than /index.html so crawlers don't get the prerendered
+# homepage echoed back on paths that aren't the homepage.
+/*                /spa.html                  200

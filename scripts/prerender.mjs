@@ -19,7 +19,6 @@ const distDir = join(root, "dist");
 // reviewer or crawler is looking for.
 const ROUTES = [
   "/",
-  "/about",
   "/whitepaper",
   "/validation",
   "/protocol",
@@ -30,6 +29,13 @@ const ROUTES = [
 ];
 
 const template = readFileSync(join(distDir, "index.html"), "utf8");
+
+// Neutral shell for routes that aren't prerendered (/docs/*, 404s). The SPA fallback
+// in public/_redirects points here rather than at index.html — index.html now holds the
+// prerendered homepage, and serving that for every unknown URL would show crawlers
+// homepage content on paths that aren't the homepage.
+writeFileSync(join(distDir, "spa.html"), template);
+
 const { render } = await import(pathToFileURL(join(root, "dist-ssr", "entry-server.js")).href);
 
 /**

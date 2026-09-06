@@ -283,7 +283,7 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 
 ## Who Built Aidress?
 
-Full company details, founders, advisors, and contact information: https://aidress.ai/about
+Founders and advisors are listed on the homepage: https://aidress.ai/#crew
 
 Aidress is registered in Singapore. A Delaware C-corp is in progress.
 

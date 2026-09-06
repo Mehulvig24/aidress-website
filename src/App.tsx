@@ -17,7 +17,6 @@ import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import ForAgentsPage from "./pages/ForAgentsPage";
 import ImpactPage from "./pages/ImpactPage";
-import AboutPage from "./pages/AboutPage";
 import { crewMembers } from "./data/team";
 import {
   WhitePaperPage,
@@ -908,7 +907,7 @@ function Nav() {
           <a href="/docs" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Docs</a>
           <a href="/docs/register" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>API Reference</a>
           <a href="/impact" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>Impact</a>
-          <a href="/about" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>About</a>
+          <a href="/#crew" className="hidden text-[13px] font-medium transition lg:inline" style={{ color: "var(--text-muted)" }}>About</a>
 
           <SearchBox variant="site" className="hidden lg:flex" />
 
@@ -998,7 +997,7 @@ function Nav() {
                 Impact
               </a>
               <a
-                href="/about"
+                href="/#crew"
                 onClick={() => setMobileOpen(false)}
                 className="rounded-md px-3 py-2.5 text-[14px] font-medium transition"
                 style={{ color: "var(--text)" }}
@@ -2165,9 +2164,8 @@ function Footer() {
               { label: "Contact", href: "mailto:teamaidress@gmail.com" },
             ]} />
             <FooterCol heading="Company" links={[
-              { label: "About", href: "/about" },
               { label: "Mission", href: "#logs" },
-              { label: "Team", href: "#crew" },
+              { label: "About / Team", href: "#crew" },
               { label: "Aidress for Good", href: "/impact" },
               { label: "GitHub", href: "https://github.com/Aidress-ai/Aidress", external: true },
               { label: "Privacy", href: "/privacy" },
@@ -2271,7 +2269,6 @@ export function AppRoutes() {
         <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
         <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
         <Route path="/impact" element={<PaperRoute Component={ImpactPage} />} />
-        <Route path="/about" element={<PaperRoute Component={AboutPage} />} />
       </Routes>
     </ThemeProvider>
   );

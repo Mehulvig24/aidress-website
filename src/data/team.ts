@@ -1,4 +1,4 @@
-// Single source of truth for people — used by the homepage Crew section and /about.
+// Single source of truth for people — used by the homepage Crew section.
 
 export type TeamMember = {
   name: string;
