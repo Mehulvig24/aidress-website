@@ -43,15 +43,16 @@ export const advisors: TeamMember[] = [
   {
     name: "Vidhya Venkat",
     role: "Advisor",
+    photo: "/vidhya.png",
+    linkedin: "https://www.linkedin.com/in/vidhya-venkat-0849469/",
     description: "Software Engineering Lead at Meta, currently leading infrastructure build for Meta Superintelligence Labs.",
   },
 ];
 
 export const crewMembers: TeamMember[] = [...founders, ...advisors];
 
+// Single shared inbox for now — founder addresses are deliberately not published.
 export const contactEmails = {
   general: "teamaidress@gmail.com",
-  security: "security@aidress.ai",
-  mehul: "mehul@aidress.ai",
-  kabir: "kabir@aidress.ai",
+  security: "teamaidress@gmail.com",
 };

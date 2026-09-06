@@ -1991,8 +1991,23 @@ function LetsTalkSection() {
 
 // ─── Section 8: Crew ────────────────────────────────────────────────────────────
 
-// Fallback tile for a crew member whose photo we don't have yet.
-function CrewInitials({ name }: { name: string }) {
+// Photo tile that falls back to initials — covers members with no photo, and a photo
+// path whose file hasn't been added to public/ yet, so neither shows a broken image.
+function CrewPhoto({ name, photo }: { name: string; photo?: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (photo && !failed) {
+    return (
+      <img
+        src={photo}
+        alt={name}
+        onError={() => setFailed(true)}
+        className="h-full w-full object-cover object-top"
+        style={{ filter: "grayscale(100%)" }}
+      />
+    );
+  }
+
   const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("");
   return (
     <div
@@ -2020,11 +2035,7 @@ function CrewSection() {
                 className="mb-3 aspect-square w-full max-w-[120px] overflow-hidden rounded-[10px] sm:max-w-[140px]"
                 style={{ border: "1px solid var(--border)" }}
               >
-                {m.photo ? (
-                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top" style={{ filter: "grayscale(100%)" }} />
-                ) : (
-                  <CrewInitials name={m.name} />
-                )}
+                <CrewPhoto name={m.name} photo={m.photo} />
               </div>
               <div className="text-sm font-medium" style={{ color: "var(--text)" }}>{m.name}</div>
               <div className="text-xs" style={{ color: "var(--text-faint)" }}>{m.role}</div>
