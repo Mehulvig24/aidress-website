@@ -17,6 +17,7 @@ import DocsPage from "./pages/DocsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import ForAgentsPage from "./pages/ForAgentsPage";
 import ImpactPage from "./pages/ImpactPage";
+import SecurityPage from "./pages/SecurityPage";
 import { crewMembers } from "./data/team";
 import {
   WhitePaperPage,
@@ -2179,6 +2180,7 @@ function Footer() {
               { label: "About / Team", href: "#crew" },
               { label: "Aidress for Good", href: "/impact" },
               { label: "GitHub", href: "https://github.com/Aidress-ai/Aidress", external: true },
+              { label: "Security", href: "/security" },
               { label: "Privacy", href: "/privacy" },
             ]} />
           </div>
@@ -2280,6 +2282,7 @@ export function AppRoutes() {
         <Route path="/privacy" element={<PaperRoute Component={PrivacyPage} />} />
         <Route path="/for-agents" element={<PaperRoute Component={ForAgentsPage} />} />
         <Route path="/impact" element={<PaperRoute Component={ImpactPage} />} />
+        <Route path="/security" element={<PaperRoute Component={SecurityPage} />} />
       </Routes>
     </ThemeProvider>
   );

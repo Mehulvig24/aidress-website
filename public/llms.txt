@@ -296,6 +296,7 @@ Aidress is registered in Singapore. A Delaware C-corp is in progress.
 ## Security
 
 Report suspected vulnerabilities to teamaidress@gmail.com.
+Vulnerability disclosure policy: https://aidress.ai/security
 Machine-readable contact (RFC 9116): https://aidress.ai/.well-known/security.txt
 
 ## Product Demo

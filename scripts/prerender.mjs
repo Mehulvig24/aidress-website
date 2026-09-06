@@ -26,6 +26,7 @@ const ROUTES = [
   "/impact",
   "/for-agents",
   "/privacy",
+  "/security",
 ];
 
 const template = readFileSync(join(distDir, "index.html"), "utf8");
