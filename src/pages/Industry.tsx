@@ -14,7 +14,6 @@ function Industries({go}){
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:22,marginTop:64}}>
       {inds.map(i=><div key={i.id}>
         <IndustryTile code={i.code} height={380} title={i.title} description={i.use} onClick={()=>go('industry',{id:i.id})} media={<Photo id={'tile-'+i.id} label={i.photo} src={i.img.src} credit={i.img.credit} href={i.img.href}/>}/>
-        <div style={{display:'flex',gap:28,marginTop:18}}>{i.stats.slice(0,2).map(([v,l])=><div key={l}><div style={{font:'500 22px/1 var(--font-sans)',letterSpacing:'-0.02em'}}>{v}</div><div style={{...mono,fontSize:11,color:'var(--text-secondary)',marginTop:8}}>{l}</div></div>)}</div>
       </div>)}
       <ScopedTile go={go} height={380}/>
     </div>
