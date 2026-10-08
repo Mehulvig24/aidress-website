@@ -132,6 +132,37 @@ write(
     `\n\n${onboard}\n`,
 );
 
+// /.well-known/llms.txt mirrors /llms.txt.
+write(".well-known/llms.txt", readFileSync(join(distDir, "llms.txt"), "utf8"));
+
+// /.well-known/agent-card.json (A2A agent card). Facts only from the docs and machineText().
+const API = "https://api.aidress.ai";
+write(
+  ".well-known/agent-card.json",
+  JSON.stringify(
+    {
+      name: "Aidress",
+      description: home.meta.description,
+      url: SITE_URL,
+      documentationUrl: `${SITE_URL}/docs`,
+      provider: { organization: "Aidress", url: SITE_URL },
+      apiBase: API,
+      mcpServer: { url: `${API}/mcp-http/mcp`, transport: "streamable-http" },
+      authentication: "Read endpoints require no authentication. Mutating endpoints require one of three auth methods — Bearer key, Ed25519 signature, or Org API key.",
+      defaultInputModes: ["application/json"],
+      defaultOutputModes: ["application/json"],
+      skills: [
+        { id: "discover", name: "Discover", description: "Find counterparties by capability.", tags: ["discovery"], examples: [`POST ${API}/v1/discover`] },
+        { id: "verify", name: "Verify", description: "Trust evidence against a policy.", tags: ["trust", "identity"], examples: [`POST ${API}/v1/evaluate`, `POST ${API}/verify`] },
+        { id: "terms", name: "Terms", description: "Declared pricing, inputs, conditions.", tags: ["terms"], examples: [`GET ${API}/v1/agents/{id}/terms`] },
+        { id: "resolve", name: "Resolve", description: "Interface + settlement rail.", tags: ["routing", "settlement"], examples: [`POST ${API}/v1/resolve`] },
+      ],
+    },
+    null,
+    2,
+  ) + "\n",
+);
+
 // sitemap.xml: every indexable route (noindex pages, e.g. passports while the Atlas is hidden, are left out).
 const today = new Date().toISOString().slice(0, 10);
 write(

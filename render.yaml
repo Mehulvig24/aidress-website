@@ -17,6 +17,7 @@ services:
     headers:
       - { path: /*.md, name: Content-Type, value: text/markdown; charset=utf-8 }
       - { path: /*.txt, name: Content-Type, value: text/plain; charset=utf-8 }
+      - { path: /.well-known/agent-card.json, name: Content-Type, value: application/json; charset=utf-8 }
       - path: /*
         name: Link
         value: </.well-known/api-catalog>; rel="api-catalog", </docs>; rel="service-doc", </llms.txt>; rel="alternate"; type="text/plain", </agents.md>; rel="alternate"; type="text/markdown"

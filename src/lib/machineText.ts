@@ -30,5 +30,15 @@ export function machineText(r){
   else if(r.name==='docs'){const pg=AidressDocs.getPageData(p.id||'introduction');body='# '+(pg?pg.title:'Docs')+'\n'+U+'/docs'+(p.id?'/'+p.id:'')+'\n\n## Pages\n'+AidressDocs.sidebarNav.map(g=>'### '+g.title+'\n'+g.items.map(i=>'- ['+i.label+']('+U+'/docs/'+i.slug+')').join('\n')).join('\n\n');}
   else if(r.name==='privacy'){body='# Privacy policy\n'+U+'/privacy\ncontact: teamaidress@gmail.com';}
   else if(r.name==='security'){body='# Security and vulnerability disclosure\n'+U+'/security\nsecurity.txt: '+U+'/.well-known/security.txt\ncontact: teamaidress@gmail.com';}
-  return head+'\n'+body+'\n';
+  // /for-agents and /agents.md open with a plain-text index for agents (an addition to the mock).
+  const start=r.name==='for-agents'?'START HERE\n'+
+   'llms.txt:    '+U+'/llms.txt (also '+U+'/.well-known/llms.txt)\n'+
+   'agents.md:   '+U+'/agents.md\n'+
+   'Agent card:  '+U+'/.well-known/agent-card.json\n'+
+   'API base:    '+API+'\n'+
+   'MCP server:  '+API+'/mcp-http/mcp\n'+
+   'Auth:        Read endpoints require no authentication. Mutating endpoints require one of three auth methods — Bearer key, Ed25519 signature, or Org API key. '+U+'/docs/authentication\n'+
+   'Docs:        '+U+'/docs\n'+
+   'Any page as plain text: add .md to its path, e.g. '+U+'/docs/quickstart.md (the homepage is '+U+'/index.md)\n\n':'';
+  return start+head+'\n'+body+'\n';
 }
