@@ -20,7 +20,7 @@ export interface Meta {
 }
 
 /** Plain text of a React tree (used to read a docs page's first paragraph). */
-function textOf(node: ReactNode): string {
+export function textOf(node: ReactNode): string {
   if (node == null || typeof node === 'boolean') return '';
   if (typeof node === 'string' || typeof node === 'number') return String(node);
   if (Array.isArray(node)) return node.map(textOf).join('');

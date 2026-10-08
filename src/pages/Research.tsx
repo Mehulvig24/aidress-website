@@ -2,6 +2,7 @@
 /* eslint-disable react-refresh/only-export-components, react-hooks/exhaustive-deps, react-hooks/rules-of-hooks */
 // Research site and Crew, ported from design_handoff_aidress_website/design/ui_kits/website/Research.jsx.
 import React from 'react';
+import { hrefFor, spaClick } from '../lib/routes';
 import { Icon, SectionHeader } from '../components/ds';
 import { Band, monoStyle as mono } from '../components/site/Shared';
 import { AidressPapers } from '../content/papersContent';
@@ -9,7 +10,7 @@ import { AW } from '../data/site';
 const C={bg:'var(--ink-deep)',fg:'var(--paper)',mute:'#9a9c95',rule:'#3a3c38'};
 function useNarrow(q='(max-width: 760px)'){const [n,setN]=React.useState(()=>typeof matchMedia!=='undefined'&&matchMedia(q).matches);React.useEffect(()=>{const m=matchMedia(q);const f=()=>setN(m.matches);m.addEventListener('change',f);return()=>m.removeEventListener('change',f);},[]);return n;}
 function Cover({p,ratio='4 / 3'}){return <div style={{aspectRatio:ratio,overflow:'hidden',background:'#000'}}><img src={p.img} alt={p.title+' cover'} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform 700ms var(--ease-resolve)'}}/></div>;}
-function Card({p,open}){const [h,setH]=React.useState(false);return <a onClick={open} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{cursor:'pointer',display:'flex',flexDirection:'column',gap:14,padding:'22px 0 26px',borderTop:'1px solid '+(h?'#F07A5C':C.rule),color:C.fg,transition:'border-color var(--dur-fast)'}}>
+function Card({p,open}){const [h,setH]=React.useState(false);return <a href={hrefFor('research:'+p.id)} onClick={spaClick(open)} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{cursor:'pointer',display:'flex',flexDirection:'column',gap:14,padding:'22px 0 26px',borderTop:'1px solid '+(h?'#F07A5C':C.rule),color:C.fg,transition:'border-color var(--dur-fast)'}}>
   <div style={{display:'flex',gap:12,flexWrap:'wrap',...mono,fontSize:11,color:C.mute}}><span style={{color:'#F07A5C'}}>{p.cat}</span><span>{p.date}</span><span>{p.meta}</span></div>
   <div style={{font:'500 clamp(22px,2.2vw,28px)/1.15 var(--font-sans)',letterSpacing:'-0.025em',textWrap:'balance'}}>{p.title}</div>
   <p style={{margin:0,font:'400 15px/1.5 var(--font-sans)',color:'#c9c9c1'}}>{p.desc}</p>
@@ -26,7 +27,7 @@ function Research({params,go}){
       <p style={{margin:'24px 0 0',font:'400 clamp(17px,1.6vw,21px)/1.45 var(--font-sans)',color:'#c9c9c1',maxWidth:640}}>We test what stops autonomous agents from transacting, publish what we find, and build the infrastructure the evidence points to.</p>
     </section>
     <section style={{padding:'0 var(--gutter) 64px'}}>
-      <a onClick={()=>open(f)} style={{cursor:'pointer',display:'grid',gridTemplateColumns:nar?'1fr':'minmax(0,520px) minmax(0,1fr)',gap:nar?20:48,alignItems:'center',color:C.fg}}>
+      <a href={hrefFor('research:'+f.id)} onClick={spaClick(()=>open(f))} style={{cursor:'pointer',display:'grid',gridTemplateColumns:nar?'1fr':'minmax(0,520px) minmax(0,1fr)',gap:nar?20:48,alignItems:'center',color:C.fg}}>
         <Cover p={f} ratio="4 / 3"/>
         <div style={{display:'flex',flexDirection:'column',gap:18,paddingBottom:8}}>
           <div style={{display:'flex',gap:12,...mono,fontSize:11,color:C.mute}}><span style={{color:'#F07A5C'}}>Featured · {f.cat}</span><span>{f.date}</span></div>
@@ -38,7 +39,7 @@ function Research({params,go}){
       </a>
     </section>
     <section style={{padding:'40px var(--gutter)',borderTop:'1px solid '+C.rule,borderBottom:'1px solid '+C.rule}}>
-      <div style={{display:'flex',justifyContent:'space-between',gap:16,flexWrap:'wrap',...mono,fontSize:11,color:C.mute}}><span>Validation study · key findings</span><a onClick={()=>go('research:validation')} style={{cursor:'pointer',color:C.fg,borderBottom:'1px solid currentColor',paddingBottom:2}}>Read the report ↗</a></div>
+      <div style={{display:'flex',justifyContent:'space-between',gap:16,flexWrap:'wrap',...mono,fontSize:11,color:C.mute}}><span>Validation study · key findings</span><a href={hrefFor('research:validation')} onClick={spaClick(()=>go('research:validation'))} style={{cursor:'pointer',color:C.fg,borderBottom:'1px solid currentColor',paddingBottom:2}}>Read the report ↗</a></div>
       <div style={{display:'grid',gridTemplateColumns:nar?'1fr 1fr':'repeat(4,minmax(0,1fr))',gap:nar?'28px 16px':0,marginTop:28}}>{D.findings.map(([v,l],k)=><div key={l} style={{paddingLeft:!nar&&k?24:0,borderLeft:!nar&&k?'1px solid '+C.rule:'none'}}><div style={{font:'500 clamp(36px,4.5vw,60px)/1 var(--font-sans)',letterSpacing:'-0.045em',color:k===0?'#F07A5C':C.fg}}>{v}</div><div style={{marginTop:10,font:'400 14px/1.4 var(--font-sans)',color:'#c9c9c1',maxWidth:220}}>{l}</div></div>)}</div>
     </section>
     <section style={{padding:'64px var(--gutter) 96px'}}>

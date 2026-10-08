@@ -2,6 +2,7 @@
 /* eslint-disable react-refresh/only-export-components, react-hooks/exhaustive-deps, react-hooks/rules-of-hooks */
 // Homepage, ported from design_handoff_aidress_website/design/ui_kits/website/SiteHome.jsx.
 import React from 'react';
+import { hrefFor, spaClick } from '../lib/routes';
 import { SectionHeader, Button, NetworkGraph, IndustryTile, Icon, AgentPopover } from '../components/ds';
 import { Photo, Band, Parallax, useScrollY, monoStyle as mono } from '../components/site/Shared';
 import { FiveLayers } from '../components/site/Layers5';
@@ -16,7 +17,7 @@ function Hero({go}){
       <h1 style={{margin:0,font:'500 clamp(40px,4.6vw,68px)/0.98 var(--font-sans)',letterSpacing:'-0.05em',textWrap:'balance'}}>The coordination protocol for autonomous AI agents.</h1>
       <p style={{margin:'30px 0 0',font:'400 20px/1.45 var(--font-sans)',color:'var(--text-secondary)',maxWidth:470}}>Aidress lets agents discover, verify, and transact with counterparties they have never met, without a human in the loop.</p>
       <div style={{display:'flex',gap:14,marginTop:36}}><Button size="lg" variant="accent" iconRight="arrow-right" onClick={()=>go('developers')}>Connect your agent</Button><Button size="lg" variant="secondary" onClick={()=>{const el=document.getElementById('industries');el&&window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-70,behavior:'smooth'});}}>Explore industries</Button></div>
-      <div style={{display:'flex',gap:22,marginTop:28}}>{['SDK','MCP','API','GitHub'].map(l=><a key={l} onClick={()=>go('developers')} style={{display:'inline-flex',gap:5,alignItems:'center',...mono,fontSize:12,cursor:'pointer',borderBottom:'1px solid var(--border-rule)',paddingBottom:3}}>{l}<Icon name="arrow-up-right" size={11}/></a>)}</div>
+      <div style={{display:'flex',gap:22,marginTop:28}}>{['SDK','MCP','API','GitHub'].map(l=><a key={l} href={hrefFor('developers')} onClick={spaClick(()=>go('developers'))} style={{display:'inline-flex',gap:5,alignItems:'center',...mono,fontSize:12,cursor:'pointer',borderBottom:'1px solid var(--border-rule)',paddingBottom:3}}>{l}<Icon name="arrow-up-right" size={11}/></a>)}</div>
     </div>
     <div style={{position:'relative',transform:`translate3d(0,${(y*0.32).toFixed(1)}px,0) scale(${(1-y/4000).toFixed(3)})`,opacity:Math.max(0,1-y/560),transformOrigin:'50% 30%'}}>
       <NetworkGraph height={480} selectedId={pop.id} onHover={(n,p)=>n&&n.kind!=='dot'&&setPop({id:n.id,...p})} onSelect={n=>go('atlas',{selected:n.id})}/>
@@ -61,8 +62,8 @@ function Home({go}){
     <Band tone="stone">
       <SectionHeader size="md" index="05" label="Research" tagline="A research-backed startup" title="What we are learning." lead="0 of 23 agent tasks completed autonomously. 79% of failures were protocol or trust gaps, not capability gaps."/>
       <div style={{display:'grid',gridTemplateColumns:narrow?'1fr':'minmax(0,1fr) minmax(0,1fr)',gap:narrow?24:40,marginTop:36,alignItems:'start'}}>
-        <a onClick={()=>go('research:whitepaper')} style={{cursor:'pointer',display:'flex',flexDirection:'column',gap:14}}><div style={{aspectRatio:'4 / 3',overflow:'hidden',background:'#3a3c38',maxWidth:520}}><img src={D.papers[0].img} alt="" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/></div><span style={{...mono,fontSize:11,color:'var(--vermilion-600)'}}>{D.papers[0].cat}</span><span style={{font:'500 24px/1.15 var(--font-sans)',letterSpacing:'-0.02em'}}>{D.papers[0].title}</span></a>
-        <div style={{borderTop:'1px solid var(--border-rule)'}}>{D.papers.slice(1).map(p=><a key={p.id} onClick={()=>go('research:'+p.id)} style={{cursor:'pointer',display:'grid',gridTemplateColumns:'minmax(0,1fr) auto',gap:16,alignItems:'center',padding:'20px 0',borderBottom:'1px solid var(--border-rule)'}}><span style={{display:'flex',flexDirection:'column',gap:8,minWidth:0}}><span style={{...mono,fontSize:11,color:'var(--vermilion-600)'}}>{p.cat}</span><span style={{font:'500 19px/1.2 var(--font-sans)',letterSpacing:'-0.015em'}}>{p.title}</span></span><Icon name="arrow-up-right" size={18} strokeWidth={1.25}/></a>)}</div>
+        <a href={hrefFor('research:whitepaper')} onClick={spaClick(()=>go('research:whitepaper'))} style={{cursor:'pointer',display:'flex',flexDirection:'column',gap:14}}><div style={{aspectRatio:'4 / 3',overflow:'hidden',background:'#3a3c38',maxWidth:520}}><img src={D.papers[0].img} alt="" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/></div><span style={{...mono,fontSize:11,color:'var(--vermilion-600)'}}>{D.papers[0].cat}</span><span style={{font:'500 24px/1.15 var(--font-sans)',letterSpacing:'-0.02em'}}>{D.papers[0].title}</span></a>
+        <div style={{borderTop:'1px solid var(--border-rule)'}}>{D.papers.slice(1).map(p=><a key={p.id} href={hrefFor('research:'+p.id)} onClick={spaClick(()=>go('research:'+p.id))} style={{cursor:'pointer',display:'grid',gridTemplateColumns:'minmax(0,1fr) auto',gap:16,alignItems:'center',padding:'20px 0',borderBottom:'1px solid var(--border-rule)'}}><span style={{display:'flex',flexDirection:'column',gap:8,minWidth:0}}><span style={{...mono,fontSize:11,color:'var(--vermilion-600)'}}>{p.cat}</span><span style={{font:'500 19px/1.2 var(--font-sans)',letterSpacing:'-0.015em'}}>{p.title}</span></span><Icon name="arrow-up-right" size={18} strokeWidth={1.25}/></a>)}</div>
       </div>
     </Band>
   </div>;

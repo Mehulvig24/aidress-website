@@ -3,6 +3,7 @@
 // Industries, IndustryDetail, ComingSoon (redacted brief), ScopedRegistries, AtlasSoon and EarlyAccess,
 // ported from design_handoff_aidress_website/design/ui_kits/website/Industry.jsx.
 import React from 'react';
+import { hrefFor, spaClick } from '../lib/routes';
 import { SectionHeader, IndustryTile, TextLink, Button, StatRow, Tag, Avatar, Badge, Icon } from '../components/ds';
 import { Photo, Band, Stepper, monoStyle as mono } from '../components/site/Shared';
 import { FiveLayers } from '../components/site/Layers5';
@@ -34,7 +35,7 @@ function IndustryDetail({go,params}){
   const scrollTo=id=>{const el=document.getElementById(id);if(el)window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-70,behavior:'smooth'});};
   return <div>
     <Band style={{paddingTop:40,paddingBottom:56}}>
-      <TextLink direction="back" onClick={()=>go('industries')}>All industries</TextLink>
+      <TextLink direction="back" href={hrefFor('industries')} onClick={spaClick(()=>go('industries'))}>All industries</TextLink>
       <div style={{marginTop:56}}><SectionHeader index={ind.code} label={ind.title} tagline={ind.scenario} title={ind.title+'.'} lead={ind.lead}/></div>
       <div style={{display:'flex',gap:12,marginTop:40}}><Button size="lg" iconRight="arrow-down" onClick={()=>scrollTo('workflow')}>Explore the workflow</Button><Button size="lg" variant="secondary" onClick={()=>go('atlas')}>See {ind.short} agents in the Atlas</Button></div>
     </Band>
@@ -52,7 +53,7 @@ function IndustryDetail({go,params}){
       <div style={{marginTop:56}}><FiveLayers ind={ind}/></div>
     </Band>
     <Band tone="stone">
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}><div><div style={{...mono}}>03 / Agents in this workflow</div><h2 style={{margin:'22px 0 0',font:'500 48px/1 var(--font-sans)',letterSpacing:'-0.045em'}}>Meet the counterparties.</h2></div><TextLink onClick={()=>go('atlas')}>Explore all in the Atlas</TextLink></div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}><div><div style={{...mono}}>03 / Agents in this workflow</div><h2 style={{margin:'22px 0 0',font:'500 48px/1 var(--font-sans)',letterSpacing:'-0.045em'}}>Meet the counterparties.</h2></div><TextLink href={hrefFor('atlas')} onClick={spaClick(()=>go('atlas'))}>Explore all in the Atlas</TextLink></div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:18,marginTop:48}}>{ind.agents.map(a=><AgentCard key={a} id={a} go={go}/>)}</div>
     </Band>
   </div>;
@@ -87,7 +88,7 @@ function Redacted({rows}){
 function ComingSoon({ind,go}){
   return <div>
     <Band style={{paddingTop:40,paddingBottom:48}}>
-      <TextLink direction="back" onClick={()=>go('industries')}>All industries</TextLink>
+      <TextLink direction="back" href={hrefFor('industries')} onClick={spaClick(()=>go('industries'))}>All industries</TextLink>
       <div style={{marginTop:40}}><SoonTag/></div>
       <div style={{marginTop:24}}><SectionHeader index={ind.code} label={ind.title} title={ind.title+'.'}/></div>
       <div style={{marginTop:40}}><Redacted rows={ind.brief}/></div>
@@ -127,7 +128,7 @@ function ScopedRegistries({go}){
   const ag=t=><span style={{...mono,fontSize:11,padding:'8px 10px',background:'var(--surface-card)',border:'1px solid var(--border-box)',textTransform:'none'}}>{t}</span>;
   return <div>
     <Band style={{paddingTop:40,paddingBottom:48}}>
-      <TextLink direction="back" onClick={()=>go('industries')}>All industries</TextLink>
+      <TextLink direction="back" href={hrefFor('industries')} onClick={spaClick(()=>go('industries'))}>All industries</TextLink>
       <div style={{marginTop:40}}><SoonTag/></div>
       <div style={{marginTop:24}}><SectionHeader index="REG-00" label="Scoped registries" title={<>Your agents. Your rules.<br/>The same protocol.</>} lead="A scoped registry for your organisation, consortium or network. Internal agents discover and verify each other privately, and you decide which of them are visible on the public Aidress registry."/></div>
     </Band>

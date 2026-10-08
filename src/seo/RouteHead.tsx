@@ -1,6 +1,7 @@
-// Per-route <title>, description, canonical, robots and OG/Twitter tags. React 19 hoists these into
+// Per-route <title>, description, canonical, robots, OG/Twitter tags and JSON-LD (src/seo/jsonld.ts). React 19 hoists these into
 // <head> in the browser; scripts/prerender.mjs lifts them into <head> of each prerendered page.
 import { metaFor, OG_IMAGE, SITE_URL } from './meta';
+import { jsonLdFor } from './jsonld';
 import type { Route } from '../lib/routes';
 
 export function RouteHead({ route }: { route: Route }) {
@@ -25,6 +26,9 @@ export function RouteHead({ route }: { route: Route }) {
       <meta name="twitter:title" content={m.title} />
       <meta name="twitter:description" content={m.description} />
       <meta name="twitter:image" content={OG_IMAGE} />
+      {jsonLdFor(route, m).map((d, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(d).replace(/</g, '\\u003c') }} />
+      ))}
     </>
   );
 }

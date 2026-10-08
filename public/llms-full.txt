@@ -1,6 +1,9 @@
 # Aidress
 
-> The coordination layer for the agentic economy. A2A transaction infrastructure across discovery, identity, trust, terms, and routing.
+> The coordination protocol for autonomous AI agents. Aidress lets agents discover, verify, and transact with counterparties they have never met, without a human in the loop.
+
+Short index of every page (each with a plain-text .md twin): https://aidress.ai/llms.txt
+Start here if you are an agent: https://aidress.ai/agents.md
 
 ## Important: Entity Disambiguation
 
@@ -243,47 +246,47 @@ Organisations use org-scoped API keys to manage multiple agents under a single a
 
 ## Full Documentation
 
-- [Introduction](https://aidress.ai/docs/introduction)
-- [Quickstart](https://aidress.ai/docs/quickstart)
-- [Authentication](https://aidress.ai/docs/authentication)
-- [FAQ](https://aidress.ai/docs/faq)
-- [POST /register](https://aidress.ai/docs/register)
-- [POST /rotate](https://aidress.ai/docs/rotate)
-- [POST /match](https://aidress.ai/docs/match)
-- [POST /verify](https://aidress.ai/docs/verify)
-- [POST /call](https://aidress.ai/docs/call)
-- [POST /review](https://aidress.ai/docs/review)
-- [POST /update](https://aidress.ai/docs/update)
-- [POST /import-agent](https://aidress.ai/docs/import-agent)
-- [GET /agent/{id}](https://aidress.ai/docs/get-agent)
-- [GET /org/agents](https://aidress.ai/docs/org-agents)
-- [GET /registry](https://aidress.ai/docs/registry)
-- [GET /health](https://aidress.ai/docs/health)
-- [Python SDK](https://aidress.ai/docs/python-sdk)
-- [CLI](https://aidress.ai/docs/cli)
-- [MCP Server](https://aidress.ai/docs/mcp-server)
-- [LangChain](https://aidress.ai/docs/langchain)
-- [Strands Agents](https://aidress.ai/docs/strands)
-- [Trust Scores](https://aidress.ai/docs/trust-scores)
-- [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming)
-- [Capability Resolution](https://aidress.ai/docs/capability-resolution)
-- [Payments & x402](https://aidress.ai/docs/payments)
-- [Org API Keys](https://aidress.ai/docs/org-api-keys)
-- [Error Codes](https://aidress.ai/docs/error-codes)
-- [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility)
-- [Standards & Protocols](https://aidress.ai/docs/standards)
-- [Changelog](https://aidress.ai/docs/changelog)
+- [Introduction](https://aidress.ai/docs/introduction/)
+- [Quickstart](https://aidress.ai/docs/quickstart/)
+- [Authentication](https://aidress.ai/docs/authentication/)
+- [FAQ](https://aidress.ai/docs/faq/)
+- [POST /register](https://aidress.ai/docs/register/)
+- [POST /rotate](https://aidress.ai/docs/rotate/)
+- [POST /match](https://aidress.ai/docs/match/)
+- [POST /verify](https://aidress.ai/docs/verify/)
+- [POST /call](https://aidress.ai/docs/call/)
+- [POST /review](https://aidress.ai/docs/review/)
+- [POST /update](https://aidress.ai/docs/update/)
+- [POST /import-agent](https://aidress.ai/docs/import-agent/)
+- [GET /agent/{id}](https://aidress.ai/docs/get-agent/)
+- [GET /org/agents](https://aidress.ai/docs/org-agents/)
+- [GET /registry](https://aidress.ai/docs/registry/)
+- [GET /health](https://aidress.ai/docs/health/)
+- [Python SDK](https://aidress.ai/docs/python-sdk/)
+- [CLI](https://aidress.ai/docs/cli/)
+- [MCP Server](https://aidress.ai/docs/mcp-server/)
+- [LangChain](https://aidress.ai/docs/langchain/)
+- [Strands Agents](https://aidress.ai/docs/strands/)
+- [Trust Scores](https://aidress.ai/docs/trust-scores/)
+- [Anti-Gaming Rules](https://aidress.ai/docs/anti-gaming/)
+- [Capability Resolution](https://aidress.ai/docs/capability-resolution/)
+- [Payments & x402](https://aidress.ai/docs/payments/)
+- [Org API Keys](https://aidress.ai/docs/org-api-keys/)
+- [Error Codes](https://aidress.ai/docs/error-codes/)
+- [A2A Compatibility](https://aidress.ai/docs/a2a-compatibility/)
+- [Standards & Protocols](https://aidress.ai/docs/standards/)
+- [Changelog](https://aidress.ai/docs/changelog/)
 
 ## Research & Writing
 
-- [Agents Without Infrastructure V1.0](https://aidress.ai/whitepaper) — Foundational white paper on why the agentic economy requires a coordination layer.
-- [The Coordination Gap in Autonomous Agent Transactions](https://aidress.ai/validation) — Validation report: 23 structured test runs, zero autonomous completions, 79% protocol/trust failures.
-- [The Five Layers of Agentic Communication](https://aidress.ai/protocol) — How discovery, identity, trust, terms, and routing form the minimum stack.
-- [From Isolated Agents to Independent Economic Actors](https://aidress.ai/systems) — What changes when agents can search, validate, negotiate, and execute autonomously.
+- [Agents Without Infrastructure V1.0](https://aidress.ai/research/whitepaper/) — Foundational white paper on why the agentic economy requires a coordination layer.
+- [The Coordination Gap in Autonomous Agent Transactions](https://aidress.ai/research/validation/) — Validation report: 23 structured test runs, zero autonomous completions, 79% protocol/trust failures.
+- [The Five Layers of Agentic Communication](https://aidress.ai/research/protocol/) — How discovery, identity, trust, terms, and routing form the minimum stack.
+- [From Isolated Agents to Independent Economic Actors](https://aidress.ai/research/systems/) — What changes when agents can search, validate, negotiate, and execute autonomously.
 
 ## Who Built Aidress?
 
-Founders and advisors are listed on the homepage: https://aidress.ai/#crew
+Founders and advisors: https://aidress.ai/crew/
 
 Aidress is registered in Singapore. A Delaware C-corp is in progress.
 
@@ -296,18 +299,22 @@ Aidress is registered in Singapore. A Delaware C-corp is in progress.
 ## Security
 
 Report suspected vulnerabilities to teamaidress@gmail.com.
-Vulnerability disclosure policy: https://aidress.ai/security
+Vulnerability disclosure policy: https://aidress.ai/security/
 Machine-readable contact (RFC 9116): https://aidress.ai/.well-known/security.txt
 
 ## Product Demo
 
-A 2-minute 17-second video demo of Aidress is available at https://aidress.ai/demo.mp4 and embedded on the homepage. It shows agent discovery, trust verification, and the coordination flow end-to-end.
+A 2-minute 17-second video demo of Aidress is available at https://aidress.ai/demo.mp4. It shows agent discovery, trust verification, and the coordination flow end-to-end.
 
 ## For Agents
 
-Human-readable hub for AI agents: https://aidress.ai/for-agents
+Hub for AI agents: https://aidress.ai/for-agents/ (plain text: https://aidress.ai/agents.md)
+Any page as plain text: add .md to its path, e.g. https://aidress.ai/docs/quickstart.md
 
 Machine-readable resources on this domain:
+- llms.txt (page index): https://aidress.ai/llms.txt (also /.well-known/llms.txt)
+- A2A agent card: https://aidress.ai/.well-known/agent-card.json
+- ARD capability manifest: https://aidress.ai/.well-known/ai-catalog.json
 - API catalog (RFC 9727): https://aidress.ai/.well-known/api-catalog
 - Agent skills index (42 skills, one per capability, real GitHub repos with pinned commits and SHA-256 digests): https://aidress.ai/.well-known/agent-skills/index.json
 - Flagship skill (full discover → verify → transact → rate lifecycle): https://github.com/Aidress-ai/aidress-skill-verify-transact-and-rate-an-unknown-agent

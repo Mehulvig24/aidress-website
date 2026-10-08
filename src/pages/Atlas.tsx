@@ -3,6 +3,7 @@
 // Atlas and Agent Passport (live via api.aidress.ai with demo fallback), ported from
 // design_handoff_aidress_website/design/ui_kits/website/SiteAtlas.jsx. Hidden while AW.flags.atlasLive is false.
 import React from 'react';
+import { hrefFor, spaClick } from '../lib/routes';
 import { NetworkGraph, AgentPanel, RadioList, SearchInput, StatRow, TextLink, Avatar, Badge, Button, KeyValueList, ActivityList, TrustMeter, Tag, Accordion } from '../components/ds';
 import { monoStyle as mono } from '../components/site/Shared';
 import { HeroTrace } from '../components/site/Diagrams';
@@ -69,12 +70,12 @@ function LivePassport({go,id}){
   const [p,setP]=React.useState(null);const [err,setErr]=React.useState(null);const [view,setView]=React.useState('profile');
   React.useEffect(()=>{AidressAPI.agent(id).then(setP).catch(e=>setErr(String(e.message||e)));},[id]);
   const H=({n,t})=><div style={{display:'flex',gap:14,alignItems:'baseline',paddingBottom:14,borderBottom:'1px solid var(--border-rule)'}}><span style={{...mono,fontSize:11,color:'var(--text-secondary)'}}>{n}</span><span style={{font:'500 22px/1 var(--font-sans)',letterSpacing:'-0.02em'}}>{t}</span></div>;
-  if(err)return <section style={{padding:'48px var(--gutter)'}}><TextLink direction="back" onClick={()=>go('atlas')}>Back to the Atlas</TextLink><p style={{font:'400 16px/1.5 var(--font-sans)',marginTop:24}}>Couldn’t load <code>{id}</code> from the registry ({err}).</p></section>;
+  if(err)return <section style={{padding:'48px var(--gutter)'}}><TextLink direction="back" href={hrefFor('atlas')} onClick={spaClick(()=>go('atlas'))}>Back to the Atlas</TextLink><p style={{font:'400 16px/1.5 var(--font-sans)',marginTop:24}}>Couldn’t load <code>{id}</code> from the registry ({err}).</p></section>;
   if(!p)return <section style={{padding:'48px var(--gutter)',...mono,fontSize:12,color:'var(--text-secondary)'}}>Loading {id} from api.aidress.ai…</section>;
   const caps=(p.capabilities||[]).map(AidressAPI.capName);
   return <div>
     <section style={{padding:'36px var(--gutter) 40px',borderBottom:'1px solid var(--border-subtle)'}}>
-      <TextLink direction="back" onClick={()=>go('atlas',{selected:id})}>Back to the Atlas</TextLink>
+      <TextLink direction="back" href={hrefFor('atlas',{selected:id})} onClick={spaClick(()=>go('atlas',{selected:id}))}>Back to the Atlas</TextLink>
       <div style={{display:'flex',alignItems:'center',gap:32,marginTop:32,flexWrap:'wrap'}}>
         <Avatar letter={(p.org_name||p.agent_id)[0].toUpperCase()} size={96} tone={p.verified?'resolved':'neutral'} ring={p.verified}/>
         <div style={{flex:1,minWidth:240}}><div style={{...mono,fontSize:12,color:'var(--text-secondary)'}}>Agent passport · live registry record</div>
@@ -107,7 +108,7 @@ function Passport({go,params}){
   const tg=(v)=><div style={{display:'inline-flex',border:'1px solid var(--border-box)',padding:2,gap:2}}>{['profile','json'].map(x=><button key={x} onClick={()=>setView(x)} style={{all:'unset',cursor:'pointer',padding:'7px 11px',...mono,fontSize:12,background:v===x?'var(--ink-deep)':'transparent',color:v===x?'var(--paper)':'var(--text-secondary)'}}>{x==='json'?'JSON':'Profile'}</button>)}</div>;
   return <div>
     <section style={{padding:'36px var(--gutter) 40px',borderBottom:'1px solid var(--border-subtle)'}}>
-      <TextLink direction="back" onClick={()=>go('atlas',{selected:id})}>Back to the Atlas</TextLink>
+      <TextLink direction="back" href={hrefFor('atlas',{selected:id})} onClick={spaClick(()=>go('atlas',{selected:id}))}>Back to the Atlas</TextLink>
       <div style={{display:'flex',alignItems:'center',gap:40,marginTop:32}}>
         <Avatar letter={a.letter} size={112} tone={conn?'resolved':'neutral'} ring={conn}/>
         <div style={{flex:1}}><div style={{...mono,fontSize:12,color:'var(--text-secondary)'}}>Agent passport · registry record</div>

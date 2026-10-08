@@ -3,6 +3,7 @@
 // Developers page, the homepage Integrate band and open-source table, ported from
 // design_handoff_aidress_website/design/ui_kits/website/Dev.jsx.
 import React from 'react';
+import { hrefFor, spaClick } from '../lib/routes';
 import { SectionHeader, Button, Icon, TextLink } from '../components/ds';
 import { Band, monoStyle as mono } from '../components/site/Shared';
 import { AW } from '../data/site';
@@ -29,7 +30,7 @@ function RunDemo({fill}){
     <pre style={{margin:0,padding:'16px 18px',minHeight:150,flex:1,font:'400 12.5px/1.7 var(--font-mono)',whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{n===0&&!run?<span style={{color:'var(--text-tertiary)'}}>Run the request to see what the agent receives.</span>:RESP.slice(0,n).map((l,k)=><div key={k} style={{color:l.includes('verified')?'var(--vermilion-600)':'var(--ink-deep)',animation:'ad-fade-up 240ms both'}}>{l}</div>)}</pre>
   </div>;
 }
-function LinkRow({items,tone}){return <div style={{display:'flex',gap:28,flexWrap:'wrap'}}>{items.map(([l,fn])=><a key={l} onClick={fn} style={{display:'inline-flex',gap:6,alignItems:'center',...mono,fontSize:12,color:tone==='dark'?'var(--paper)':'var(--ink-deep)',cursor:'pointer',borderBottom:'1px solid currentColor',paddingBottom:3}}>{l}<Icon name="arrow-up-right" size={12}/></a>)}</div>;}
+function LinkRow({items,tone}){return <div style={{display:'flex',gap:28,flexWrap:'wrap'}}>{items.map(([l,fn,h])=><a key={l} href={h} onClick={h?spaClick(fn):fn} style={{display:'inline-flex',gap:6,alignItems:'center',...mono,fontSize:12,color:tone==='dark'?'var(--paper)':'var(--ink-deep)',cursor:'pointer',borderBottom:'1px solid currentColor',paddingBottom:3}}>{l}<Icon name="arrow-up-right" size={12}/></a>)}</div>;}
 function Integrate({go}){
   const A=AW;const [tab,setTab]=React.useState(0);
   return <Band tone="stone" id="integrate">
@@ -45,11 +46,11 @@ function Integrate({go}){
     </div>
     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:28,gap:24,flexWrap:'wrap'}}>
       <div style={{display:'flex',gap:12}}><Button size="lg" onClick={()=>go('atlas')}>Use the registry</Button><Button size="lg" variant="secondary" onClick={()=>go('docs:register')}>Register an agent</Button></div>
-      <LinkRow items={[['pip install aidress-sdk',()=>go('docs:python-sdk')],['MCP server',()=>go('docs:mcp-server')],['API reference',()=>go('docs:register')],['llms.txt',()=>window.open('https://aidress.ai/llms.txt','_blank')]]}/>
+      <LinkRow items={[['pip install aidress-sdk',()=>go('docs:python-sdk'),hrefFor('docs:python-sdk')],['MCP server',()=>go('docs:mcp-server'),hrefFor('docs:mcp-server')],['API reference',()=>go('docs:register'),hrefFor('docs:register')],['llms.txt',()=>window.open('https://aidress.ai/llms.txt','_blank'),'https://aidress.ai/llms.txt']]}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'minmax(0,0.7fr) minmax(0,1.6fr)',gap:32,marginTop:44,paddingTop:28,borderTop:'1px solid var(--border-rule)'}}>
       <div><div style={{...mono}}>Open source</div><h3 style={{margin:'14px 0 0',font:'500 24px/1.05 var(--font-sans)',letterSpacing:'-0.035em'}}>Build it with us.</h3><p style={{margin:'10px 0 16px',font:'400 14px/1.45 var(--font-sans)',color:'var(--text-secondary)',maxWidth:340}}>The SDK, CLI, MCP server and LangChain toolkit are MIT-licensed. The hosted registry at api.aidress.ai is what they connect to.</p>
-        <LinkRow items={[['GitHub',()=>window.open('https://github.com/Aidress-ai/Aidress','_blank')],['Changelog',()=>go('docs:changelog')]]}/></div>
+        <LinkRow items={[['GitHub',()=>window.open('https://github.com/Aidress-ai/Aidress','_blank'),'https://github.com/Aidress-ai/Aidress'],['Changelog',()=>go('docs:changelog'),hrefFor('docs:changelog')]]}/></div>
       <RepoTable compact/>
     </div>
   </Band>;
@@ -96,7 +97,7 @@ function Developers({go,params}){
       </div>
     </Band>
     <Band id="examples">
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}><div><div style={{...mono}}>Integration examples</div><h2 style={{margin:'22px 0 0',font:'500 48px/1 var(--font-sans)',letterSpacing:'-0.045em'}}>From scenario to code.</h2></div><TextLink onClick={()=>go('industry',{id:inds[ex].id})}>Back to the {inds[ex].short} workflow</TextLink></div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end'}}><div><div style={{...mono}}>Integration examples</div><h2 style={{margin:'22px 0 0',font:'500 48px/1 var(--font-sans)',letterSpacing:'-0.045em'}}>From scenario to code.</h2></div><TextLink href={hrefFor('industry',{id:inds[ex].id})} onClick={spaClick(()=>go('industry',{id:inds[ex].id}))}>Back to the {inds[ex].short} workflow</TextLink></div>
       <div style={{marginTop:40}}><CodeBlock minHeight={220} value={ex} onChange={setEx} tabs={inds.map(i=>({label:i.short,code:i.example}))}/></div>
     </Band>
     <Band tone="dark">

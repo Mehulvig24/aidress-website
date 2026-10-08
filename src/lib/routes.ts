@@ -80,6 +80,22 @@ export function pathToRoute(pathname: string, search = ''): Route {
   return { name: 'notfound', params: {} };
 }
 
+/** Real URL for a mock route name, e.g. hrefFor('docs:quickstart') → /docs/quickstart/. */
+export const hrefFor = (name: string, params?: Record<string, string>) => routeToPath(parseRouteName(name, params));
+
+/**
+ * onClick for an <a href> that keeps in-app navigation: plain clicks run fn (no page load);
+ * modifier / middle clicks fall through to the browser so "open in new tab" works. The href is
+ * what crawlers follow.
+ */
+export function spaClick(fn: (e?: any) => void) {
+  return (e?: any) => {
+    if (e && (e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) return;
+    if (e && e.preventDefault) e.preventDefault();
+    fn(e);
+  };
+}
+
 // Module-level bridge for content modules that navigate outside React props
 // (docsContent's <Link> used window.__adGo in the mock).
 let current: Go = () => {};
