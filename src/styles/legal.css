@@ -1,0 +1,70 @@
+/* /privacy and /security keep their pre-redesign body (decision: restyle header and footer only).
+   They were written with Tailwind v4 utilities; Tailwind is gone, so these are the exact values
+   those utilities produced, scoped to .ad-legal. Includes the bits of Tailwind preflight and the
+   old body font the pages relied on. */
+.ad-legal{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.5}
+.ad-legal *,.ad-legal ::before,.ad-legal ::after{box-sizing:border-box}
+.ad-legal h1,.ad-legal h2,.ad-legal h3,.ad-legal p,.ad-legal ul{margin:0;font-size:inherit;font-weight:inherit}
+.ad-legal ul{padding:0;list-style:none}
+.ad-legal a{color:inherit;text-decoration:inherit}
+.ad-legal button{font:inherit;letter-spacing:inherit;color:inherit;background:transparent;border:0;padding:0;border-radius:0}
+
+.ad-legal .min-h-screen{min-height:100vh}
+.ad-legal .bg-\[\#06070a\]{background-color:#06070a}
+.ad-legal .mx-auto{margin-inline:auto}
+.ad-legal .max-w-3xl{max-width:48rem}
+.ad-legal .px-6{padding-inline:1.5rem}
+.ad-legal .py-12{padding-block:3rem}
+.ad-legal .flex{display:flex}
+.ad-legal .inline-flex{display:inline-flex}
+.ad-legal .items-center{align-items:center}
+.ad-legal .gap-2{gap:.5rem}
+.ad-legal .ml-4{margin-left:1rem}
+.ad-legal .mt-8{margin-top:2rem}
+.ad-legal .mt-12{margin-top:3rem}
+.ad-legal .mt-14{margin-top:3.5rem}
+.ad-legal .mb-3{margin-bottom:.75rem}
+.ad-legal .mb-4{margin-bottom:1rem}
+.ad-legal .mb-5{margin-bottom:1.25rem}
+.ad-legal .mb-12{margin-bottom:3rem}
+.ad-legal .list-disc{list-style-type:disc}
+.ad-legal .space-y-1>:not(:last-child){margin-block-end:.25rem}
+.ad-legal .space-y-1\.5>:not(:last-child){margin-block-end:.375rem}
+.ad-legal .text-xs{font-size:.75rem;line-height:calc(1/.75)}
+.ad-legal .text-sm{font-size:.875rem;line-height:calc(1.25/.875)}
+.ad-legal .text-base{font-size:1rem;line-height:1.5}
+.ad-legal .text-xl{font-size:1.25rem;line-height:calc(1.75/1.25)}
+.ad-legal .text-3xl{font-size:1.875rem;line-height:calc(2.25/1.875)}
+.ad-legal .text-\[15px\]{font-size:15px}
+.ad-legal .leading-\[1\.15\]{line-height:1.15}
+.ad-legal .leading-\[1\.85\]{line-height:1.85}
+.ad-legal .font-medium{font-weight:500}
+.ad-legal .font-semibold{font-weight:600}
+.ad-legal .uppercase{text-transform:uppercase}
+.ad-legal .tracking-tight{letter-spacing:-.025em}
+.ad-legal .tracking-\[0\.2em\]{letter-spacing:.2em}
+.ad-legal .text-white{color:#fff}
+.ad-legal .text-white\/30{color:rgb(255 255 255/.3)}
+.ad-legal .text-white\/40{color:rgb(255 255 255/.4)}
+.ad-legal .text-white\/60{color:rgb(255 255 255/.6)}
+.ad-legal .text-white\/80{color:rgb(255 255 255/.8)}
+.ad-legal .text-blue-300{color:oklch(80.9% .105 251.813)}
+.ad-legal .text-blue-300\/80{color:oklch(80.9% .105 251.813/.8)}
+.ad-legal .underline{text-decoration-line:underline}
+.ad-legal .underline-offset-2{text-underline-offset:2px}
+.ad-legal .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}
+.ad-legal .hover\:text-white\/80:hover{color:rgb(255 255 255/.8)}
+.ad-legal .hover\:text-blue-200:hover{color:oklch(88.2% .059 254.128)}
+@media (min-width:48rem){
+  .ad-legal .md\:px-10{padding-inline:2.5rem}
+  .ad-legal .md\:py-20{padding-block:5rem}
+  .ad-legal .md\:text-4xl{font-size:2.25rem;line-height:calc(2.5/2.25)}
+  .ad-legal .md\:text-\[2\.6rem\]{font-size:2.6rem}
+}
+/* The site's ≤760px rules force h1/h2/h3 sizes with !important; keep the legal pages' own sizes. */
+@media (max-width:760px){
+  .ad-legal h1.text-3xl{font-size:1.875rem!important;line-height:calc(2.25/1.875)!important}
+  .ad-legal h1.leading-\[1\.15\]{line-height:1.15!important}
+  .ad-legal h2.text-xl{font-size:1.25rem!important}
+  .ad-legal h3.text-base{font-size:1rem!important}
+}
