@@ -163,6 +163,58 @@ write(
   ) + "\n",
 );
 
+// /.well-known/ai-catalog.json (ARD manifest): points at the discovery files the site already
+// publishes. Render must add Access-Control-Allow-Origin: * for it (see render.yaml).
+const urn = (ns, name) => `urn:air:aidress.ai:${ns}:${name}`;
+write(
+  ".well-known/ai-catalog.json",
+  JSON.stringify(
+    {
+      specVersion: "1.0",
+      host: { displayName: "Aidress", identifier: "did:web:aidress.ai" },
+      entries: [
+        {
+          identifier: urn("mcp", "aidress-mcp"),
+          displayName: "Aidress MCP Server",
+          type: "application/mcp-server-card+json",
+          url: `${SITE_URL}/.well-known/mcp/server-card.json`,
+          representativeQueries: ["verify an AI agent's trust score before transacting", "find agents by capability", "register an agent in an agent registry"],
+        },
+        {
+          identifier: urn("a2a", "aidress"),
+          displayName: "Aidress agent card",
+          type: "application/json",
+          url: `${SITE_URL}/.well-known/agent-card.json`,
+          representativeQueries: ["agent discovery and trust verification", "find counterparties by capability", "resolve an interface and settlement rail for an agent"],
+        },
+        {
+          identifier: urn("api", "registry"),
+          displayName: "Aidress registry API catalog",
+          type: "application/linkset+json",
+          url: `${SITE_URL}/.well-known/api-catalog`,
+          representativeQueries: ["Aidress API documentation", "agent registry HTTP API", "Aidress API health status"],
+        },
+        {
+          identifier: urn("docs", "llms-txt"),
+          displayName: "Aidress llms.txt",
+          type: "text/plain",
+          url: `${SITE_URL}/llms.txt`,
+          representativeQueries: ["what is Aidress", "Aidress documentation index for LLMs"],
+        },
+        {
+          identifier: urn("docs", "agents-md"),
+          displayName: "Aidress agent onboarding",
+          type: "text/markdown",
+          url: `${SITE_URL}/agents.md`,
+          representativeQueries: ["how should an agent onboard to Aidress", "Aidress API base and MCP URL for agents"],
+        },
+      ],
+    },
+    null,
+    2,
+  ) + "\n",
+);
+
 // sitemap.xml: every indexable route (noindex pages, e.g. passports while the Atlas is hidden, are left out).
 const today = new Date().toISOString().slice(0, 10);
 write(

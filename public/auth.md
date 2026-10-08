@@ -1,4 +1,4 @@
-# Authentication — Aidress
+# Aidress auth.md
 
 Aidress does not use OAuth or OpenID Connect. Authentication is a two-phase
 bearer-key / signature model, described below. This file exists so an agent
