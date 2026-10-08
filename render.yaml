@@ -1,0 +1,23 @@
+# Render Blueprint for aidress.ai (static site). If the service is managed in the dashboard rather
+# than as a Blueprint, mirror these routes and headers there: Settings → Redirects/Rewrites, Headers.
+# Render serves an existing file before applying a rewrite, so prerendered routes win over /* → /spa.html.
+services:
+  - type: web
+    name: aidress-website
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - { type: redirect, source: /whitepaper, destination: /research/whitepaper }
+      - { type: redirect, source: /validation, destination: /research/validation }
+      - { type: redirect, source: /protocol, destination: /research/protocol }
+      - { type: redirect, source: /systems, destination: /research/systems }
+      - { type: redirect, source: /about, destination: / }
+      - { type: rewrite, source: /*, destination: /spa.html }
+    headers:
+      - { path: /*.md, name: Content-Type, value: text/markdown; charset=utf-8 }
+      - { path: /*.txt, name: Content-Type, value: text/plain; charset=utf-8 }
+      - { path: /.well-known/agent-card.json, name: Content-Type, value: application/json; charset=utf-8 }
+      - path: /*
+        name: Link
+        value: </.well-known/api-catalog>; rel="api-catalog", </docs>; rel="service-doc", </llms.txt>; rel="alternate"; type="text/plain", </agents.md>; rel="alternate"; type="text/markdown"

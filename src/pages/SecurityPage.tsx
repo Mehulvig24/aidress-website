@@ -1,11 +1,11 @@
+// Pre-redesign page body, kept as-is (classes are served by src/styles/legal.css, not Tailwind).
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import { contactEmails } from "../data/team";
+const contactEmails = { security: "teamaidress@gmail.com" };
 
 function Shell({ children, onBack }: { children: React.ReactNode; onBack: () => void }) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
-    <div className="min-h-screen bg-[#06070a] text-white">
+    <div className="ad-legal min-h-screen bg-[#06070a] text-white">
       <div className="mx-auto max-w-3xl px-6 py-12 md:px-10 md:py-20">
         {/* Real href so this works without JS; onClick keeps SPA navigation when JS is on. */}
         <a
@@ -35,14 +35,10 @@ function UL({ children }: { children: React.ReactNode }) {
 
 const link = "text-blue-300 underline underline-offset-2 hover:text-blue-200";
 
-export default function SecurityPage({ onBack }: { onBack: () => void }) {
+export function SecurityPage({ go }: { go: (name: string) => void }) {
+  const onBack = () => go("home");
   return (
     <Shell onBack={onBack}>
-      <Helmet>
-        <title>Security &amp; Vulnerability Disclosure — Aidress</title>
-        <meta name="description" content="How to report a security vulnerability in Aidress, what's in scope, and what to expect. Machine-readable contact at /.well-known/security.txt." />
-        <link rel="canonical" href="https://aidress.ai/security" />
-      </Helmet>
 
       <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300/80">Security</div>
       <h1 className="mb-5 text-3xl font-semibold leading-[1.15] tracking-tight text-white md:text-[2.6rem]">

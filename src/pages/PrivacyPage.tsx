@@ -1,10 +1,10 @@
+// Pre-redesign page body, kept as-is (classes are served by src/styles/legal.css, not Tailwind).
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 
 function Shell({ children, onBack }: { children: React.ReactNode; onBack: () => void }) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
-    <div className="min-h-screen bg-[#06070a] text-white">
+    <div className="ad-legal min-h-screen bg-[#06070a] text-white">
       <div className="mx-auto max-w-3xl px-6 py-12 md:px-10 md:py-20">
         <button
           type="button"
@@ -35,13 +35,10 @@ function UL({ children }: { children: React.ReactNode }) {
   return <ul className="mb-4 ml-4 list-disc space-y-1 text-sm leading-[1.85] text-white/60">{children}</ul>;
 }
 
-export default function PrivacyPage({ onBack }: { onBack: () => void }) {
+export function PrivacyPage({ go }: { go: (name: string) => void }) {
+  const onBack = () => go("home");
   return (
     <Shell onBack={onBack}>
-      <Helmet>
-        <title>Privacy Policy — Aidress</title>
-        <meta name="description" content="Aidress privacy policy — how we collect, use, and protect your information." />
-      </Helmet>
 
       <p className="mb-4 text-xs uppercase tracking-[0.2em] text-white/30">Legal</p>
       <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">Privacy Policy</h1>

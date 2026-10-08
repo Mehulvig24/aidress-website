@@ -15,31 +15,19 @@
     </script>
 
     <!-- Primary SEO -->
-    <title>Aidress — The Coordination Layer for the Agentic Economy</title>
-    <meta name="description" content="A2A transaction infrastructure for autonomous AI agents. Discovery, identity, trust, terms, and routing — the coordination layer for the agentic economy." />
+    <title>Aidress — The coordination protocol for autonomous AI agents</title>
+    <meta name="description" content="Aidress lets agents discover, verify, and transact with counterparties they have never met, without a human in the loop." />
     <meta name="keywords" content="AI agents, agentic economy, agent coordination, A2A transactions, agent infrastructure, AI infrastructure, agent identity, agent trust, autonomous agents" />
     <meta name="author" content="Aidress" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <!-- No static canonical here — every route sets its own via react-helmet-async (see App.tsx / DocsPage.tsx) -->
+    <!-- No static canonical, title or OG tags per route here: src/seo/RouteHead.tsx emits them and scripts/prerender.mjs lifts them into <head>. -->
 
     <!-- Agent discovery — HTML-level Link relations (RFC 8288 / RFC 9727) -->
     <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
     <link rel="service-doc" href="/docs" />
     <link rel="alternate" href="/llms.txt" type="text/plain" title="LLM-readable summary" />
+    <link rel="alternate" type="text/markdown" href="/agents.md" title="Agent onboarding" />
 
-    <!-- Open Graph (LinkedIn, Facebook, WhatsApp previews) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://aidress.ai" />
-    <meta property="og:title" content="Aidress — The Coordination Layer for the Agentic Economy" />
-    <meta property="og:description" content="A2A transaction infrastructure across discovery, identity, trust, terms, and routing. The missing layer for autonomous AI agents." />
-    <meta property="og:image" content="https://aidress.ai/aidresslogo2.png" />
-    <meta property="og:site_name" content="Aidress" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Aidress — The Coordination Layer for the Agentic Economy" />
-    <meta name="twitter:description" content="A2A transaction infrastructure across discovery, identity, trust, terms, and routing. The missing layer for autonomous AI agents." />
-    <meta name="twitter:image" content="https://aidress.ai/aidresslogo2.png" />
 
     <!-- Structured Data: Organization -->
     <script type="application/ld+json">
@@ -288,18 +276,29 @@
           "position": 6,
           "name": "Whitepaper",
           "description": "Agents Without Infrastructure — the foundational research paper.",
-          "url": "https://aidress.ai/whitepaper"
+          "url": "https://aidress.ai/research/whitepaper"
         }
       ]
     }
     </script>
 
+    <!-- Webfonts are loaded by src/styles/tokens/fonts.css (the mock's Google Fonts import). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet" />
+
+    <!-- Dark mode before first paint (same logic as App.tsx: Research is authored dark, so it inverts when the saved theme is light). -->
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("aidress-site-theme") || "light";
+          var mode = localStorage.getItem("aidress-site-mode") || "human";
+          var authoredDark = /^\/research(\/|$)/.test(location.pathname) && mode === "human";
+          document.documentElement.dataset.theme = (theme === "dark") !== authoredDark ? "dark" : "light";
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body style="background:#06070a;color:#e2e8f0;margin:0">
-    <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">Aidress — A2A Transaction Infrastructure for Autonomous AI Agents</h1>
+  <body class="ad" style="background:var(--stone-100)">
     <div id="root"></div>
     <noscript>
       <!--
@@ -317,18 +316,19 @@
           transform: none !important;
         }
       </style>
-      <nav aria-label="Site directory" style="border-top:1px solid #1e2530;margin-top:3rem;padding-top:1rem;font-size:14px">
-        <p style="color:#94a3b8">Aidress &mdash; A2A transaction infrastructure for autonomous AI agents.</p>
+      <nav aria-label="Site directory" style="padding:24px 44px;font:400 14px/1.6 var(--font-sans)">
+        <p>Aidress: the coordination protocol for autonomous AI agents.</p>
         <ul>
           <li><a href="/">Home</a></li>
+          <li><a href="/industries">Industries</a></li>
+          <li><a href="/developers">Developers</a></li>
           <li><a href="/docs">Documentation</a></li>
-          <li><a href="/whitepaper">Whitepaper</a></li>
-          <li><a href="/validation">Validation report</a></li>
-          <li><a href="/protocol">The five layers of agentic communication</a></li>
-          <li><a href="/systems">From isolated agents to economic actors</a></li>
+          <li><a href="/research">Research</a></li>
           <li><a href="/impact">Aidress for Good</a></li>
-          <li><a href="/for-agents">For agents</a></li>
+          <li><a href="/crew">Crew</a></li>
+          <li><a href="/for-agents">For agents</a> (<a href="/agents.md">agents.md</a>)</li>
           <li><a href="/privacy">Privacy policy</a></li>
+          <li><a href="/security">Security</a></li>
           <li><a href="/llms.txt">llms.txt</a></li>
           <li><a href="/.well-known/security.txt">security.txt</a></li>
         </ul>

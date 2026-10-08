@@ -20,7 +20,9 @@
       "@/*": ["./src/*"]
     },
 
-    /* Linting */
+    /* Linting. Not strict: src/components/ds and the pages are line-for-line ports of the
+       untyped design mock (design_handoff_aidress_website); props are typed from its .d.ts files. */
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,

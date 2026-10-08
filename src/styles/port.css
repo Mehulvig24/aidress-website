@@ -1,0 +1,12 @@
+/* Rules the production port needs that the mock got from its runtime. No new visual design. */
+
+/* Layers5.jsx injected this keyframe at runtime (#ad-travel-kf). */
+@keyframes ad-travel{from{left:0}to{left:calc(100% - 8px)}}
+
+/* The mock's <image-slot> custom element is <div class="ad-image-slot"> here (ImageSlot.tsx).
+   site.css inverts `image-slot` in dark mode; the element's shadow DOM kept its inner <img> out of
+   the page-level `img` invert, so only the slot itself flips. */
+html[data-theme=dark] .ad-image-slot{filter:invert(1) hue-rotate(180deg)}
+html[data-theme=dark] .ad-image-slot img{filter:none}
+/* Shadow-DOM credit links didn't receive the page's a:hover colour; they underline instead. */
+.ad-image-slot a.ad-slot-credit:hover,.ad-image-slot a.ad-slot-credit:focus-visible{color:inherit;text-decoration:underline}

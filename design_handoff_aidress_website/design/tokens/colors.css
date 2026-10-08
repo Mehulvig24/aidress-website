@@ -1,0 +1,24 @@
+:root{
+/* Vermilion — the one brand colour. Functional: orange = resolved. */
+--vermilion-50:#fdefeb;--vermilion-100:#fad8ce;--vermilion-200:#f5b3a1;--vermilion-300:#f08a6c;--vermilion-400:#ec6a47;--vermilion-500:#e84a27;--vermilion-600:#c93b1b;--vermilion-700:#a02f16;--vermilion-800:#782413;--vermilion-900:#50190e;
+/* Grain field stops, sampled from the brand colour plate */
+--flare:#f58a4c;--signal:#e83518;--ember:#d23f30;--oxblood:#8f2c31;
+/* Neutrals — warm, paper-like, never blue */
+--white:#ffffff;--paper:#f3f2ee;--stone-section:#e7e7df;--stone-50:#f1f0ec;--stone-100:#e9e8e3;--stone-200:#dbd9cd;--gray-300:#d9d9d9;--gray-350:#c9c8c3;--gray-400:#b3b2ad;--gray-500:#8a8985;--gray-600:#6a6966;--gray-700:#4a4947;--gray-800:#2a2a29;--ink:#161616;--ink-deep:#212320;--gray-rule:#aaaaaa;--gray-box:#92968c;--black:#000000;
+
+/* Semantic — text */
+--text-primary:var(--ink);--text-secondary:var(--gray-600);--text-tertiary:var(--gray-500);--text-inverse:var(--paper);--text-accent:var(--vermilion-600);--text-on-accent:var(--white);
+/* Semantic — surfaces */
+--surface-page:var(--paper);--surface-card:var(--white);--surface-sunken:var(--stone-50);--surface-muted:var(--stone-100);--surface-plate:var(--gray-300);--surface-specimen:var(--stone-200);--surface-inverse:var(--ink-deep);--surface-section:var(--stone-section);--surface-accent:var(--vermilion-500);--surface-accent-soft:var(--vermilion-50);
+/* Semantic — borders */
+--border-subtle:#e6e5e1;--border-default:#d6d5d0;--border-strong:var(--ink);--border-accent:var(--vermilion-500);--border-rule:var(--gray-rule);--border-box:var(--gray-box);
+/* Semantic — state (orange is reserved for "resolved") */
+--state-resolved:var(--vermilion-500);--state-resolved-soft:var(--vermilion-50);--state-pending:var(--gray-400);--state-unresolved:var(--gray-350);--state-idle:var(--gray-500);
+/* Network graph */
+--graph-edge:#cfcec9;--graph-edge-active:var(--vermilion-500);--graph-node:var(--gray-400);--graph-node-hub:var(--gray-500);--graph-node-dim:#dcdbd6;--graph-node-resolved:var(--vermilion-500);
+/* Interaction */
+--focus-ring:var(--vermilion-500);--overlay-scrim:rgba(22,22,22,.32);
+/* Textures */
+--texture-grain:url('../assets/texture-vermilion-grain.png'); /* @kind other */
+--gradient-grain:radial-gradient(120% 140% at 10% 0%,var(--signal) 0%,var(--ember) 45%,var(--oxblood) 100%);
+}
