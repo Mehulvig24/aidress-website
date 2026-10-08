@@ -16,6 +16,10 @@ const distDir = join(root, "dist");
 
 const template = readFileSync(join(distDir, "index.html"), "utf8");
 
+// Neutral shell for paths without a prerendered file. Render's rewrite rule (/* → /spa.html)
+// points here; the client router then renders the right page (or the 404 page).
+writeFileSync(join(distDir, "spa.html"), template);
+
 
 const { render, siteMap } = await import(pathToFileURL(join(root, "dist-ssr", "entry-server.js")).href);
 
@@ -91,7 +95,7 @@ for (const route of ROUTES) {
   }
 }
 
-// 404.html: Vercel serves it (with a 404 status) for any path without a prerendered file.
+// 404.html for hosts that serve it for missing paths (Render uses the /* → /spa.html rewrite instead).
 writeFileSync(join(distDir, "404.html"), buildPage(render("/__not-found").html));
 
 if (failures > 0) {
@@ -142,3 +146,10 @@ const robots = readFileSync(join(root, "scripts", "robots.base.txt"), "utf8").re
 write("robots.txt", `${robots.trimEnd()}\n\n# LLM-readable index: ${SITE_URL}/llms.txt\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
 console.log(`prerender: ${SITE.length} .md files, llms.txt, sitemap.xml (${indexed.length} urls), robots.txt`);
+
+// Old paper URLs moved to /research/<id>. Render's dashboard owns real 301s (see render.yaml);
+// these stubs make the old URLs land on the new pages even before those rules exist.
+for (const id of ["whitepaper", "validation", "protocol", "systems"]) {
+  const to = `/research/${id}`;
+  write(`${id}/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Moved</title><link rel="canonical" href="${SITE_URL}${to}"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=${to}"></head><body><a href="${to}">${SITE_URL}${to}</a></body></html>\n`);
+}
