@@ -1,0 +1,14 @@
+:root{
+--space-0:0;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;--space-20:80px;--space-24:96px;--space-32:128px;
+--gutter:44px;--content-max:1352px;--nav-height:60px;--sidebar-width:252px;--panel-width:380px;
+--radius-0:0;--radius-xs:2px;--radius-sm:4px;--radius-md:6px;--radius-lg:8px;--radius-full:999px;--radius-card:0;--radius-control:2px;
+--border-hair:1px;--border-thick:2px;
+--shadow-none:none;
+--shadow-hover:0 1px 2px rgba(22,22,22,.04),0 4px 12px rgba(22,22,22,.05);
+--shadow-popover:0 2px 4px rgba(22,22,22,.04),0 12px 32px rgba(22,22,22,.10);
+--shadow-node-ring:0 0 0 3px var(--paper),0 0 0 4px var(--ink);
+--shadow-resolved-ring:0 0 0 3px var(--paper),0 0 0 4px var(--vermilion-500);
+--blur-glass:saturate(1.2) blur(12px); /* @kind other */
+
+--surface-glass:rgba(243,242,238,.86);
+}

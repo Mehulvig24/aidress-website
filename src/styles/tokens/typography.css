@@ -1,0 +1,29 @@
+:root{
+--font-sans:"Neue Haas Grotesk Display Pro","Neue Haas Grotesk Text Pro","NHaasGroteskDSPro","Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+--font-mono:"RM Mono","JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+
+--weight-light:300;--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;--weight-black:800;
+
+/* Size scale (px, from the 1440 wireframes) */
+--size-12:12px;--size-13:13px;--size-14:14px;--size-15:15px;--size-16:16px;--size-18:18px;--size-20:20px;--size-22:22px;--size-24:24px;--size-28:28px;--size-36:36px;--size-44:44px;--size-56:56px;--size-72:72px;--size-96:96px;--size-144:144px;
+
+--tracking-tightest:-0.045em;--tracking-section:-0.05em;--tracking-tight:-0.03em;--tracking-snug:-0.015em;--tracking-normal:0;--tracking-mono-caps:0.06em;--tracking-eyebrow:0.2em;
+--leading-none:0.92;--leading-tight:1.02;--leading-snug:1.2;--leading-normal:1.45;--leading-relaxed:1.6;
+
+/* Semantic roles */
+--type-section:var(--weight-medium) var(--size-96)/0.98 var(--font-sans);
+--type-poster:var(--weight-bold) var(--size-144)/var(--leading-none) var(--font-sans);
+--type-display:var(--weight-semibold) var(--size-72)/var(--leading-tight) var(--font-sans);
+--type-h1:var(--weight-semibold) var(--size-56)/var(--leading-tight) var(--font-sans);
+--type-h2:var(--weight-semibold) var(--size-36)/var(--leading-snug) var(--font-sans);
+--type-h3:var(--weight-semibold) var(--size-24)/var(--leading-snug) var(--font-sans);
+--type-h4:var(--weight-semibold) var(--size-18)/var(--leading-snug) var(--font-sans);
+--type-lead:var(--weight-regular) var(--size-22)/var(--leading-normal) var(--font-sans);
+--type-body:var(--weight-regular) var(--size-16)/var(--leading-normal) var(--font-sans);
+--type-small:var(--weight-regular) var(--size-14)/var(--leading-normal) var(--font-sans);
+--type-caption:var(--weight-regular) var(--size-13)/var(--leading-normal) var(--font-sans);
+--type-stat:var(--weight-semibold) var(--size-28)/1 var(--font-sans);
+--type-mono-head:var(--weight-bold) var(--size-18)/1.2 var(--font-mono);
+--type-mono:var(--weight-regular) var(--size-13)/1.5 var(--font-mono);
+--type-eyebrow:var(--weight-regular) var(--size-12)/1 var(--font-mono);
+}
