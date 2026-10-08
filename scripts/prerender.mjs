@@ -181,6 +181,6 @@ console.log(`prerender: ${SITE.length} .md files, llms.txt, sitemap.xml (${index
 // Old paper URLs moved to /research/<id>. Render's dashboard owns real 301s (see render.yaml);
 // these stubs make the old URLs land on the new pages even before those rules exist.
 for (const id of ["whitepaper", "validation", "protocol", "systems"]) {
-  const to = `/research/${id}`;
+  const to = `/research/${id}/`;
   write(`${id}/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Moved</title><link rel="canonical" href="${SITE_URL}${to}"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url=${to}"></head><body><a href="${to}">${SITE_URL}${to}</a></body></html>\n`);
 }

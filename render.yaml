@@ -8,10 +8,10 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     routes:
-      - { type: redirect, source: /whitepaper, destination: /research/whitepaper }
-      - { type: redirect, source: /validation, destination: /research/validation }
-      - { type: redirect, source: /protocol, destination: /research/protocol }
-      - { type: redirect, source: /systems, destination: /research/systems }
+      - { type: redirect, source: /whitepaper, destination: /research/whitepaper/ }
+      - { type: redirect, source: /validation, destination: /research/validation/ }
+      - { type: redirect, source: /protocol, destination: /research/protocol/ }
+      - { type: redirect, source: /systems, destination: /research/systems/ }
       - { type: redirect, source: /about, destination: / }
       - { type: rewrite, source: /*, destination: /spa.html }
     headers:

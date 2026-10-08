@@ -4,7 +4,7 @@ import { isValidElement, type ReactNode } from 'react';
 import { AW } from '../data/site';
 import { AidressDocs } from '../content/docsContent';
 import { P } from '../content/docsUi';
-import { routeToPath, type Route } from '../lib/routes';
+import { routeToPath, withSlash, type Route } from '../lib/routes';
 
 export const SITE_URL = 'https://aidress.ai';
 export const OG_IMAGE = SITE_URL + '/og.png';
@@ -12,7 +12,7 @@ export const OG_IMAGE = SITE_URL + '/og.png';
 export interface Meta {
   title: string;
   description: string;
-  /** canonical path, e.g. /docs/quickstart */
+  /** canonical path, e.g. /docs/quickstart/ */
   path: string;
   noindex?: boolean;
   /** machine-readable twin, e.g. /docs/quickstart.md */
@@ -41,9 +41,10 @@ function firstParagraph(node: ReactNode): string | null {
 const clip = (s: string, n = 300) => (s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : s);
 
 export function markdownPath(path: string) {
-  if (path === '/') return '/index.md';
-  if (path === '/for-agents') return '/agents.md';
-  return path.replace(/\?.*$/, '') + '.md';
+  const p = path.replace(/\?.*$/, '').replace(/\/+$/, '');
+  if (p === '') return '/index.md';
+  if (p === '/for-agents') return '/agents.md';
+  return p + '.md';
 }
 
 export function metaFor(route: Route): Meta {
@@ -150,5 +151,6 @@ export function metaFor(route: Route): Meta {
       description = 'This page doesn’t exist.';
       noindex = true;
   }
+  path = withSlash(path);
   return { title, description, path, noindex, markdown: markdownPath(path) };
 }

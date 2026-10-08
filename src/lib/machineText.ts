@@ -27,9 +27,9 @@ export function machineText(r){
   else if(r.name==='impact'){body='# Aidress for Good\nTrust infrastructure doesn’t care who’s using it.\nThe same protocol that lets agents book freight can let a farmer’s agent reach a bank, an NGO, or a government service — safely.\n\n## The five layers, applied wider\n- Discovery: reach trusted services, not a fragmented system\n- Identity: establish who’s acting, and who’s accountable\n- Trust: reduce fraud, impersonation, unsafe delegation\n- Permissions & Terms: preserve consent, spending limits, human control\n- Routing & Audit: improve transparency across institutions\n\n## Where it applies (illustrative)\n- Smallholder agriculture\n- Financial inclusion\n- Disaster response\n\ncontact: teamaidress@gmail.com';}
   else if(r.name==='crew'){body='# Crew\nAidress is registered in Singapore. A Delaware C-corp is in progress.\n\n## Founders\n'+D.founders.map(c=>'- '+c[0]+' ('+c[1]+'): '+c[4]).join('\n')+'\n\n## Advisors\n'+D.advisors.map(c=>'- '+c[0]+' ('+c[1]+'): '+c[4]).join('\n')+'\n\ncontact: teamaidress@gmail.com';}
   // Routes added beyond the mock (not in ROUTES.md's machine view).
-  else if(r.name==='docs'){const pg=AidressDocs.getPageData(p.id||'introduction');body='# '+(pg?pg.title:'Docs')+'\n'+U+'/docs'+(p.id?'/'+p.id:'')+'\n\n## Pages\n'+AidressDocs.sidebarNav.map(g=>'### '+g.title+'\n'+g.items.map(i=>'- ['+i.label+']('+U+'/docs/'+i.slug+')').join('\n')).join('\n\n');}
-  else if(r.name==='privacy'){body='# Privacy policy\n'+U+'/privacy\ncontact: teamaidress@gmail.com';}
-  else if(r.name==='security'){body='# Security and vulnerability disclosure\n'+U+'/security\nsecurity.txt: '+U+'/.well-known/security.txt\ncontact: teamaidress@gmail.com';}
+  else if(r.name==='docs'){const pg=AidressDocs.getPageData(p.id||'introduction');body='# '+(pg?pg.title:'Docs')+'\n'+U+'/docs/'+(p.id?p.id+'/':'')+'\n\n## Pages\n'+AidressDocs.sidebarNav.map(g=>'### '+g.title+'\n'+g.items.map(i=>'- ['+i.label+']('+U+'/docs/'+i.slug+'/)').join('\n')).join('\n\n');}
+  else if(r.name==='privacy'){body='# Privacy policy\n'+U+'/privacy/\ncontact: teamaidress@gmail.com';}
+  else if(r.name==='security'){body='# Security and vulnerability disclosure\n'+U+'/security/\nsecurity.txt: '+U+'/.well-known/security.txt\ncontact: teamaidress@gmail.com';}
   // /for-agents and /agents.md open with a plain-text index for agents (an addition to the mock).
   const start=r.name==='for-agents'?'START HERE\n'+
    'llms.txt:    '+U+'/llms.txt (also '+U+'/.well-known/llms.txt)\n'+
@@ -37,8 +37,8 @@ export function machineText(r){
    'Agent card:  '+U+'/.well-known/agent-card.json\n'+
    'API base:    '+API+'\n'+
    'MCP server:  '+API+'/mcp-http/mcp\n'+
-   'Auth:        Read endpoints require no authentication. Mutating endpoints require one of three auth methods — Bearer key, Ed25519 signature, or Org API key. '+U+'/docs/authentication\n'+
-   'Docs:        '+U+'/docs\n'+
+   'Auth:        Read endpoints require no authentication. Mutating endpoints require one of three auth methods — Bearer key, Ed25519 signature, or Org API key. '+U+'/docs/authentication/\n'+
+   'Docs:        '+U+'/docs/\n'+
    'Any page as plain text: add .md to its path, e.g. '+U+'/docs/quickstart.md (the homepage is '+U+'/index.md)\n\n':'';
   return start+head+'\n'+body+'\n';
 }

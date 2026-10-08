@@ -23,7 +23,7 @@ import { SecurityPage } from './pages/SecurityPage';
 import { NotFound } from './pages/NotFound';
 import { RouteHead } from './seo/RouteHead';
 import { machineText } from './lib/machineText';
-import { parseRouteName, pathToRoute, routeToPath, setGlobalGo, type Route } from './lib/routes';
+import { parseRouteName, pathToRoute, routeToPath, setGlobalGo, withSlash, type Route } from './lib/routes';
 import { registerWebMcpTools } from './lib/webmcp';
 
 const SITE={home:'main',industries:'main',industry:'main',scoped:'main',crew:'main',developers:'main',docs:'main',impact:'main',atlas:'atlas',passport:'atlas',research:'research'};
@@ -60,6 +60,8 @@ export function AppRoutes(){
   setGlobalGo(go);
   const [theme,setTheme]=React.useState(()=>ls.get('aidress-site-theme')||'light');const [sOpen,setSOpen]=React.useState(false);const [menu,setMenu]=React.useState(false);
   React.useEffect(()=>{registerWebMcpTools();},[]);
+  // A slash-less URL (e.g. a shared link to /industries) is shown as its canonical slashed form.
+  React.useEffect(()=>{if(route.name!=='notfound'&&location.pathname!==withSlash(location.pathname))navigate(withSlash(location.pathname)+location.search+location.hash,{replace:true});},[location.pathname]);
   React.useEffect(()=>{const k=e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();setSOpen(true);}};addEventListener('keydown',k);return()=>removeEventListener('keydown',k);},[]);
   const setM=m=>{setMode(m);ls.set('aidress-site-mode',m);};
   const site=SITE[route.name]||'main';

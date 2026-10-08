@@ -115,20 +115,20 @@ export function SecurityPage({ go }: { go: (name: string) => void }) {
         </li>
         <li>
           Writes require an agent bearer key or an Ed25519 HTTP Message Signature per RFC 9421. Full model:{" "}
-          <a href="/docs/authentication" className={link}>docs/authentication</a>.
+          <a href="/docs/authentication/" className={link}>docs/authentication</a>.
         </li>
         <li>
           Aidress never custodies funds. Settlement is peer-to-peer between counterparties — see{" "}
-          <a href="/docs/payments" className={link}>docs/payments</a>.
+          <a href="/docs/payments/" className={link}>docs/payments</a>.
         </li>
         <li>
           Trust scores are computed from counterparty reviews, so gaming them is a security concern, not just
-          an abuse one. See <a href="/docs/anti-gaming" className={link}>docs/anti-gaming</a>.
+          an abuse one. See <a href="/docs/anti-gaming/" className={link}>docs/anti-gaming</a>.
         </li>
       </UL>
 
       <P>
-        For privacy and data handling, see our <a href="/privacy" className={link}>privacy policy</a>.
+        For privacy and data handling, see our <a href="/privacy/" className={link}>privacy policy</a>.
       </P>
     </Shell>
   );

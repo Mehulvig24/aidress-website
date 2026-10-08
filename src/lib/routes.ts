@@ -19,7 +19,22 @@ export function parseRouteName(name: string, params: Record<string, string> = {}
 
 const enc = encodeURIComponent;
 
-export function routeToPath({ name, params }: Route): string {
+/**
+ * Canonical URLs end in a slash (/industries/, /docs/quickstart/). Render serves a prerendered
+ * dist/<path>/index.html only for the slashed form; slash-less paths fall through to its
+ * /* → /spa.html rewrite. The home page stays "/", and query strings follow the slash.
+ */
+export function withSlash(path: string): string {
+  const [p, q] = path.split('?');
+  const slashed = p === '/' || p.endsWith('/') ? p : p + '/';
+  return q ? slashed + '?' + q : slashed;
+}
+
+export function routeToPath(route: Route): string {
+  return withSlash(rawPath(route));
+}
+
+function rawPath({ name, params }: Route): string {
   const id = params.id;
   switch (name) {
     case 'home': return '/';
