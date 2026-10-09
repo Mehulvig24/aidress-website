@@ -10,3 +10,8 @@ html[data-theme=dark] .ad-image-slot{filter:invert(1) hue-rotate(180deg)}
 html[data-theme=dark] .ad-image-slot img{filter:none}
 /* Shadow-DOM credit links didn't receive the page's a:hover colour; they underline instead. */
 .ad-image-slot a.ad-slot-credit:hover,.ad-image-slot a.ad-slot-credit:focus-visible{color:inherit;text-decoration:underline}
+
+/* Crew photos set an inline grayscale filter (colour on hover), which overrode site.css's dark-mode
+   re-invert of images, so they showed as negatives. Re-apply the invert alongside the grayscale. */
+html[data-theme=dark] img.ad-crew-photo{filter:invert(1) hue-rotate(180deg) grayscale(1)!important}
+html[data-theme=dark] a:hover img.ad-crew-photo{filter:invert(1) hue-rotate(180deg)!important}

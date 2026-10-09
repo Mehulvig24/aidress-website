@@ -49,7 +49,7 @@ function Research({params,go}){
   </div>;
 }
 function Person({p}){const [n,role,img,li,desc]=p;const [h,setH]=React.useState(false);return <a href={li} target="_blank" rel="noopener" onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'flex',flexDirection:'column',gap:10,color:'inherit',minWidth:0}}>
-  <div style={{aspectRatio:'1 / 1',overflow:'hidden',background:'var(--stone-section)',maxWidth:180}}><img src={img} alt={n} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:h?'none':'grayscale(1)',transition:'filter var(--dur-base)'}}/></div>
+  <div style={{aspectRatio:'1 / 1',overflow:'hidden',background:'var(--stone-section)',maxWidth:180}}><img className="ad-crew-photo" src={img} alt={n} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:h?'none':'grayscale(1)',transition:'filter var(--dur-base)'}}/></div>
   <div style={{...mono,fontSize:10.5,color:role==='Co-Founder'?'var(--vermilion-600)':'var(--text-secondary)'}}>{role}</div>
   <div style={{display:'flex',alignItems:'center',gap:6,font:'500 17px/1.15 var(--font-sans)',letterSpacing:'-0.015em'}}>{n}<Icon name="arrow-up-right" size={13}/></div>
   <div style={{font:'400 13.5px/1.45 var(--font-sans)',color:'var(--text-secondary)'}}>{desc}</div></a>;}
