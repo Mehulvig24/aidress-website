@@ -49,7 +49,15 @@ function Research({params,go}){
     </section>
   </div>;
 }
-function Person({p}){const [n,role,img,li,desc]=p;const [h,setH]=React.useState(false);return <a href={li} target="_blank" rel="noopener" onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'flex',flexDirection:'column',gap:10,color:'inherit',minWidth:0}}>
+function Person({p,compact}){const [n,role,img,li,desc]=p;const [h,setH]=React.useState(false);
+  // Mobile: a compact row (small headshot beside the text) so several people fit on screen.
+  if(compact)return <a href={li} target="_blank" rel="noopener" className="ad-keep" style={{display:'grid',gridTemplateColumns:'72px minmax(0,1fr)',gap:14,alignItems:'start',padding:'14px 0',borderTop:'1px solid var(--border-rule)',color:'inherit',minWidth:0}}>
+    <div style={{width:72,height:72,overflow:'hidden',background:'var(--stone-section)'}}><img className="ad-crew-photo" src={img} alt={n} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:'grayscale(1)'}}/></div>
+    <div style={{display:'flex',flexDirection:'column',gap:5,minWidth:0}}>
+      <div style={{...mono,fontSize:10.5,color:role==='Co-Founder'?'var(--vermilion-600)':'var(--text-secondary)'}}>{role}</div>
+      <div style={{display:'flex',alignItems:'center',gap:6,font:'500 16px/1.15 var(--font-sans)',letterSpacing:'-0.015em'}}>{n}<Icon name="arrow-up-right" size={12}/></div>
+      <div style={{font:'400 13px/1.4 var(--font-sans)',color:'var(--text-secondary)'}}>{desc}</div></div></a>;
+  return <a href={li} target="_blank" rel="noopener" onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{display:'flex',flexDirection:'column',gap:10,color:'inherit',minWidth:0}}>
   <div style={{aspectRatio:'1 / 1',overflow:'hidden',background:'var(--stone-section)',maxWidth:180}}><img className="ad-crew-photo" src={img} alt={n} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',filter:h?'none':'grayscale(1)',transition:'filter var(--dur-base)'}}/></div>
   <div style={{...mono,fontSize:10.5,color:role==='Co-Founder'?'var(--vermilion-600)':'var(--text-secondary)'}}>{role}</div>
   <div style={{display:'flex',alignItems:'center',gap:6,font:'500 17px/1.15 var(--font-sans)',letterSpacing:'-0.015em'}}>{n}<Icon name="arrow-up-right" size={13}/></div>
@@ -59,7 +67,7 @@ function Crew(){
   return <div>
     <Band>
       <SectionHeader label="Crew" title={<>The people building<br/>the coordination layer.</>}/>
-      <div style={{display:'grid',gridTemplateColumns:nar?'repeat(2,minmax(0,1fr))':'repeat(5,minmax(0,1fr))',gap:nar?'28px 16px':24,marginTop:40}}>{[...D.founders,...D.advisors].map(p=><Person key={p[0]} p={p}/>)}</div>
+      {nar?<div style={{display:'flex',flexDirection:'column',marginTop:28}}>{[...D.founders,...D.advisors].map(p=><Person key={p[0]} p={p} compact/>)}</div>:<div style={{display:'grid',gridTemplateColumns:'repeat(5,minmax(0,1fr))',gap:24,marginTop:40}}>{[...D.founders,...D.advisors].map(p=><Person key={p[0]} p={p}/>)}</div>}
       <div style={{display:'flex',alignItems:'center',gap:32,flexWrap:'wrap',marginTop:48,paddingTop:24,borderTop:'1px solid var(--border-rule)'}}><div style={{...mono,fontSize:11,color:'var(--text-secondary)'}}>Backed by</div><img src="/assets/badges/nvidia-inception-program.svg" alt="NVIDIA Inception Program" style={{height:72,width:'auto',display:'block'}}/></div>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:24,flexWrap:'wrap',marginTop:24,paddingTop:24,borderTop:'1px solid var(--border-rule)'}}><div style={{font:'500 22px/1.2 var(--font-sans)',letterSpacing:'-0.02em'}}>Building with us, or want to?</div><div style={{display:'flex',alignItems:'center',gap:24,flexWrap:'wrap'}}><a href="mailto:teamaidress@gmail.com" style={{display:'inline-flex',gap:8,alignItems:'center',...mono,fontSize:12,borderBottom:'1px solid currentColor',paddingBottom:4}}>teamaidress@gmail.com <Icon name="arrow-up-right" size={13}/></a><BookCall variant="primary" size="md"/></div></div>
     </Band>
