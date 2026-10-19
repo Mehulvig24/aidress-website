@@ -45,8 +45,8 @@ function organization(): Json {
     sameAs: [
       'https://www.linkedin.com/company/aidress',
       'https://github.com/Aidress-ai/Aidress',
-      'https://x.com/aidabornnative',
-      'https://www.instagram.com/aidress.ai',
+      'https://x.com/AIDRESS_AI',
+      'https://www.instagram.com/aidress_ai/',
     ],
   };
 }

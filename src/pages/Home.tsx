@@ -10,13 +10,14 @@ import { HeroTrace } from '../components/site/Diagrams';
 import { Integrate } from './Developers';
 import { ScopedTile } from './Industry';
 import { AW } from '../data/site';
+import { BookCall } from '../components/site/BookCall';
 function Hero({go}){
   const [pop,setPop]=React.useState({id:'A',x:500,y:290});const a=AW.agentFor(pop.id);const y=Math.min(useScrollY(),900);
   return <section style={{display:'grid',gridTemplateColumns:'minmax(0,5fr) minmax(0,6fr)',gap:40,padding:'56px var(--gutter) 48px',background:'var(--paper)',overflow:'hidden'}}>
     <div style={{display:'flex',flexDirection:'column',transform:`translate3d(0,${(y*-0.06).toFixed(1)}px,0)`,opacity:Math.max(0,1-y/650)}}>
       <h1 style={{margin:0,font:'500 clamp(40px,4.6vw,68px)/0.98 var(--font-sans)',letterSpacing:'-0.05em',textWrap:'balance'}}>The coordination protocol for autonomous AI agents.</h1>
       <p style={{margin:'30px 0 0',font:'400 20px/1.45 var(--font-sans)',color:'var(--text-secondary)',maxWidth:470}}>Aidress lets agents discover, verify, and transact with counterparties they have never met, without a human in the loop.</p>
-      <div style={{display:'flex',gap:14,marginTop:36}}><Button size="lg" variant="accent" iconRight="arrow-right" onClick={()=>go('developers')}>Connect your agent</Button><Button size="lg" variant="secondary" onClick={()=>{const el=document.getElementById('industries');el&&window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-70,behavior:'smooth'});}}>Explore industries</Button></div>
+      <div style={{display:'flex',gap:14,marginTop:36}}><Button size="lg" variant="accent" iconRight="arrow-right" onClick={()=>go('developers')}>Connect your agent</Button><Button size="lg" variant="secondary" onClick={()=>{const el=document.getElementById('industries');el&&window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-70,behavior:'smooth'});}}>Explore industries</Button><BookCall variant="ghost"/></div>
       <div style={{display:'flex',gap:22,marginTop:28}}>{['SDK','MCP','API','GitHub'].map(l=><a key={l} href={hrefFor('developers')} onClick={spaClick(()=>go('developers'))} style={{display:'inline-flex',gap:5,alignItems:'center',...mono,fontSize:12,cursor:'pointer',borderBottom:'1px solid var(--border-rule)',paddingBottom:3}}>{l}<Icon name="arrow-up-right" size={11}/></a>)}</div>
     </div>
     <div style={{position:'relative',transform:`translate3d(0,${(y*0.32).toFixed(1)}px,0) scale(${(1-y/4000).toFixed(3)})`,opacity:Math.max(0,1-y/560),transformOrigin:'50% 30%'}}>

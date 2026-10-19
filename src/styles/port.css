@@ -15,3 +15,6 @@ html[data-theme=dark] .ad-image-slot img{filter:none}
    re-invert of images, so they showed as negatives. Re-apply the invert alongside the grayscale. */
 html[data-theme=dark] img.ad-crew-photo{filter:invert(1) hue-rotate(180deg) grayscale(1)!important}
 html[data-theme=dark] a:hover img.ad-crew-photo{filter:invert(1) hue-rotate(180deg)!important}
+
+/* The Cal.com booking popup (BookCall.tsx) is third-party UI; keep it out of the dark-mode page invert. */
+html[data-theme=dark] cal-modal-box{filter:invert(1) hue-rotate(180deg)}

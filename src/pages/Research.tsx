@@ -7,6 +7,7 @@ import { Icon, SectionHeader } from '../components/ds';
 import { Band, monoStyle as mono } from '../components/site/Shared';
 import { AidressPapers } from '../content/papersContent';
 import { AW } from '../data/site';
+import { BookCall } from '../components/site/BookCall';
 const C={bg:'var(--ink-deep)',fg:'var(--paper)',mute:'#9a9c95',rule:'#3a3c38'};
 function useNarrow(q='(max-width: 760px)'){const [n,setN]=React.useState(()=>typeof matchMedia!=='undefined'&&matchMedia(q).matches);React.useEffect(()=>{const m=matchMedia(q);const f=()=>setN(m.matches);m.addEventListener('change',f);return()=>m.removeEventListener('change',f);},[]);return n;}
 function Cover({p,ratio='4 / 3'}){return <div style={{aspectRatio:ratio,overflow:'hidden',background:'#000'}}><img src={p.img} alt={p.title+' cover'} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform 700ms var(--ease-resolve)'}}/></div>;}
@@ -59,7 +60,8 @@ function Crew(){
     <Band>
       <SectionHeader label="Crew" title={<>The people building<br/>the coordination layer.</>}/>
       <div style={{display:'grid',gridTemplateColumns:nar?'repeat(2,minmax(0,1fr))':'repeat(5,minmax(0,1fr))',gap:nar?'28px 16px':24,marginTop:40}}>{[...D.founders,...D.advisors].map(p=><Person key={p[0]} p={p}/>)}</div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:24,flexWrap:'wrap',marginTop:48,paddingTop:24,borderTop:'1px solid var(--border-rule)'}}><div style={{font:'500 22px/1.2 var(--font-sans)',letterSpacing:'-0.02em'}}>Building with us, or want to?</div><a href="mailto:teamaidress@gmail.com" style={{display:'inline-flex',gap:8,alignItems:'center',...mono,fontSize:12,borderBottom:'1px solid currentColor',paddingBottom:4}}>teamaidress@gmail.com <Icon name="arrow-up-right" size={13}/></a></div>
+      <div style={{display:'flex',alignItems:'center',gap:32,flexWrap:'wrap',marginTop:48,paddingTop:24,borderTop:'1px solid var(--border-rule)'}}><div style={{...mono,fontSize:11,color:'var(--text-secondary)'}}>Backed by</div><img src="/assets/badges/nvidia-inception-program.svg" alt="NVIDIA Inception Program" style={{height:72,width:'auto',display:'block'}}/></div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:24,flexWrap:'wrap',marginTop:24,paddingTop:24,borderTop:'1px solid var(--border-rule)'}}><div style={{font:'500 22px/1.2 var(--font-sans)',letterSpacing:'-0.02em'}}>Building with us, or want to?</div><div style={{display:'flex',alignItems:'center',gap:24,flexWrap:'wrap'}}><a href="mailto:teamaidress@gmail.com" style={{display:'inline-flex',gap:8,alignItems:'center',...mono,fontSize:12,borderBottom:'1px solid currentColor',paddingBottom:4}}>teamaidress@gmail.com <Icon name="arrow-up-right" size={13}/></a><BookCall variant="primary" size="md"/></div></div>
     </Band>
   </div>;
 }
