@@ -23,7 +23,7 @@ writeFileSync(join(distDir, "spa.html"), template);
 
 const { render, siteMap } = await import(pathToFileURL(join(root, "dist-ssr", "entry-server.js")).href);
 
-// Every route from ROUTES.md (plus /for-agents, /privacy, /security), each /docs/:slug and
+// Every route from ROUTES.md (plus /for-agents, /privacy, /terms, /security), each /docs/:slug and
 // /research/:id, and the demo agent passports — the same list the sitemap is built from.
 const SITE = siteMap();
 const ROUTES = SITE.map((r) => r.path);

@@ -50,6 +50,7 @@ function rawPath({ name, params }: Route): string {
     case 'research': return id ? '/research/' + enc(id) : '/research';
     case 'for-agents': return '/for-agents';
     case 'privacy': return '/privacy';
+    case 'terms': return '/terms';
     case 'security': return '/security';
     default: return '/';
   }
@@ -76,6 +77,7 @@ export function pathToRoute(pathname: string, search = ''): Route {
   if (a === 'research' && only(2)) return { name: 'research', params: { id: b } };
   if (a === 'for-agents' && only(1)) return { name: 'for-agents', params: {} };
   if (a === 'privacy' && only(1)) return { name: 'privacy', params: {} };
+  if (a === 'terms' && only(1)) return { name: 'terms', params: {} };
   if (a === 'security' && only(1)) return { name: 'security', params: {} };
   return { name: 'notfound', params: {} };
 }

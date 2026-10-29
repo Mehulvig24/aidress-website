@@ -18,7 +18,7 @@ function BigFooter({go}){
       </div>
     </div>
     <div style={{display:'flex',gap:28,flexWrap:'wrap',padding:'18px var(--gutter)',borderTop:'1px solid rgba(33,35,32,.35)'}}>{[['X','https://x.com/AIDRESS_AI'],['LinkedIn','https://www.linkedin.com/company/aidress'],['Instagram','https://www.instagram.com/aidress_ai/'],['GitHub','https://github.com/Aidress-ai/Aidress'],['Discord','https://discord.gg/DG2VjeB7T'],['Email','mailto:teamaidress@gmail.com']].map(([l,u])=><a key={l} href={u} target="_blank" rel="noopener" style={{...mono,fontSize:12,color:INK,display:'inline-flex',gap:6,borderBottom:'1px solid currentColor',paddingBottom:3}}>{l} ↗</a>)}</div>
-    <div style={{display:'flex',justifyContent:'space-between',padding:'16px var(--gutter)',borderTop:'1px solid rgba(33,35,32,.35)',...mono,fontSize:11}}><span>© 2026 Aidress</span><span>Orange = resolved</span></div>
+    <div style={{display:'flex',justifyContent:'space-between',padding:'16px var(--gutter)',borderTop:'1px solid rgba(33,35,32,.35)',...mono,fontSize:11}}><span>© 2026 Aidress Pte. Ltd.</span><span style={{display:'flex',gap:20}}>{[['Privacy','privacy'],['Terms','terms'],['Security','security']].map(([l,to])=><a key={to} href={hrefFor(to)} onClick={spaClick(()=>go(to))} style={{color:INK,cursor:'pointer'}}>{l}</a>)}</span><span>Orange = resolved</span></div>
   </footer>;
 }
 export { BigFooter };

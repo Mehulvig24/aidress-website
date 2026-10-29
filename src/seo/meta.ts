@@ -1,5 +1,5 @@
 // Per-route <head> data from design_handoff_aidress_website/ROUTES.md (titles and descriptions are
-// copied from that table), plus the routes added beyond it (/for-agents, /privacy, /security).
+// copied from that table), plus the routes added beyond it (/for-agents, /privacy, /terms, /security).
 import { isValidElement, type ReactNode } from 'react';
 import { AW } from '../data/site';
 import { AidressDocs } from '../content/docsContent';
@@ -141,6 +141,10 @@ export function metaFor(route: Route): Meta {
     case 'privacy':
       title = 'Privacy Policy — Aidress';
       description = 'Aidress privacy policy — how we collect, use, and protect your information.';
+      break;
+    case 'terms':
+      title = 'Terms of Service — Aidress';
+      description = 'Terms of Service for aidress.ai and the Aidress API, MCP server and SDKs.';
       break;
     case 'security':
       title = 'Security & Vulnerability Disclosure — Aidress';

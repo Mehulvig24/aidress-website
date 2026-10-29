@@ -20,6 +20,7 @@ import { Research, Crew } from './pages/Research';
 import { Impact } from './pages/Impact';
 import { ForAgents } from './pages/ForAgents';
 import { PrivacyPage } from './pages/PrivacyPage';
+import { TermsPage } from './pages/TermsPage';
 import { SecurityPage } from './pages/SecurityPage';
 import { NotFound } from './pages/NotFound';
 import { RouteHead } from './seo/RouteHead';
@@ -47,7 +48,7 @@ function SiteSearch({go,onClose}){
 }
 const pill=(dark)=>({all:'unset',cursor:'pointer',boxSizing:'border-box',display:'inline-flex',alignItems:'center',gap:8,height:34,padding:'0 10px',font:'400 12px/1 var(--font-mono)',textTransform:'uppercase',whiteSpace:'nowrap',color:dark?'var(--paper)':'var(--ink-deep)',border:'1px solid '+(dark?'#444':'var(--border-box)')});
 const ls={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}}};
-const PAGE_FOR={home:Home,industries:Industries,industry:IndustryDetail,scoped:ScopedRegistries,crew:Crew,developers:Developers,docs:Docs,impact:Impact,research:Research,'for-agents':ForAgents,privacy:PrivacyPage,security:SecurityPage,notfound:NotFound};
+const PAGE_FOR={home:Home,industries:Industries,industry:IndustryDetail,scoped:ScopedRegistries,crew:Crew,developers:Developers,docs:Docs,impact:Impact,research:Research,'for-agents':ForAgents,privacy:PrivacyPage,terms:TermsPage,security:SecurityPage,notfound:NotFound};
 /** Pages whose body the mock authors dark (the dark-mode invert treats them as already dark). */
 export const AUTHORED_DARK=(name,mode)=>SITE[name]==='research'&&mode==='human';
 

@@ -29,6 +29,7 @@ export function machineText(r){
   // Routes added beyond the mock (not in ROUTES.md's machine view).
   else if(r.name==='docs'){const pg=AidressDocs.getPageData(p.id||'introduction');body='# '+(pg?pg.title:'Docs')+'\n'+U+'/docs/'+(p.id?p.id+'/':'')+'\n\n## Pages\n'+AidressDocs.sidebarNav.map(g=>'### '+g.title+'\n'+g.items.map(i=>'- ['+i.label+']('+U+'/docs/'+i.slug+'/)').join('\n')).join('\n\n');}
   else if(r.name==='privacy'){body='# Privacy policy\n'+U+'/privacy/\ncontact: teamaidress@gmail.com';}
+  else if(r.name==='terms'){body='# Terms of Service\n'+U+'/terms/\nOperator of an agent is bound by these terms; no scraping or bulk extraction outside the documented API; no manipulation of trust scores or reviews; Aidress never holds or settles funds.\ncontact: teamaidress@gmail.com';}
   else if(r.name==='security'){body='# Security and vulnerability disclosure\n'+U+'/security/\nsecurity.txt: '+U+'/.well-known/security.txt\ncontact: teamaidress@gmail.com';}
   // /for-agents and /agents.md open with a plain-text index for agents (an addition to the mock).
   const start=r.name==='for-agents'?'START HERE\n'+

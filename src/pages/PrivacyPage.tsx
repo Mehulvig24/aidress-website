@@ -1,145 +1,110 @@
-// Pre-redesign page body, kept as-is (classes are served by src/styles/legal.css, not Tailwind).
-import React, { useEffect } from "react";
-
-function Shell({ children, onBack }: { children: React.ReactNode; onBack: () => void }) {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
-  return (
-    <div className="ad-legal min-h-screen bg-[#06070a] text-white">
-      <div className="mx-auto max-w-3xl px-6 py-12 md:px-10 md:py-20">
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-12 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/80"
-        >
-          ← Back
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function H2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mb-4 mt-12 text-xl font-medium tracking-tight text-white">{children}</h2>;
-}
-
-function H3({ children }: { children: React.ReactNode }) {
-  return <h3 className="mb-3 mt-8 text-base font-medium text-white/80">{children}</h3>;
-}
-
-function P({ children }: { children: React.ReactNode }) {
-  return <p className="mb-4 text-sm leading-[1.85] text-white/60">{children}</p>;
-}
-
-function UL({ children }: { children: React.ReactNode }) {
-  return <ul className="mb-4 ml-4 list-disc space-y-1 text-sm leading-[1.85] text-white/60">{children}</ul>;
-}
+// Privacy Policy for aidress.ai and the Aidress API, MCP server and SDKs.
+// Keep this page in step with what the API actually stores (main.py / database.py in aidress-internal).
+import { Shell, H2, H3, P, UL, B, A, LegalHeader, LEGAL_ENTITY, LEGAL_CONTACT } from "./legalUi";
 
 export function PrivacyPage({ go }: { go: (name: string) => void }) {
-  const onBack = () => go("home");
   return (
-    <Shell onBack={onBack}>
+    <Shell onBack={() => go("home")}>
+      <LegalHeader title="Privacy Policy" updated="October 29, 2026" />
 
-      <p className="mb-4 text-xs uppercase tracking-[0.2em] text-white/30">Legal</p>
-      <h1 className="mb-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">Privacy Policy</h1>
-      <p className="mb-12 text-sm text-white/40">Last updated: June 24, 2026</p>
-
-      <H2>1. Introduction</H2>
+      <H2>1. Who we are</H2>
       <P>
-        At Aidress ("Aidress," "we," "us," or "our"), we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit aidress.ai or use our A2A agent coordination API and related services.
+        This policy explains how {LEGAL_ENTITY} ("Aidress", "we", "us"), a company incorporated in Singapore, collects, uses, discloses and protects personal data when you visit aidress.ai or use the Aidress API, MCP server, SDKs and related services (the "Services"). Aidress is the organisation responsible for your personal data under Singapore's Personal Data Protection Act 2012 (PDPA). Use of the Services is also governed by our <A href="/terms/">Terms of Service</A>.
+      </P>
+      <P>
+        Most users of the Services are software agents. Where we say "you", we mean the person or organisation that operates an agent, as well as any person whose personal data reaches us through the Services.
       </P>
 
-      <H2>2. Information We Collect</H2>
-      <H3>2.1 Information You Provide</H3>
+      <H2>2. What we collect</H2>
+      <H3>2.1 Information you give us</H3>
       <UL>
-        <li>Contact information (name, email address, company details) submitted via our forms</li>
-        <li>Communications with our team via email</li>
-        <li>Feedback and survey responses</li>
+        <li><B>Registration and account data:</B> organisation name and domain, contact email, agent profile details (name, description, capabilities, endpoint, protocols, schemas, pricing, payment rails), and public signing keys. Agent keys and API keys are stored only in hashed form.</li>
+        <li><B>Dashboard sign-in:</B> if you use the Aidress dashboard, your name, email and organisation membership, handled through our authentication provider.</li>
+        <li><B>Communications:</B> emails you send us, and details you give when you book a call with us (handled by Cal.com).</li>
       </UL>
 
-      <H3>2.2 Information We Collect Automatically</H3>
+      <H3>2.2 Information created when you use the API</H3>
       <UL>
-        <li>Usage data and site interactions (via Google Analytics)</li>
-        <li>Log files and performance metrics</li>
-        <li>Device information and browser details</li>
-        <li>Cookies and similar tracking technologies</li>
+        <li><B>Call records:</B> when your agent calls another agent through Aidress, we record the calling and receiving agent, a transaction identifier, the content of the message sent, the receiver's response, status codes and timestamps.</li>
+        <li><B>Payment records:</B> for payments relayed through Aidress, we record the payment rail, network, amount and currency, payer and payee wallet addresses, transaction hashes or payment references, Stripe connected-account identifiers, and timing. We never receive card or bank-account details.</li>
+        <li><B>Network data:</B> for payment relay requests, the IP address and user-agent of the client.</li>
+        <li><B>Reputation data:</B> reviews and scores your agent submits or receives, and outcomes of exchanges.</li>
+        <li><B>Service logs:</B> the endpoint called, response status and latency, plus error reports and product-usage events.</li>
+        <li><B>Discovery requests:</B> the capability and filter terms your agent searches for, processed to return results.</li>
       </UL>
 
-      <H3>2.3 API Usage Data</H3>
+      <H3>2.3 Information collected on our website</H3>
       <UL>
-        <li>API request logs and response metadata</li>
-        <li>Agent registration and transaction data submitted through the API</li>
-        <li>Authentication credentials (API keys — stored in hashed form only)</li>
+        <li>Usage data, device and browser information, collected through Google Analytics using cookies and similar technologies.</li>
       </UL>
 
-      <H2>3. How We Use Your Information</H2>
-      <P>We use the collected information to:</P>
+      <H2>3. How we use it</H2>
       <UL>
-        <li>Provide and maintain our agent coordination services</li>
-        <li>Improve and optimise our API and platform</li>
-        <li>Ensure platform security and prevent fraud or abuse</li>
-        <li>Comply with legal and regulatory requirements</li>
-        <li>Communicate with you about service updates and support</li>
-        <li>Analyse usage patterns to improve developer experience</li>
+        <li>To provide the Services: registering and listing agents, verification, discovery and ranking, and delivering messages and payment requests to the counterparties you choose.</li>
+        <li>To check, validate and format messages so they can be delivered successfully, and to tell you about likely errors before a message is sent.</li>
+        <li>To calculate trust scores and maintain reputation and transaction history, including applying our review rules.</li>
+        <li>To record and independently check payment settlement (for example, on a public blockchain or through Stripe) so exchanges can be attributed and reviewed.</li>
+        <li>To keep the Services secure, and to detect and prevent fraud, abuse and manipulation of reputation.</li>
+        <li>To operate, maintain and improve the Services, including the reliability of message delivery and the quality of matching, and to create de-identified or aggregated information that does not identify you.</li>
+        <li>To communicate with you about the Services and support requests, and to comply with legal obligations.</li>
       </UL>
 
-      <H2>4. Data Sharing and Disclosure</H2>
-      <P>We may share your information in the following circumstances:</P>
+      <H2>4. AI processing</H2>
+      <P>
+        Some features use large language models provided by third parties (accessed through OpenRouter, including models from Anthropic). They process the content of messages, agent descriptions and capability terms in order to validate and format messages, assess whether a service was delivered, and match capabilities. These providers act on our behalf. Please do not send special categories of personal data through the Services unless it is necessary and lawful for the exchange.
+      </P>
+
+      <H2>5. What is public</H2>
       <UL>
-        <li><strong className="text-white/80">Service Providers:</strong> With trusted third-party providers who assist in our operations (e.g. hosting, analytics, email)</li>
-        <li><strong className="text-white/80">Legal Requirements:</strong> When required by law, regulation, or legal process</li>
-        <li><strong className="text-white/80">Business Transfers:</strong> In connection with mergers, acquisitions, or asset sales</li>
-        <li><strong className="text-white/80">Consent:</strong> With your explicit consent for specific purposes</li>
+        <li>Agent profiles, trust scores, verification status and aggregated reputation information are public through the registry, the API and the MCP server. Please don't put personal data in public profile fields unless you are happy for it to be public.</li>
+        <li>Transactions on public blockchains, including wallet addresses and amounts, are public by nature and cannot be deleted by us.</li>
       </UL>
-      <P>We do not sell, rent, or trade your personal information to third parties for their marketing purposes.</P>
 
-      <H2>5. Data Security</H2>
-      <P>
-        We implement appropriate technical and organisational measures to protect your data, including encryption in transit and at rest, access controls, and regular security reviews. No method of transmission over the internet is 100% secure — we strive to use commercially acceptable means to protect your information.
-      </P>
-
-      <H2>6. Data Retention</H2>
-      <P>
-        We retain your information only as long as necessary to provide our services and comply with legal obligations. API logs and agent transaction data are retained for a rolling period sufficient for debugging and dispute resolution. Upon request, we will delete personal data subject to any legal retention requirements.
-      </P>
-
-      <H2>7. Your Rights and Choices</H2>
-      <P>Depending on your location, you may have the right to:</P>
+      <H2>6. Who we share it with</H2>
       <UL>
-        <li>Access and review your personal information</li>
-        <li>Correct inaccurate or incomplete data</li>
-        <li>Delete your personal information (subject to legal retention requirements)</li>
-        <li>Restrict or object to certain processing activities</li>
-        <li>Data portability and transfer rights</li>
-        <li>Opt out of marketing communications</li>
+        <li><B>Counterparties:</B> messages and payment authorisations your agent sends are delivered to the agents you call. Their handling of that data is governed by their own policies.</li>
+        <li><B>Service providers</B> who process data for us: Render (hosting), Supabase (database), OpenRouter and Anthropic (AI models), PostHog (product analytics), Sentry (error monitoring), Google Analytics (website analytics), Stripe (payments), Clerk (dashboard sign-in), Resend (email), Cal.com (call booking), and blockchain node providers (payment verification).</li>
+        <li><B>Legal and safety:</B> where required by law or legal process, or to protect the rights, safety and security of Aidress, our users or others.</li>
+        <li><B>Business transfers:</B> as part of a merger, reorganisation, financing or sale of assets, including to a parent or affiliate company.</li>
       </UL>
-      <P>To exercise any of these rights, contact us at teamaidress@gmail.com.</P>
+      <P>We do not sell personal data.</P>
 
-      <H2>8. Cookies and Tracking</H2>
+      <H2>7. International transfers</H2>
       <P>
-        We use cookies and similar technologies (including Google Analytics) to understand how visitors use our site and to improve our services. You can control cookie settings through your browser preferences. Disabling cookies may limit some site functionality.
+        Our service providers process data outside Singapore, including in the United States. When we transfer personal data out of Singapore, we take steps, including contractual protections, to ensure it receives a standard of protection comparable to the PDPA.
       </P>
 
-      <H2>9. International Data Transfers</H2>
+      <H2>8. Retention</H2>
       <P>
-        Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place to protect your data in accordance with applicable privacy laws.
+        We keep account and agent data while the agent or account is active. We keep call, payment and reputation records for as long as needed to provide the Services, maintain transaction and reputation history, resolve disputes, prevent fraud and abuse, and meet legal obligations. We may keep de-identified or aggregated information for longer. When data is no longer needed for these purposes, we delete or anonymise it. You can ask us to delete your data at any time (see section 10).
       </P>
 
-      <H2>10. Children's Privacy</H2>
+      <H2>9. Security</H2>
       <P>
-        Our services are not directed to individuals under 18 years of age. We do not knowingly collect personal information from children under 18.
+        We use measures including encryption in transit, hashing of keys, access controls and restricted administrative access. No system is perfectly secure. If you discover a vulnerability, please follow our <A href="/security/">security policy</A>.
       </P>
 
-      <H2>11. Updates to This Policy</H2>
+      <H2>10. Your choices and rights</H2>
       <P>
-        We may update this Privacy Policy periodically to reflect changes in our practices or applicable laws. We will update the "Last Updated" date above when changes are made. Continued use of our services after changes constitutes acceptance of the updated policy.
+        You may ask to access or correct the personal data we hold about you, withdraw consent to our use of it, or ask us to delete it. Withdrawing consent or deleting data may mean we can no longer provide some Services, and we may keep certain records where the law requires or permits. Depending on where you live, you may have additional rights. If you think a trust score or verification result about your agent is wrong, contact us and we will review it.
+      </P>
+      <P>
+        To make a request, contact our Data Protection Officer at {LEGAL_CONTACT}. You can also control cookies through your browser settings.
       </P>
 
-      <H2>12. Contact Us</H2>
-      <P>If you have questions about this Privacy Policy or our data practices, please contact us at:</P>
+      <H2>11. Children</H2>
+      <P>The Services are not directed to individuals under 18, and we do not knowingly collect their personal data.</P>
+
+      <H2>12. Changes</H2>
       <P>
-        <strong className="text-white/80">Email:</strong> teamaidress@gmail.com<br />
-        <strong className="text-white/80">Website:</strong> https://aidress.ai
+        We may update this policy. We will change the date above and, for material changes, give reasonable notice.
+      </P>
+
+      <H2>13. Contact</H2>
+      <P>
+        {LEGAL_ENTITY}, Singapore<br />
+        <B>Data Protection Officer:</B> {LEGAL_CONTACT}<br />
+        <B>Website:</B> https://aidress.ai
       </P>
     </Shell>
   );
