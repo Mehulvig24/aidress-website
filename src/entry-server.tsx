@@ -28,7 +28,7 @@ export function siteMap() {
     ...AidressDocs.sidebarNav.flatMap((g) => g.items.map((i) => "/docs/" + i.slug)),
     "/research",
     ...(AW.papers || []).map((p) => "/research/" + p.id),
-    "/impact", "/crew", "/for-agents", "/privacy", "/security",
+    "/impact", "/crew", "/for-agents", "/privacy", "/terms", "/security",
     ...Object.keys(AW.agents).map((id) => "/atlas/agents/" + id),
   ];
   return [...new Set(paths)].map((path) => {

@@ -11,6 +11,10 @@
 
 .ad-legal .min-h-screen{min-height:100vh}
 .ad-legal .bg-\[\#06070a\]{background-color:#06070a}
+/* The page wrapper carries both .ad-legal and these classes itself, so the descendant rules above
+   never matched it (white text on the light site background). Match the wrapper too. */
+.ad-legal.min-h-screen{min-height:100vh}
+.ad-legal.bg-\[\#06070a\]{background-color:#06070a}
 .ad-legal .mx-auto{margin-inline:auto}
 .ad-legal .max-w-3xl{max-width:48rem}
 .ad-legal .px-6{padding-inline:1.5rem}
